@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink } from 'vue-router';
+import { ref } from 'vue';
 import axios from 'axios';
 
 const username = ref('');
@@ -95,7 +96,7 @@ const register = () => {
 </template>
 
 <style scoped>
-.v-form {
+/* .v-form {
   width: 50%; 
   max-width: 300px;
   padding: 20px;
@@ -118,5 +119,5 @@ const register = () => {
   color: blue;
   text-decoration: underline;
   cursor: pointer;
-}
+} */
 </style>

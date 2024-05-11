@@ -4,26 +4,34 @@ import RegisterForm from '../components/RegisterForm.vue';
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <div class="left-pane">
-      <WelcomeMessage />
+      <WelcomeMessage></WelcomeMessage>
     </div>
     <div class="right-pane">
-      <RegisterForm />
+      <RegisterForm></RegisterForm>
     </div>
   </div>
 </template>
 
 <style scoped>
-.left-pane {
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.left-pane, .right-pane {
   flex: 1;
+  padding: 20px;
+}
+
+.left-pane {
   background-color: #f0f0f0;
 }
 
 .right-pane {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: #f8f8f8;
 }
 </style>

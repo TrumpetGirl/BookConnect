@@ -20,7 +20,7 @@ const name = 'LeftPanel';
 </template>
 
 <style scoped>
-.container {
+/* .container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,5 +45,5 @@ const name = 'LeftPanel';
   margin-top: 20px;
   font-size: 12px;
   color: #888;
-}
+} */
 </style>
