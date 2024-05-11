@@ -1,3 +1,25 @@
+<script setup>
+import { ref } from 'vue';
+import axios from 'axios';
+
+const username = ref('');
+const password = ref('');
+
+const login = () => {
+  axios.post('http://localhost:3000/login', {
+    email: username.value,
+    password: password.value,
+  })
+  .then(response => {
+    const token = response.data.token;
+    localStorage.setItem('token', token);      
+  })
+  .catch(error => {
+    console.error('Error al iniciar sesión:', error);
+  });
+};
+</script>
+
 <template>
   <div>
     <div class="container">
@@ -40,39 +62,12 @@
             </v-row>
           </v-form>
 
-    <p><router-link to="/">Todavía no estoy registrado/a</router-link></p>
+          <p><router-link to="/">Todavía no estoy registrado/a</router-link></p>
         </fieldset>
       </div>
     </div>
-
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      password: ''
-    };
-  },
-  methods: {
-    login() {
-      axios.post('http://localhost:3000/login', {
-        email: this.email,
-        password: this.password,
-      })
-      .then(response => {
-        const token = response.data.token;
-        localStorage.setItem('token', token);      
-      })
-      .catch(error => {
-        console.error('Error al iniciar sesión:', error);
-      });
-    },
-  },
-};
-</script>
 
 <style scoped>
 .container {

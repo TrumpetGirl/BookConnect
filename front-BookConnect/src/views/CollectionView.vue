@@ -1,24 +1,15 @@
+<script setup>
+import CollectionView from '../components/CollectionBooks.vue';
+</script>
+
 <template>
-    <div class="container">
-    
-        <CollectionView />
-   
-    </div>
-  </template>
-  
-  <script>
-  import CollectionView from '../components/CollectionBooks.vue'; 
-  
-  export default {
-    components: {
-      CollectionView
-    }
-  };
-  </script>
-  
-  <style>
+  <div class="container">
+    <CollectionView />
+  </div>
+</template>
+
+<style>
 .container {
-    margin: auto;
+  margin: auto;
 }
-  </style>
-  
+</style>

@@ -1,3 +1,7 @@
+<script setup>
+const name = 'LeftPanel';
+</script>
+
 <template>
   <div class="container">
     <div class="left-panel">
@@ -14,12 +18,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'LeftPanel'
-}
-</script>
 
 <style scoped>
 .container {
@@ -42,11 +40,6 @@ export default {
 .content {
   margin-bottom: auto;
 }
-
-.social-media {
-  
-}
-
 
  .copyright {
   margin-top: 20px;

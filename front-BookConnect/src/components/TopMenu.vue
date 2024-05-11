@@ -1,3 +1,6 @@
+<script setup>
+</script>
+
 <template>
   <div class="menu-bar" style="background-color: #888;">
     <div class="container">
@@ -9,12 +12,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  
-}
-</script>
 
 <style scoped>
 .menu-bar {

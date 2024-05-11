@@ -1,5 +1,31 @@
 <script setup>
-  import { RouterLink } from 'vue-router';
+import { RouterLink } from 'vue-router';
+import axios from 'axios';
+
+const username = ref('');
+const birthdate = ref('');
+const email = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+
+const register = () => {
+  if (password.value !== confirmPassword.value) {
+    console.error('Las contraseñas no coinciden');
+    return;
+  }
+  
+  axios.post('http://localhost:3000/register', {
+    username: username.value,
+    birthdate: birthdate.value,
+    email: email.value,
+    password: password.value,
+  })
+  .then(response => {
+  })
+  .catch(error => {
+    console.error('Error al registrar usuario:', error);
+  });
+};
 </script>
 
 <template>
@@ -62,47 +88,11 @@
             </v-col>
           </v-row>
         </v-form>
-        <p>¿Ya estás registrado? <router-link to="/login">Inicia sesión aquí</router-link></p>
+        <p>¿Ya estás registrado? <RouterLink to="/login">Inicia sesión aquí</RouterLink></p>
       </div>
     </div>
   </div>
 </template>
-
-<script>
-import axios from 'axios';
-
-export default {
-  data() {
-    return {
-      username: '',
-      birthdate: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    };
-  },
-  methods: {
-    register() {
-      if (this.password !== this.confirmPassword) {
-        console.error('Las contraseñas no coinciden');
-        return;
-      }
-      
-      axios.post('http://localhost:3000/register', {
-        username: this.username,
-        birthdate: this.birthdate,
-        email: this.email,
-        password: this.password,
-      })
-      .then(response => {
-      })
-      .catch(error => {
-        console.error('Error al registrar usuario:', error);
-      });
-    },
-  },
-};
-</script>
 
 <style scoped>
 .v-form {

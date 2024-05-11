@@ -1,3 +1,29 @@
+<script setup>
+import axios from 'axios';
+
+const books = ref([]);
+const error = ref(null);
+const headers = [
+  { text: 'Título', value: 'title' },
+  { text: 'Autor', value: 'author.name' },
+  { text: 'Año de Publicación', value: 'publication_year' },
+  { text: 'ISBN', value: 'isbn' },
+];
+
+const fetchBooks = () => {
+  axios.get('http://localhost:3000/books')
+    .then(response => {
+      books.value = response.data;
+    })
+    .catch(error => {
+      console.error('Hubo un error al obtener los libros:', error);
+      error.value = 'Error al obtener los libros. Por favor, intenta de nuevo más tarde.';
+    });
+};
+
+onMounted(fetchBooks);
+</script>
+
 <template>
   <div>
     <h2>Mi colección</h2>
@@ -33,32 +59,6 @@
     </v-card>
   </div>
 </template>
-
-<script setup>
-import axios from 'axios';
-
-const books = ref([]);
-const error = ref(null);
-const headers = [
-  { text: 'Título', value: 'title' },
-  { text: 'Autor', value: 'author.name' },
-  { text: 'Año de Publicación', value: 'publication_year' },
-  { text: 'ISBN', value: 'isbn' },
-];
-
-const fetchBooks = () => {
-  axios.get('http://localhost:3000/books')
-    .then(response => {
-      books.value = response.data;
-    })
-    .catch(error => {
-      console.error('Hubo un error al obtener los libros:', error);
-      error.value = 'Error al obtener los libros. Por favor, intenta de nuevo más tarde.';
-    });
-};
-
-onMounted(fetchBooks);
-</script>
 
 <style scoped>
 .custom-table {

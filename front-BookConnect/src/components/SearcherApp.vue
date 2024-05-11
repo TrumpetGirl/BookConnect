@@ -1,3 +1,11 @@
+<script setup>
+const searchQuery = ref('');
+
+const search = () => {
+  console.log('Realizar búsqueda con el término:', searchQuery.value);
+};
+</script>
+
 <template>
   <div class="search-bar">
     <input
@@ -11,22 +19,6 @@
     </button>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      searchQuery: ''
-    };
-  },
-  methods: {
-    search() {
-      
-      console.log('Realizar búsqueda con el término:', this.searchQuery);
-    }
-  }
-};
-</script>
 
 <style scoped>
 .search-bar {

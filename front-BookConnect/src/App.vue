@@ -1,6 +1,4 @@
 <script setup>
-
-
 import TopMenu from './components/TopMenu.vue';
 import TopMenuSignIn from './components/TopMenuSignIn.vue';
 </script>

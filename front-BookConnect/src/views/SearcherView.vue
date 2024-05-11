@@ -1,12 +1,15 @@
+<script setup>
+import SearcherApp from '../components/SearcherApp.vue';
+import BookForm from '../components/BookForm.vue';
+</script>
+
 <template>
-    <SearcherApp></SearcherApp>
-    <BookForm></BookForm>
-    </template>
+  <div>
+    <SearcherApp />
+    <BookForm />
+  </div>
+</template>
 
-    <script setup>
-    import SearcherApp from '../components/SearcherApp.vue';
-    import BookForm from '../components/BookForm.vue';
-    </script>
-
-    <style scoped>
-    </style>
+<style scoped>
+/* Estilos específicos */
+</style>
