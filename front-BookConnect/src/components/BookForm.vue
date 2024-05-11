@@ -1,44 +1,40 @@
-<script>
+<script setup>
 import { ref } from 'vue';
 import axios from 'axios';
 
-export default {
-    const selectedFile = ref(null);
-    const book = ref({
-      title: '',
-      isbn: '',
-      year: '',
-      synopsis: ''
-    });
+const selectedFile = ref(null);
+const book = ref({
+  title: '',
+  isbn: '',
+  year: '',
+  synopsis: ''
+});
 
-    const handleFileUpload = (event) => {
-      selectedFile.value = event.target.files[0];
-    };
+const handleFileUpload = (event) => {
+  selectedFile.value = event.target.files[0];
+};
 
-    const submitForm = async () => {
-      try {
-        const formData = new FormData();
-        formData.append('image', selectedFile.value);
-        formData.append('title', book.value.title);
-        formData.append('isbn', book.value.isbn);
-        formData.append('year', book.value.year);
-        formData.append('synopsis', book.value.synopsis);
-        await axios.post('/uploads', formData);
-        alert('Libro enviado. Espere confirmación por parte del administrador');
-        
-        selectedFile.value = null;
-        book.value.title = '';
-        book.value.isbn = '';
-        book.value.year = '';
-        book.value.synopsis = '';
-      } catch (error) {
-        console.error('Error al subir el libro:', error);
-        alert('Error al subir el libro.');
-      }
-    };
-
-    return { selectedFile, book, handleFileUpload, submitForm };
+const submitForm = async () => {
+  try {
+    const formData = new FormData();
+    formData.append('image', selectedFile.value);
+    formData.append('title', book.value.title);
+    formData.append('isbn', book.value.isbn);
+    formData.append('year', book.value.year);
+    formData.append('synopsis', book.value.synopsis);
+    await axios.post('/uploads', formData);
+    alert('Libro enviado. Espere confirmación por parte del administrador');
+    
+    selectedFile.value = null;
+    book.value.title = '';
+    book.value.isbn = '';
+    book.value.year = '';
+    book.value.synopsis = '';
+  } catch (error) {
+    console.error('Error al subir el libro:', error);
+    alert('Error al subir el libro.');
   }
+};
 </script>
 
 <template>
