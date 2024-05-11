@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model author {
+  id                       Int      @id @default(autoincrement())
+  name                     String   @db.VarChar(100)
+  birth_date               DateTime @db.Date
+  nationality              String   @db.VarChar(50)
+  book_book_authorToauthor book[]   @relation("book_authorToauthor")
+}
+
+model book {
+  id                             Int         @id @default(autoincrement())
+  isbn                           String      @db.VarChar(50)
+  title                          String      @db.VarChar(100)
+  publication_year               Int
+  author                         Int
+  genre                          Int
+  synopsis                       String?     @db.Text
+  author_book_authorToauthor     author      @relation("book_authorToauthor", fields: [author], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_author")
+  genre_book_genreTogenre        genre       @relation("book_genreTogenre", fields: [genre], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_genre")
+  user_book_user_book_bookTobook user_book[] @relation("user_book_bookTobook")
+
+  @@index([author], map: "fk_book_author")
+  @@index([genre], map: "fk_book_genre")
+}
+
+model genre {
+  id                     Int    @id @default(autoincrement())
+  name                   String @db.VarChar(50)
+  book_book_genreTogenre book[] @relation("book_genreTogenre")
+}
+
+model list {
+  id                                       Int              @id @default(autoincrement())
+  name                                     String           @db.VarChar(100)
+  user                                     Int
+  user_list_userTouser                     user             @relation("list_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_list_user")
+  user_book_list_user_book_list_listTolist user_book_list[] @relation("user_book_list_listTolist")
+
+  @@index([user], map: "fk_list_user")
+}
+
+model role {
+  id                   Int    @id @default(autoincrement())
+  type                 String @db.VarChar(50)
+  user_user_roleTorole user[] @relation("user_roleTorole")
+}
+
+model state {
+  id                               Int         @id @default(autoincrement())
+  type                             String      @db.VarChar(50)
+  user_book_user_book_stateTostate user_book[] @relation("user_book_stateTostate")
+}
+
+model user {
+  id                                         Int              @id @default(autoincrement())
+  nick                                       String           @db.VarChar(100)
+  email                                      String           @db.VarChar(100)
+  password                                   String           @db.VarChar(50)
+  birth_date                                 DateTime         @db.Date
+  role                                       Int
+  list_list_userTouser                       list[]           @relation("list_userTouser")
+  role_user_roleTorole                       role             @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_role_user")
+  user_book_user_book_userTouser             user_book[]      @relation("user_book_userTouser")
+  user_book_list                             user_book_list[]
+  user_follower_user_follower_followerTouser user_follower[]  @relation("user_follower_followerTouser")
+  user_follower_user_follower_userTouser     user_follower[]  @relation("user_follower_userTouser")
+
+  @@index([role], map: "FK_user_role")
+}
+
+model user_book {
+  id                           Int    @id @default(autoincrement())
+  user                         Int
+  book                         Int
+  state                        Int
+  rating                       Int
+  review                       String @db.Text
+  book_user_book_bookTobook    book   @relation("user_book_bookTobook", fields: [book], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_book")
+  state_user_book_stateTostate state  @relation("user_book_stateTostate", fields: [state], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_state")
+  user_user_book_userTouser    user   @relation("user_book_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_user")
+
+  @@unique([user, book], map: "user")
+  @@index([book], map: "FK_user_book_book")
+  @@index([state], map: "FK_user_book_state")
+}
+
+model user_book_list {
+  id                             Int  @id @default(autoincrement())
+  user_book                      Int
+  list                           Int
+  list_user_book_list_listTolist list @relation("user_book_list_listTolist", fields: [list], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_list")
+  user                           user @relation(fields: [user_book], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_user_book")
+
+  @@index([list], map: "FK_user_book_list")
+  @@index([user_book], map: "FK_user_book_user_book")
+}
+
+model user_follower {
+  id                                Int      @id @default(autoincrement())
+  user                              Int
+  follower                          Int
+  start_following                   DateTime @db.Date
+  unfollow                          Boolean
+  user_user_follower_followerTouser user     @relation("user_follower_followerTouser", fields: [follower], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_follower_follower")
+  user_user_follower_userTouser     user     @relation("user_follower_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_follower_user")
+
+  @@index([follower], map: "FK_user_follower_follower")
+  @@index([user], map: "FK_user_follower_user")
+}
