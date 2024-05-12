@@ -12,21 +12,21 @@ const router = createRouter({
       name: 'main',
       component: MainView
     },
-      {
-        path: '/login',
-        name: 'login',
-        component: LoginView
-      },
-      {
-        path: '/search',
-        name: 'search',
-        component: SearcherView
-      },
-      {
-        path: '/mycollection',
-        name: 'mycollection',
-        component: MyCollection
-      }
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: SearcherView
+    },
+    {
+      path: '/mycollection',
+      name: 'mycollection',
+      component: MyCollection
+    }
   ]
 })
 

@@ -20,6 +20,10 @@ import RegisterForm from '../components/RegisterForm.vue';
   justify-content: center;
   align-items: center;
   height: 100vh;
+  font-family: "Ubuntu Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
 }
 
 .left-pane, .right-pane {

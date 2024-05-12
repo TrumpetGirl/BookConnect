@@ -21,50 +21,47 @@ const login = () => {
 </script>
 
 <template>
-  <div>
-    <div class="container">
-      <div class="login-container">
-        <fieldset class="login-fieldset">
-          <legend>Inicia sesión</legend>
-          <v-form ref="form" class="login-form">        
-            <v-text-field
-              v-model="username"
-              label="Nombre de Usuario"
-              required
-            ></v-text-field>
-        
-            <v-text-field
-              v-model="password"
-              label="Contraseña"
-              type="password"
-              required
-            ></v-text-field>
-        
-            <v-row>
-              <v-col cols="6">
-                <v-btn
-                  color="error"
-                  @click="cancel"
-                  block
-                >
-                  Cancelar
-                </v-btn>
-              </v-col>
-              <v-col cols="6">
-                <v-btn
-                  color="primary"
-                  @click="login"
-                  block
-                >
-                  Iniciar Sesión
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
+  <div class="container">
+    <div class="left-pane">
+      <fieldset class="login-fieldset">
+        <legend>Inicia sesión para acceder a tu cuenta</legend>
+        <v-form ref="form" class="login-form">        
+          <v-text-field
+            v-model="loginUsername"
+            label="Nombre de Usuario"
+            required
+          ></v-text-field>
 
-          <p><router-link to="/">Todavía no estoy registrado/a</router-link></p>
-        </fieldset>
-      </div>
+          <v-text-field
+            v-model="loginPassword"
+            label="Contraseña"
+            type="password"
+            required
+          ></v-text-field>
+
+          <v-row>
+            <v-col cols="6">
+              <v-btn
+                color="#d3d3d3"
+                @click="cancel"
+                block
+              >
+                Cancelar
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn
+                color="#ff7eb9"
+                @click="login"
+                block
+              >
+                Iniciar Sesión
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+        <p>¿No tienes cuenta? <RouterLink to="/">Regístrate aquí</RouterLink></p>
+      </fieldset>
     </div>
   </div>
 </template>
@@ -77,24 +74,27 @@ const login = () => {
   height: 100vh;
 }
 
-.login-container {
-  width: 400px;
+.left-pane {
+  width: 80%;
+  max-width: 500px;
 }
 
 .login-fieldset {
-  padding: 20px; 
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.login-form {
-  max-width: 400px;
-  margin: 0 auto;
+legend {
+  color: #ff7eb9;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-.v-form {
-  width: 50%; 
-  max-width: 300px; 
-  padding: 20px; 
-  border: 1px solid #ccc; 
-  border-radius: 5px; 
+p {
+  text-align: center;
+  margin-top: 15px;
 }
 </style>
+

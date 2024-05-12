@@ -31,38 +31,38 @@ const register = () => {
 
 <template>
   <div class="container">
-    <div class="main-container">
-      <div class="left-pane">
-        <h2>Regístrate aquí para formar parte de la comunidad</h2>
+    <div class="left-pane">
+      <fieldset class="register-fieldset">
+        <legend>Regístrate aquí para formar parte de la comunidad</legend>
         <v-form ref="form" class="register-form">        
           <v-text-field
-            v-model="username"
+            v-model="registerUsername"
             label="Nombre de Usuario"
             required
           ></v-text-field>
 
           <v-text-field
-            v-model="birthdate"
+            v-model="registerBirthdate"
             label="Fecha de Nacimiento (YYYY/MM/dd)"
             required
           ></v-text-field>
 
           <v-text-field
-            v-model="email"
+            v-model="registerEmail"
             label="Correo Electrónico"
             type="email"
             required
           ></v-text-field>
 
           <v-text-field
-            v-model="password"
+            v-model="registerPassword"
             label="Contraseña"
             type="password"
             required
           ></v-text-field>
 
           <v-text-field
-            v-model="confirmPassword"
+            v-model="registerConfirmPassword"
             label="Repite Contraseña"
             type="password"
             required
@@ -71,7 +71,7 @@ const register = () => {
           <v-row>
             <v-col cols="6">
               <v-btn
-                color="error"
+                color="#d3d3d3"
                 @click="cancel"
                 block
               >
@@ -80,8 +80,8 @@ const register = () => {
             </v-col>
             <v-col cols="6">
               <v-btn
-                color="primary"
-                @click="submit"
+                color="#ff7eb9"
+                @click="register"
                 block
               >
                 Enviar
@@ -90,34 +90,40 @@ const register = () => {
           </v-row>
         </v-form>
         <p>¿Ya estás registrado? <RouterLink to="/login">Inicia sesión aquí</RouterLink></p>
-      </div>
+      </fieldset>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* .v-form {
-  width: 50%; 
-  max-width: 300px;
-  padding: 20px;
-  border: 1px solid #ccc; 
-  border-radius: 5px; 
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
 .left-pane {
-  flex: 1;
+  width: 80%;
+  max-width: 500px;
+}
+
+.register-fieldset {
   padding: 20px;
-  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
-.register-form {
-  max-width: 300px;
-  margin: 0 auto;
+legend {
+  color: #ff7eb9;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
-.router-link {
-  color: blue;
-  text-decoration: underline;
-  cursor: pointer;
-} */
+p {
+  text-align: center;
+  margin-top: 15px;
+}
 </style>
+

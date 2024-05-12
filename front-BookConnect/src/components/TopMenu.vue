@@ -2,31 +2,43 @@
 </script>
 
 <template>
-  <div class="menu-bar" style="background-color: #888;">
+  <div class="top-menu">
     <div class="container">
       <div class="title">
-        <h1 style="margin-right: 30px;">BookConnect</h1> 
-        <img src="../assets/logo.png" alt="Icono" style="width: 65px; height: 55px;">
+        <h1>BookConnect</h1> 
+        <img src="../assets/logo.png" alt="IconoBookConnect">
       </div>
-      
     </div>
   </div>
 </template>
 
 <style scoped>
-.menu-bar {
-  background-color: #bdb9b9; 
-  color: white;
-}
+  .top-menu {
+    background-color: #bdb9b9; 
+    color: white;
+    font-family: "Poetsen One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
 
-.container {
-  width: 100%;
-  margin: 0 auto;
-  padding: 10px 20px;
-}
+  .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px 20px;
+  }
 
-.title {
-  display: flex;
-  align-items: center;
-}
+  .title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    margin-right: 30px;
+  }
+
+  img {
+    width: 70px;
+    height: 60px;
+  }
 </style>

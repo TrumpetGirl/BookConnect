@@ -1,15 +1,24 @@
 <script setup>
-import SearcherApp from '../components/SearcherApp.vue';
-import BookForm from '../components/BookForm.vue';
+import Searcher from '../components/AppSearcher.vue';
 </script>
 
 <template>
-  <div>
-    <SearcherApp />
-    <BookForm />
+  HOLA BUENAS TARDES
+  <div class="container">
+    <Searcher />
+    
   </div>
 </template>
 
 <style scoped>
-/* Estilos específicos */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: "Ubuntu Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+}
 </style>

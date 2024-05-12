@@ -1,49 +1,51 @@
-<script setup>
-const name = 'LeftPanel';
-</script>
-
 <template>
   <div class="container">
-    <div class="left-panel">
-      <div class="content">
-        <h2>Mensaje de bienvenida</h2>
-        <p>Breve descripción de la web</p>
-      </div>
-      <div class="social-media">
-        <i class="fab fa-facebook"></i>
-        <i class="fab fa-twitter"></i>
-        <i class="fab fa-instagram"></i>
-      </div>
-      <p class="copyright">BookConnect, 2024. Todos los derechos reservados.</p>
+    <div class="content">
+      <h2>Bienvenido/a a BookConnect. La red social para los amantes de los libros</h2>
+      <p>Registra y organiza tus lecturas. Descubre usuarios con tus mismos gustos</p>
     </div>
+    <div class="social-media">
+      <v-icon icon="mdi-facebook" style="margin-right: 20px;" />
+      <v-icon icon="mdi-twitter" style="margin-right: 20px;" />
+      <v-icon icon="mdi-instagram" />
+    </div>
+    <p class="copyright">BookConnect, 2024. Todos los derechos reservados.</p>
   </div>
 </template>
 
 <style scoped>
-/* .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.left-panel {
-  width: 50%;
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-right: 1px solid #ccc;
-  box-sizing: border-box;
+.container {
+  background-color: #f9e3e3; /* Color de fondo */
+  height: 100vh; /* Altura del 100% de la pantalla */
+  width: 100%; /* Ancho del 100% de la pantalla */
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .content {
-  margin-bottom: auto;
+  width: 90%;
+  max-width: 600px; /* Ancho máximo del contenido */
+  padding: 20px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
- .copyright {
-  margin-top: 20px;
-  font-size: 12px;
-  color: #888;
-} */
+h2 {
+  color: #ff7eb9;
+  margin-bottom: 20px; /* Agrega separación entre el h2 y el párrafo */
+}
+
+p {
+  color: #ff7eb9; /* Cambia el color del párrafo */
+  font-size: 20px;
+}
+
+.social-media {
+  margin-top: 10px;
+  margin-bottom: 20px; /* Agrega un margen en la parte inferior para separar los íconos del pie de página */
+  display: flex;
+  justify-content: center; /* Centra los íconos horizontalmente */
+}
 </style>

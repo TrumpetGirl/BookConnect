@@ -6,7 +6,7 @@ import TopMenuSignIn from './components/TopMenuSignIn.vue';
 <template>
   <div class="container">
     
-    <TopMenuSignIn></TopMenuSignIn>
+    <TopMenu></TopMenu>
     
     <div class="main-container"> 
       <RouterView/>
@@ -15,16 +15,6 @@ import TopMenuSignIn from './components/TopMenuSignIn.vue';
 </template>
 
 <style scoped>
- /* .container {
-    display: flex;
-    flex-direction: column; 
-    height: 100vh; 
-  }
-  
-  .main-container {
-    flex: 1; 
-    display: flex;
-    width: 100%; 
-  } */
+
 
 </style>
