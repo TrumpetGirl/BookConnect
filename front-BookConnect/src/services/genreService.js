@@ -23,3 +23,6 @@ onRootMount(loadGenres);
 
 // Desmonta el componente al finalizar
 onUnmounted(() => {});
+
+
+

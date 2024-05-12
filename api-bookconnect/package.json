@@ -1,11 +1,11 @@
 {
   "name": "api-bookconnect",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "apiRest.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon "
+    "start": "nodemon"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +13,8 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.13.0",
+    "cors": "^2.8.5",
+    "exports": "^0.0.1",
     "express": "^4.19.2"
   },
   "devDependencies": {

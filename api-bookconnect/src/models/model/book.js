@@ -1,25 +1,17 @@
-import { DataTypes, Sequelize } from 'sequelize';
-import sequelize from './sequelize'; // Archivo de configuración de Sequelize
+export default class Book {
 
-const Book = sequelize.define('Book', {
-  // Definición de los campos de la tabla de libros
-  title: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  author: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  genre: {
-    type: DataTypes.STRING,
-  },
-  year: {
-    type: DataTypes.INTEGER,
-  },
-});
+  constructor(id, isbn, title, publicationYear, author, genre, synopsis) {
+    this.id = id;
+    this.isbn = isbn;
+    this.title = title;
+    this.publicationYear = publicationYear;
+    this.author = author;
+    this.genre = genre;
+    this.synopsis = synopsis;
+  }
 
-// Sincronizar el modelo con la base de datos (crear la tabla si no existe)
-Book.sync();
+}
 
-export default Book;
+
+
+
