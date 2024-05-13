@@ -1,3 +1,4 @@
+// Modelo de la clase libro
 export default class Book {
 
   constructor(id, isbn, title, publicationYear, author, genre, synopsis) {
