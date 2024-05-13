@@ -2,6 +2,8 @@
 import express from 'express';
 import cors from 'cors';
 import bookRoutes from './src/routes/bookRoutes.js';
+import authorRoutes from './src/routes/authorRoutes.js';
+import userRoutes from './src/routes/userRoutes.js';
 
 // Creamos la API
 const app = express();
@@ -18,8 +20,8 @@ app.use(cors());
 // Middleware para analizar el cuerpo de las solicitudes entrantes
 app.use(express.json());
 
-// Utilizamos la ruta de libro dentro de la API
-app.use(bookRoutes)
+// Utilizamos las diferentes rutas dentro de la API
+app.use(bookRoutes, authorRoutes, userRoutes);
 
 
 
