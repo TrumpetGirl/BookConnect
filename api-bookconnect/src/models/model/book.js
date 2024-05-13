@@ -10,7 +10,7 @@ export default class Book {
     this.genre = genre;
     this.synopsis = synopsis;
   }
-
+  
 }
 
 
