@@ -20,7 +20,6 @@ import Results from '../components/Results.vue';
   flex-direction: column; /* Apila los elementos verticalmente */
   justify-content: flex-start; 
   align-items: center;
-  height: 100vh;
   font-family: "Ubuntu Sans", sans-serif;
   font-optical-sizing: auto;
   font-weight: 100;
@@ -29,5 +28,6 @@ import Results from '../components/Results.vue';
 
 .search-container, .results-container {
   margin-top: 20px; /* Agrega un poco de separación entre los contenedores */
+  width: 800px;
 }
 </style>

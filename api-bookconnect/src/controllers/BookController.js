@@ -1,5 +1,5 @@
 // Importamos el repositorio para utilizar sus métodos
-import { findBooksByAuthor } from '../models/repository/bookRepository.js'
+import { findBooksByAuthor, findBooksByTitle } from '../models/repository/bookRepository.js'
 
 // Función asíncrona que maneja la solicitud (req)--> título del libro,
 // y la respuesta (res)--> libros que coinciden con el título proporcionado

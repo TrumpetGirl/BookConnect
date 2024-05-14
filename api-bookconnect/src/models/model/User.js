@@ -5,7 +5,7 @@ export default class User {
       this.id = id;
       this.name = name;
       this.password = password;
-      this.publicationYear = birthdayDate;
+      this.birthdayDate = birthdayDate;
       this.role = role;
     }
   
