@@ -26,3 +26,14 @@ export const loadBooksbyAuthorId = () => {
     });
 };
 
+// Función para buscar libros
+export const searchBooksByTitle = async (title) => {
+  try {
+    const response = await axios.get(`http://localhost:3000/books/search/${title}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error al buscar libros por título:', error);
+    return [];
+  }
+};
+

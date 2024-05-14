@@ -1,31 +1,37 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { loadAllBooks } from '../services/bookService';
+  import { ref, watch } from 'vue';
+  import { searchBooksByTitle } from '@/services/bookService';
 
-const searchQuery = ref('');
-const books = ref([]);
-const filteredBooks = ref([]);
+  const searchQuery = ref('');
+  const books = ref([]);
+  const filteredBooks = ref([]);
 
-const searchBooks = () => {
-  filteredBooks.value = books.value.filter(book =>
-    book.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-};
+  // Función para buscar libros al cambiar el término de búsqueda
+  const searchBooks = async () => {
+    if (!searchQuery.value.trim()) {
+      filteredBooks.value = [];
+      return;
+    }
 
-// Obtener libros de la API al montar el componente
-import { onMounted } from 'vue';
-onMounted(async () => {
-  try {
-    books.value = await loadAllBooks();
-    searchBooks();
-  } catch (error) {
-    console.error('Error al obtener libros:', error);
-  }
-});
+    try {
+      books.value = await searchBooksByTitle(searchQuery.value);
+      filterBooks();
+    } catch (error) {
+      console.error('Error al buscar libros:', error);
+    }
+  };
 
-// Actualizar los resultados de búsqueda cuando cambia el término de búsqueda
-watch(searchQuery, searchBooks);
+  // Función para filtrar libros según el término de búsqueda
+  const filterBooks = () => {
+    filteredBooks.value = books.value.filter(book =>
+      book.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+  };
+
+  // Observador para llamar a la función de búsqueda al cambiar el término de búsqueda
+  watch(searchQuery, searchBooks);
 </script>
+
 
 <template>
     <div>
@@ -33,7 +39,7 @@ watch(searchQuery, searchBooks);
       <div class="search-container">
         <v-text-field
           v-model="searchQuery"
-          label="Buscar por título"
+          label="Buscar por título del libro"
           outlined
           dense
           @input="searchBooks"
@@ -65,9 +71,9 @@ watch(searchQuery, searchBooks);
   
   <style scoped>
   .search-container {
-    margin: 0 auto; /* Centra horizontalmente */
+    margin: 0 auto;
     margin-top: 30px;
-    max-width: 600px; /* Establece un ancho máximo */
+    max-width: 600px; 
   }
   </style>
   
