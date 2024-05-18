@@ -1,8 +1,8 @@
 // Importamos el modelo de usuario y el objeto de PrismaClient para utilizar sus métodos
 import User  from '../model/User.js'
 import { PrismaClient } from '@prisma/client';
-// import bcrypt from 'bcrypt';
-// import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 // Creamos el objeto de Prisma
 const prisma = new PrismaClient();
@@ -11,7 +11,7 @@ const secretKey = 'your-secret-key';
 
 export const login = async (username, password) => {
   try {
-    const user = await prisma.user.findUnique({ where: { username } });
+    const user = await prisma.user.findUnique({ where: { name: username } });
     if (!user) {
       return { success: false, message: 'Invalid username or password' };
     }

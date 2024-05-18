@@ -1,23 +1,23 @@
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
+  import { ref } from 'vue';
+  import { loginUser } from '../services/userService.js';
 
-const username = ref('');
-const password = ref('');
+  const username = ref('');
+  const password = ref('');
 
-const login = () => {
-  axios.post('http://localhost:3000/login', {
-    email: username.value,
-    password: password.value,
-  })
-  .then(response => {
-    const token = response.data.token;
-    localStorage.setItem('token', token);      
-  })
-  .catch(error => {
-    console.error('Error al iniciar sesión:', error);
-  });
-};
+  const handleLogin = async () => {
+    try {
+      const data = await loginUser(username.value, password.value);
+      localStorage.setItem('token', data.token);
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
+    }
+  };
+
+  const cancel = () => {
+    username.value = '';
+    password.value = '';
+  };
 </script>
 
 <template>
@@ -25,36 +25,26 @@ const login = () => {
     <div class="left-pane">
       <fieldset class="login-fieldset">
         <legend>Inicia sesión para acceder a tu cuenta</legend>
-        <v-form ref="form" class="login-form">        
+        <v-form ref="form" class="login-form">
           <v-text-field
-            v-model="loginUsername"
+            v-model="username"
             label="Nombre de Usuario"
             required
           ></v-text-field>
-
           <v-text-field
-            v-model="loginPassword"
+            v-model="password"
             label="Contraseña"
             type="password"
             required
           ></v-text-field>
-
           <v-row>
             <v-col cols="6">
-              <v-btn
-                color="#d3d3d3"
-                @click="cancel"
-                block
-              >
+              <v-btn color="#d3d3d3" @click="cancel" block>
                 Cancelar
               </v-btn>
             </v-col>
             <v-col cols="6">
-              <v-btn
-                color="#ff7eb9"
-                @click="login"
-                block
-              >
+              <v-btn color="#ff7eb9" @click="handleLogin" block>
                 Iniciar Sesión
               </v-btn>
             </v-col>

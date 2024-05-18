@@ -17,7 +17,7 @@ import Results from '../components/Results.vue';
 <style scoped>
 .container {
   display: flex;
-  flex-direction: column; /* Apila los elementos verticalmente */
+  flex-direction: column; 
   justify-content: flex-start; 
   align-items: center;
   font-family: "Ubuntu Sans", sans-serif;
