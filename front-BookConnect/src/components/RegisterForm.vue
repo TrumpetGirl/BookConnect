@@ -9,23 +9,20 @@ const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
 
-const register = () => {
-  if (password.value !== confirmPassword.value) {
-    console.error('Las contraseñas no coinciden');
-    return;
+const handleRegister = async () => {
+  try {
+    await authStore.register(username.value, password.value);
+    if (authStore.isAuthenticated) {
+      // Redirigir o mostrar mensaje de éxito
+      console.log('Usuario registrado');
+    } else {
+      // Mostrar mensaje de error
+      console.log('Fallo al registrar el usuario');
+    }
+  } catch (error) {
+    console.error('Fallo al registrar el usuario', error);
+    errorMessage.value = error.response?.res?.message || 'Fallo al registrar el usuario';
   }
-  
-  axios.post('http://localhost:3000/register', {
-    username: username.value,
-    birthdate: birthdate.value,
-    email: email.value,
-    password: password.value,
-  })
-  .then(response => {
-  })
-  .catch(error => {
-    console.error('Error al registrar usuario:', error);
-  });
 };
 </script>
 
@@ -81,7 +78,7 @@ const register = () => {
             <v-col cols="6">
               <v-btn
                 color="#ff7eb9"
-                @click="register"
+                @click="handleRegister"
                 block
               >
                 Enviar

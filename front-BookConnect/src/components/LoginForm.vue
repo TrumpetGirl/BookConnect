@@ -1,21 +1,28 @@
+
 <script setup>
+import { RouterLink } from 'vue-router';
+import { useAuthStore } from '../stores/auth.js';
 import { ref } from 'vue';
-import { loginUser } from '../services/userService.js';
-import { RouterLink, useRouter } from 'vue-router';
+import router from '../router'
+
+const authStore = useAuthStore();
 
 const username = ref('');
 const password = ref('');
-
 const errorMessage = ref('');
-
-const router = useRouter(); // Obtén la instancia del enrutador
 
 const handleLogin = async () => {
   try {
-    const res = await loginUser(username.value, password.value);
-    sessionStorage.setItem('token', res.data.token);
-    errorMessage.value = '';
-    router.push('/search');
+    await authStore.login(username.value, password.value);
+    if (authStore.isAuthenticated) {
+      // Redirigir o mostrar mensaje de éxito
+      console.log('Login exitoso');
+      console.log(authStore.user);
+      router.push('/search');
+    } else {
+      // Mostrar mensaje de error
+      console.log('Login fallido');
+    }
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
     errorMessage.value = error.response?.res?.message || 'Error al iniciar sesión';
@@ -23,6 +30,7 @@ const handleLogin = async () => {
 };
 
 const cancel = () => {
+  // Limpiar los campos en caso de cancelación
   username.value = '';
   password.value = '';
   errorMessage.value = '';
@@ -60,7 +68,7 @@ const cancel = () => {
           </v-row>
           <p v-if="errorMessage">{{ errorMessage }}</p>
         </v-form>
-        <p>¿No tienes cuenta? <RouterLink to="/">Regístrate aquí</RouterLink></p>
+        <p>¿No tienes cuenta? <RouterLink to="/register">Regístrate aquí</RouterLink></p>
       </fieldset>
     </div>
   </div>

@@ -6,7 +6,7 @@ import TopMenuSignIn from './components/TopMenuSignIn.vue';
 <template>
   <div class="container">
     
-    <TopMenu></TopMenu>
+    <TopMenuSignIn></TopMenuSignIn>
     
     <div class="main-container"> 
       <RouterView/>

@@ -47,7 +47,7 @@ export const login = async (username, password) => {
     }
 
     const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
-    return { success: true, token };
+    return { success: true, user: user, token: token };
   } catch (error) {
     console.error('Login error:', error);
     return { success: false, message: 'Internal server error' };

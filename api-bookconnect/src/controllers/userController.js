@@ -16,7 +16,7 @@ export const loginUser = async (req, res) => {
     const { username, password } = req.body;
     const result = await login(username, password);
     if (result.success) {
-      res.json({ token: result.token });
+      res.json({ user: result.user, token: result.token });
     } else {
       res.status(401).json({ message: result.message });
     }

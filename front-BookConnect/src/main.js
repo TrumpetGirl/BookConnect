@@ -11,18 +11,27 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-
+import { es } from "vuetify/locale";
 
 const vuetify = createVuetify({
   components,
   directives,
-  
+  locale: {
+    locale: "es",
+    fallback: "es",
+    messages: { es }
+  },
+  date: {
+    locale: {
+      es: 'es-ES'
+    }
+  }
 })
 
 axios.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('token')
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`
+    config.headers.Authorization = 'Bearer ${token}'
   }
   return config
 })

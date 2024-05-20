@@ -14,9 +14,9 @@ export const getAuthors = async (req, res) => {
 
 // Función asíncrona para añadir un nuevo autor
 export const createAuthor = async (req, res) => {
-  const { name, birthDate, nationality } = req.body;
+  const { name, birth_date, nationality } = req.body;
   try {
-    const newAuthor = await addAuthor(name, birthDate, nationality);
+    const newAuthor = await addAuthor(name, birth_date, nationality);
     res.status(201).json(newAuthor);
   } catch (error) {
     res.status(500).json({ message: error.message });

@@ -1,16 +1,21 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { createAuthor } from '../services/authorService.js';
-import { RouterLink } from 'vue-router';
+import { useDate } from 'vuetify'
+
+const adapter = useDate()
 
 const author = ref({
   name: '',
-  birth_date: '',
+  birth_date: new Date(),
   nationality: ''
-});
+})
+
+const fNac = ref(new Date())
 
 const handleSubmit = async () => {
   try {
+    console.log("1 " + author.value.birth_date)
     const response = await createAuthor({
       name: author.value.name,
       birth_date: author.value.birth_date,
@@ -19,7 +24,8 @@ const handleSubmit = async () => {
     console.log('Autor agregado con éxito:', response);
     // Limpiar los campos después de agregar el autor con éxito
     author.value.name = '';
-    author.value.birth_date = '';
+    author.value.birth_date = new Date();
+    fNac.value = new Date();
     author.value.nationality = '';
   } catch (error) {
     console.error('Error al agregar autor:', error);
@@ -29,9 +35,18 @@ const handleSubmit = async () => {
 const cancel = () => {
   // Limpiar los campos en caso de cancelación
   author.value.name = '';
-  author.value.birth_date = '';
+  author.value.birth_date = new Date();
+  fNac = new Date();
   author.value.nationality = '';
 };
+
+watch(fNac, (newVal) => {
+  console.log(newVal);
+  if (newVal) {
+    // Asegúrate de que solo la parte de la fecha se guarde
+    author.value.birth_date = adapter.toISO(newVal);
+  }
+});
 </script>
 
 <template>
@@ -41,7 +56,7 @@ const cancel = () => {
         <legend>Añadir Autor</legend>
         <v-form @submit.prevent="handleSubmit" class="register-form">
           <v-text-field v-model="author.name" label="Nombre" required></v-text-field>
-          <v-date-picker v-model="author.birth_date" label="Fecha de Nacimiento" required></v-date-picker>
+          <v-date-picker v-model="fNac" label="Fecha de Nacimiento" required></v-date-picker>
           <v-text-field v-model="author.nationality" label="Nacionalidad" required></v-text-field>
           <v-row>
             <v-col cols="6">
