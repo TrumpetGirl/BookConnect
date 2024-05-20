@@ -1,12 +1,15 @@
 // Importamos Express.js y el controlador para utilizar sus métodos
 import express from 'express';
-import  { getAuthors } from '../controllers/authorController.js'
+import { getAuthors, createAuthor } from '../controllers/authorController.js';
 
 // Creamos el enrutador de Express
 const router = express.Router();
 
-// Configuramos la ruta GET /users/:id para manejarla con el controlador 
-router.get('/author', getAuthors);
+// Configuramos la ruta GET /authors para obtener todos los autores
+router.get('/authors', getAuthors);
 
-// Exportar el enrutador
+// Configuramos la ruta POST /authors para añadir un nuevo autor
+router.post('/addAuthor', createAuthor);
+
+// Exportamos el enrutador
 export default router;

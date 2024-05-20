@@ -1,5 +1,15 @@
 // Importamos el repositorio para utilizar sus métodos
-import { login, findUsersByRole } from '../models/repository/userRepository.js';
+import { registerUser, login, findUsersByRole } from '../models/repository/userRepository.js';
+
+export const createUser = async (req, res) => {
+  try {
+    const { username, password, email, birthDate, role } = req.body;
+    const user = await registerUser(username, password, email, birthDate, role);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const loginUser = async (req, res) => {
   try {

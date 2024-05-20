@@ -5,6 +5,22 @@ import { PrismaClient } from '@prisma/client';
 // Creamos el objeto de Prisma
 const prisma = new PrismaClient();
 
+export const addAuthor = async (name, birthDate, nationality) => {
+  try {
+    const newAuthor = await prisma.author.create({
+      data: {
+        name: name,
+        birth_date: new Date(birthDate), // Convertir la cadena a tipo DateTime
+        nationality: nationality
+      }
+    });
+    return newAuthor;
+  } catch (error) {
+    console.error('Error al añadir autor:', error);
+    throw error;
+  }
+};
+
 // Función asíncrona que devuelve todos los autores de la base de datos
 export const findAllAuthors = async () => {
   try {

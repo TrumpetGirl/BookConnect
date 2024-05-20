@@ -61,9 +61,9 @@ model state {
 
 model user {
   id                                         Int              @id @default(autoincrement())
-  nick                                       String           @db.VarChar(100)
+  username                                   String           @unique(map: "username") @db.VarChar(100)
   email                                      String           @db.VarChar(100)
-  password                                   String           @db.VarChar(50)
+  password                                   String           @db.VarChar(80)
   birth_date                                 DateTime         @db.Date
   role                                       Int
   list_list_userTouser                       list[]           @relation("list_userTouser")

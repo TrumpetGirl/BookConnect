@@ -1,23 +1,32 @@
 <script setup>
-  import { ref } from 'vue';
-  import { loginUser } from '../services/userService.js';
+import { ref } from 'vue';
+import { loginUser } from '../services/userService.js';
+import { RouterLink, useRouter } from 'vue-router';
 
-  const username = ref('');
-  const password = ref('');
+const username = ref('');
+const password = ref('');
 
-  const handleLogin = async () => {
-    try {
-      const data = await loginUser(username.value, password.value);
-      localStorage.setItem('token', data.token);
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-    }
-  };
+const errorMessage = ref('');
 
-  const cancel = () => {
-    username.value = '';
-    password.value = '';
-  };
+const router = useRouter(); // Obtén la instancia del enrutador
+
+const handleLogin = async () => {
+  try {
+    const res = await loginUser(username.value, password.value);
+    sessionStorage.setItem('token', res.data.token);
+    errorMessage.value = '';
+    router.push('/search');
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    errorMessage.value = error.response?.res?.message || 'Error al iniciar sesión';
+  }
+};
+
+const cancel = () => {
+  username.value = '';
+  password.value = '';
+  errorMessage.value = '';
+};
 </script>
 
 <template>
@@ -49,6 +58,7 @@
               </v-btn>
             </v-col>
           </v-row>
+          <p v-if="errorMessage">{{ errorMessage }}</p>
         </v-form>
         <p>¿No tienes cuenta? <RouterLink to="/">Regístrate aquí</RouterLink></p>
       </fieldset>
@@ -87,4 +97,3 @@ p {
   margin-top: 15px;
 }
 </style>
-

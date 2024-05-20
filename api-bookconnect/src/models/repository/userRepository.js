@@ -7,18 +7,43 @@ import jwt from 'jsonwebtoken';
 // Creamos el objeto de Prisma
 const prisma = new PrismaClient();
 
+export const registerUser = async (username, password, email, birthDate, role) => {
+  try {
+     // Ciframos la contraseña usando bcrypt
+     const hashedPassword = await bcrypt.hash(password, 10); // 10 es el costo del cifrado
+    
+    const newUser = await prisma.user.create({
+      data: {
+        username: username,
+        password: hashedPassword,
+        email: email,
+        birth_date: new Date(birthDate), // Convertir la cadena a tipo DateTime
+        role: role
+      }
+
+    });
+    return newUser;
+  } catch (error) {
+    console.error('Error registering user:', error);
+    throw error;
+  }
+};
+
+
+
+
 const secretKey = 'your-secret-key';
 
 export const login = async (username, password) => {
   try {
-    const user = await prisma.user.findUnique({ where: { name: username } });
+    const user = await prisma.user.findUnique({ where: { username: username } });
     if (!user) {
-      return { success: false, message: 'Invalid username or password' };
+      return { success: false, message: 'Invalid username' };
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return { success: false, message: 'Invalid username or password' };
+      return { success: false, message: 'Invalid password' };
     }
 
     const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '1h' });
@@ -41,7 +66,7 @@ export const findUsersByRole = async () => {
       });
     
     // Mapea los libros de Prisma al modelo de usuario
-    const arrUsers = users.map(user => new User(user.id, user.name, user.password, 
+    const arrUsers = users.map(user => new User(user.id, user.username, user.password, 
       user.birthday_date, user.role));
 
     return arrUsers;
