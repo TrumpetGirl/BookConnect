@@ -5,21 +5,29 @@ import { PrismaClient } from '@prisma/client';
 // Creamos el objeto de Prisma
 const prisma = new PrismaClient();
 
-export const addAuthor = async (name, birthDate, nationality) => {
+export async function addAuthor(name, birthDate, nationality, imageExtension) {
   try {
     const newAuthor = await prisma.author.create({
       data: {
         name: name,
-        birth_date: new Date(birthDate), // Convertir la cadena a tipo DateTime
+        birth_date: new Date(birthDate), 
         nationality: nationality
       }
     });
-    return newAuthor;
+    const updateAuthor = await prisma.author.update({
+      where: {
+        id: newAuthor.id
+      },
+      data: {
+        image_path: "authors/imagenAutor_" + newAuthor.id + "." + imageExtension
+      }
+    })
+    return updateAuthor;
   } catch (error) {
-    console.error('Error al añadir autor:', error);
+    console.error('Error adding author:', error);
     throw error;
   }
-};
+}
 
 // Función asíncrona que devuelve todos los autores de la base de datos
 export const findAllAuthors = async () => {
@@ -28,8 +36,8 @@ export const findAllAuthors = async () => {
     const authors = await prisma.author.findMany();
     
     // Mapea los libros de Prisma al modelo de autor
-    const arrAuthors = authors.map(author => new Author(author.id, author.name, author.birthday_date, 
-    author.nationality));
+    const arrAuthors = authors.map(author => new Author(author.id, author.name, author.birth_date, 
+    author.nationality, author.image_path));
 
     return arrAuthors;
   } catch (error) {

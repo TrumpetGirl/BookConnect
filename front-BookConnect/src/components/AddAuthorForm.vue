@@ -1,52 +1,62 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { createAuthor } from '../services/authorService.js';
-import { useDate } from 'vuetify'
+import { useDate } from 'vuetify';
+import { uploadImage } from '../services/fileService.js'
 
-const adapter = useDate()
+const adapter = useDate();
 
 const author = ref({
   name: '',
   birth_date: new Date(),
   nationality: ''
-})
+});
 
-const fNac = ref(new Date())
+const fNac = ref(new Date());
+
+watch(fNac, (newVal) => {
+  if (newVal) {
+    author.value.birth_date = adapter.toISO(newVal);
+  }
+});
+
+let image = ref(new File([""], "filename"))
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    image = file
+  }
+};
 
 const handleSubmit = async () => {
   try {
-    console.log("1 " + author.value.birth_date)
-    const response = await createAuthor({
-      name: author.value.name,
-      birth_date: author.value.birth_date,
-      nationality: author.value.nationality
-    });
-    console.log('Autor agregado con éxito:', response);
-    // Limpiar los campos después de agregar el autor con éxito
-    author.value.name = '';
-    author.value.birth_date = new Date();
-    fNac.value = new Date();
-    author.value.nationality = '';
+    const formData = new FormData()
+    author.value.imageExtension = image.name.split(".").pop()
+    
+    
+
+    const response = await createAuthor(author.value)
+    if (response && response.image_path) {
+      formData.append('path', response.image_path)
+      formData.append('file', image)
+      await uploadImage(formData)
+    }
+    cleanForm()
   } catch (error) {
     console.error('Error al agregar autor:', error);
   }
 };
 
-const cancel = () => {
-  // Limpiar los campos en caso de cancelación
-  author.value.name = '';
-  author.value.birth_date = new Date();
-  fNac = new Date();
-  author.value.nationality = '';
+const cleanForm = () => {
+  author.value.name = ''
+  author.value.birth_date = new Date()
+  fNac.value = new Date()
+  image.value = ref(new File([""], "filename"))
+  author.value.nationality = ''
+  author.value.image = null
 };
 
-watch(fNac, (newVal) => {
-  console.log(newVal);
-  if (newVal) {
-    // Asegúrate de que solo la parte de la fecha se guarde
-    author.value.birth_date = adapter.toISO(newVal);
-  }
-});
+
 </script>
 
 <template>
@@ -58,6 +68,7 @@ watch(fNac, (newVal) => {
           <v-text-field v-model="author.name" label="Nombre" required></v-text-field>
           <v-date-picker v-model="fNac" label="Fecha de Nacimiento" required></v-date-picker>
           <v-text-field v-model="author.nationality" label="Nacionalidad" required></v-text-field>
+          <input type="file" @change="handleFileChange" required />
           <v-row>
             <v-col cols="6">
               <v-btn color="#d3d3d3" @click="cancel" block>Cancelar</v-btn>
@@ -83,6 +94,7 @@ watch(fNac, (newVal) => {
 .left-pane {
   width: 80%;
   max-width: 500px;
+  margin-top: 100px;
 }
 
 .register-fieldset {

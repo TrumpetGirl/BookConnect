@@ -31,13 +31,15 @@ const vuetify = createVuetify({
 axios.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('token')
   if (token) {
-    config.headers.Authorization = 'Bearer ${token}'
+    config.headers.Authorization = 'Bearer ' + token
+    console.log("axios.interceptors.request.use")
   }
   return config
 })
 
 axios.interceptors.response.use(
   (response) => {
+    console.log("axios.interceptors.response.use")
     console.log(response)
     return response
   },

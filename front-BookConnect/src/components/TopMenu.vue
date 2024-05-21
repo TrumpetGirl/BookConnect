@@ -22,15 +22,15 @@
   }
 
   .container {
-    width: 100%;
-    margin: 0 auto;
     padding: 10px 20px;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
   }
 
   .title {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
   }
 
   h1 {

@@ -12,6 +12,7 @@ model author {
   name                     String   @db.VarChar(100)
   birth_date               DateTime @db.Date
   nationality              String   @db.VarChar(50)
+  image_path               String?  @db.VarChar(255)
   book_book_authorToauthor book[]   @relation("book_authorToauthor")
 }
 

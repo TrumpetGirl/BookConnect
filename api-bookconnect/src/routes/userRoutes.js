@@ -9,7 +9,7 @@ const router = express.Router();
 // Configuramos la ruta GET /users/:id para manejarla con el controlador 
 router.get('/user/:roleId', getRoleUsers);
 
-router.post('/', createUser);
+router.post('/register', createUser);
 
 router.post('/login', loginUser);
 

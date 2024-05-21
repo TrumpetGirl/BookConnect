@@ -5,6 +5,7 @@ import SearcherView from '../views/SearcherView.vue'
 import BookView from '../views/BookView.vue'
 import MyCollection from '../views/CollectionView.vue'
 import AddAuthor from '../views/AddAuthorView.vue'
+import AuthorsView from '../views/AuthorsView.vue'
 import { useAuthStore } from '../stores/auth.js';
 
 const router = createRouter({
@@ -42,17 +43,18 @@ const router = createRouter({
       path: '/author',
       name: 'addAuthor',
       component: AddAuthor
+    },
+    {
+      path: '/allAuthors',
+      name: 'Authors',
+      component: AuthorsView
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
-  console.log(from);
-  console.log(to);
-  console.log(to.meta.requiresAuth);
-  console.log(authStore.isAuthenticated);
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     next('/login');
   } else {
     next();

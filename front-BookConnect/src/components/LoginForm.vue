@@ -68,7 +68,7 @@ const cancel = () => {
           </v-row>
           <p v-if="errorMessage">{{ errorMessage }}</p>
         </v-form>
-        <p>¿No tienes cuenta? <RouterLink to="/register">Regístrate aquí</RouterLink></p>
+        <p>¿No tienes cuenta? <RouterLink to="/">Regístrate aquí</RouterLink></p>
       </fieldset>
     </div>
   </div>
