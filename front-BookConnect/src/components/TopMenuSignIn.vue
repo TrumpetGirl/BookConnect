@@ -1,10 +1,11 @@
 <script setup>
-  import { useAuthStore } from '../stores/auth.js';
-  const userName = 'Usuario';
+  import { useAuthStore } from '@/stores';
+
   const profilePicture = 'profile-picture.png';
   let showDropdownMenu = false;
 
   const authStore = useAuthStore();
+  const userName = authStore.user.username;
 
   const toggleDropdownMenu = () => {
     showDropdownMenu = !showDropdownMenu;

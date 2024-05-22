@@ -1,9 +1,7 @@
-
 <script setup>
 import { RouterLink } from 'vue-router';
-import { useAuthStore } from '../stores/auth.js';
+import { useAuthStore } from '@/stores';
 import { ref } from 'vue';
-import router from '../router'
 
 const authStore = useAuthStore();
 
@@ -17,8 +15,6 @@ const handleLogin = async () => {
     if (authStore.isAuthenticated) {
       // Redirigir o mostrar mensaje de éxito
       console.log('Login exitoso');
-      console.log(authStore.user);
-      router.push('/search');
     } else {
       // Mostrar mensaje de error
       console.log('Login fallido');

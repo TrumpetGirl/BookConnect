@@ -14,7 +14,6 @@ router.post('/file/upload', upload.single('file'), (req, res) => {
 });
 
 router.use('/file/download', express.static('src/assets/images'), (req, res) => {
-    console.log(req.file)
     res.send('Terminado')
 });
 

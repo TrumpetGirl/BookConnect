@@ -1,16 +1,14 @@
 import axios from 'axios';
 
-
-// Función para cargar los géneros
-export const loadGenres = () => {
-  // Realiza una solicitud GET a la API REST de géneros
-  axios.get('http://localhost:3000/genres')
-    .then(response => {
-      items.value = response.data;
-    })
-    .catch(error => {
-      console.error('Error al obtener datos de géneros:', error);
-    });
+// Función para cargar todos los libros
+export const fetchGenres = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/genre');
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener géneros:', error);
+    throw error;
+  }
 };
 
 

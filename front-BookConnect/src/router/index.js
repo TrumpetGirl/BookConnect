@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import userRoutes from './user.routes'
 import LoginView from '../views/LoginView.vue'
 import MainView from '../views/MainView.vue'
 import SearcherView from '../views/SearcherView.vue'
@@ -6,7 +7,8 @@ import BookView from '../views/BookView.vue'
 import MyCollection from '../views/CollectionView.vue'
 import AddAuthor from '../views/AddAuthorView.vue'
 import AuthorsView from '../views/AuthorsView.vue'
-import { useAuthStore } from '../stores/auth.js';
+import AddBook from '../views/AddBookView.vue'
+import { useAuthStore } from '@/stores';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,7 +42,7 @@ const router = createRouter({
       component: MyCollection
     },
     {
-      path: '/author',
+      path: '/add/author',
       name: 'addAuthor',
       component: AddAuthor
     },
@@ -48,13 +50,21 @@ const router = createRouter({
       path: '/allAuthors',
       name: 'Authors',
       component: AuthorsView
+    },
+    {
+      path: '/add/book',
+      name: 'addBook',
+      component: AddBook
+    },
+    {
+      ...userRoutes
     }
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
-  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+  if (to.meta.requiresAuth && !(await authStore.hasToken())) {
     next('/login');
   } else {
     next();

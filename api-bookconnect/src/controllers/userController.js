@@ -1,10 +1,30 @@
 // Importamos el repositorio para utilizar sus métodos
-import { registerUser, login, findUsersByRole } from '../models/repository/userRepository.js';
+import { findUserById, findUserByIdAndUsername, registerUser, login, findUsersByRole } from '../models/repository/userRepository.js';
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await findUserById(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getUserByIdAndUsername = async (req, res) => {
+  try {
+    const { id, username } = req.body;
+    const user = await findUserByIdAndUsername(id, username);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const createUser = async (req, res) => {
   try {
-    const { username, password, email, birthDate, role } = req.body;
-    const user = await registerUser(username, password, email, birthDate, role);
+    const { username, password, email, birth_date } = req.body;
+    const user = await registerUser(username, password, email, birth_date);
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -13,7 +33,9 @@ export const createUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
+    
     const { username, password } = req.body;
+    console.log(username + " " + password)
     const result = await login(username, password);
     if (result.success) {
       res.json({ user: result.user, token: result.token });

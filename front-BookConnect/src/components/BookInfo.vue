@@ -1,10 +1,6 @@
 <script setup>
-import { loadGenres } from '../services/genreService';
 import { ref, onMounted, computed } from 'vue';
 
-onMounted(() => {
-  loadGenres();
-});
 
 const book = ref({
   coverImageUrl: 'url_de_la_imagen.jpg',

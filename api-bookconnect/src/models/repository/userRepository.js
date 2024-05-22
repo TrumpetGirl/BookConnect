@@ -7,7 +7,25 @@ import jwt from 'jsonwebtoken';
 // Creamos el objeto de Prisma
 const prisma = new PrismaClient();
 
-export const registerUser = async (username, password, email, birthDate, role) => {
+export const findUserById = async (id) => {
+  try {
+    return await prisma.user.findUnique({ where: { id: id } });
+  } catch (error) {
+    console.error('Error getting user by id:', error);
+    throw error;
+  }
+};
+
+export const findUserByIdAndUsername = async (id, username) => {
+  try {
+    return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true} });
+  } catch (error) {
+    console.error('Error getting by id and username:', error);
+    throw error;
+  }
+};
+
+export const registerUser = async (username, password, email, birthDate) => {
   try {
      // Ciframos la contraseña usando bcrypt
      const hashedPassword = await bcrypt.hash(password, 10); // 10 es el costo del cifrado
@@ -18,11 +36,14 @@ export const registerUser = async (username, password, email, birthDate, role) =
         password: hashedPassword,
         email: email,
         birth_date: new Date(birthDate), // Convertir la cadena a tipo DateTime
-        role: role
+        role: 2
       }
 
     });
-    return newUser;
+    const excludeKeys = ['password','birth_date','role','email']
+    return Object.fromEntries(
+      Object.entries(newUser).filter(([key]) => !excludeKeys.includes(key))
+    );
   } catch (error) {
     console.error('Error registering user:', error);
     throw error;

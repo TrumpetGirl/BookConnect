@@ -5,6 +5,7 @@ import bookRoutes from './src/routes/bookRoutes.js';
 import authorRoutes from './src/routes/authorRoutes.js';
 import userRoutes from './src/routes/userRoutes.js';
 import fileRoutes from './src/routes/fileRoutes.js';
+import genreRoutes from './src/routes/genreRoutes.js';
 
 // Creamos la API
 const app = express();
@@ -23,7 +24,7 @@ app.use(express.json());
 
 
 // Utilizamos las diferentes rutas dentro de la API
-app.use(bookRoutes, authorRoutes, userRoutes, fileRoutes);
+app.use(bookRoutes, authorRoutes, userRoutes, fileRoutes, genreRoutes);
 
 
 

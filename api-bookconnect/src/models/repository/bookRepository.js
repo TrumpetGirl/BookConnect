@@ -5,6 +5,34 @@ import { PrismaClient } from '@prisma/client'
 // Creamos el objeto de Prisma
 const prisma = new PrismaClient()
 
+// Crear un nuevo libro
+export async function addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension) {
+  try {
+    const newBook = await prisma.book.create({
+      data: {
+        isbn: isbn,
+        title: title, 
+        publicationYear: publicationYear,
+        author: author,
+        genre: genre, 
+        synopsis: synopsis
+      }
+    });
+    const updateBook = await prisma.book.update({
+      where: {
+        id: newBook.id
+      },
+      data: {
+        image_path: "books/imagenLibro_" + newBook.id + "." + imageExtension
+      }
+    })
+    return updateBook;
+  } catch (error) {
+    console.error('Error adding book:', error);
+    throw error;
+  }
+}
+
 // Función asíncrona que devuelve todos los libros que coinciden con el título proporcionado
 export const findBooksByTitle = async (title) => {
   try {

@@ -1,28 +1,68 @@
 <script setup>
 import { RouterLink } from 'vue-router';
-import { ref } from 'vue';
-import axios from 'axios';
+import { useDate } from 'vuetify';
+import { ref, watch } from 'vue';
+import { useUserStore } from '@/stores';
 
-const username = ref('');
-const birthdate = ref('');
-const email = ref('');
-const password = ref('');
+const adapter = useDate();
+
+const user = ref({
+  username: '',
+  birth_date: new Date(),
+  email: '',
+  password: ''
+});
+
 const confirmPassword = ref('');
+const showSnackbar = ref(false);
+const snackbarMessage = ref('');
+
+
+const fNac = ref(new Date());
+
+watch(fNac, (newVal) => {
+  if (newVal) {
+    user.value.birth_date = adapter.toISO(newVal);
+  }
+});
 
 const handleRegister = async () => {
   try {
-    await authStore.register(username.value, password.value);
-    if (authStore.isAuthenticated) {
-      // Redirigir o mostrar mensaje de éxito
-      console.log('Usuario registrado');
+    console.log(confirmPassword.value)
+    console.log(user.value.password)
+
+    if (!user.value.username || !user.value.birth_date || !user.value.email || 
+    !user.value.password || !confirmPassword.value) {
+    snackbarMessage.value = "Todos los campos son obligatorios";
+    showSnackbar.value = true;
+    return;
+  }
+
+  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  if (!emailPattern.test(user.value.email)) {
+    snackbarMessage.value = "Correo electrónico no válido";
+    showSnackbar.value = true;
+    return;
+  }
+
+    if (confirmPassword.value === user.value.password) {
+      await useUserStore().register(user.value)
+      cleanForm()
     } else {
-      // Mostrar mensaje de error
-      console.log('Fallo al registrar el usuario');
+      console.log("Passwords distintas")
     }
   } catch (error) {
-    console.error('Fallo al registrar el usuario', error);
-    errorMessage.value = error.response?.res?.message || 'Fallo al registrar el usuario';
+    console.error('Error al agregar el usuario:', error);
   }
+};
+
+const cleanForm = () => {
+  user.value.name = ''
+  user.value.birth_date = new Date()
+  fNac.value = new Date()
+  user.value.email = ''
+  user.value.password = ''
+  confirmPassword.value = ''
 };
 </script>
 
@@ -31,35 +71,35 @@ const handleRegister = async () => {
     <div class="left-pane">
       <fieldset class="register-fieldset">
         <legend>Regístrate aquí para formar parte de la comunidad</legend>
-        <v-form ref="form" class="register-form">        
+        <v-form @submit.prevent="handleRegister" ref="form" class="register-form">        
           <v-text-field
-            v-model="registerUsername"
+            v-model="user.username"
             label="Nombre de Usuario"
             required
           ></v-text-field>
 
-          <v-text-field
-            v-model="registerBirthdate"
-            label="Fecha de Nacimiento (YYYY/MM/dd)"
-            required
-          ></v-text-field>
+          <v-date-picker 
+          v-model="fNac" 
+          label="Fecha de Nacimiento" 
+          required>
+        </v-date-picker>
 
           <v-text-field
-            v-model="registerEmail"
+            v-model="user.email"
             label="Correo Electrónico"
             type="email"
             required
           ></v-text-field>
 
           <v-text-field
-            v-model="registerPassword"
+            v-model="user.password"
             label="Contraseña"
             type="password"
             required
           ></v-text-field>
 
           <v-text-field
-            v-model="registerConfirmPassword"
+            v-model="confirmPassword"
             label="Repite Contraseña"
             type="password"
             required
@@ -76,19 +116,26 @@ const handleRegister = async () => {
               </v-btn>
             </v-col>
             <v-col cols="6">
-              <v-btn
-                color="#ff7eb9"
-                @click="handleRegister"
-                block
-              >
+              <v-btn type="submit" color="#ff7eb9" block>Enviar</v-btn>
                 Enviar
-              </v-btn>
             </v-col>
           </v-row>
         </v-form>
         <p>¿Ya estás registrado? <RouterLink to="/login">Inicia sesión aquí</RouterLink></p>
       </fieldset>
     </div>
+    <v-snackbar v-model="showSnackbar">
+      {{ snackbarMessage }}
+      <template v-slot:actions>
+        <v-btn
+          color="pink"
+          variant="text"
+          @click="showSnackbar = false"
+        >
+          CERRAR
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 

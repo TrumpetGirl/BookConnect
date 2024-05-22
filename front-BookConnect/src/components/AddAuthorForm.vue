@@ -32,8 +32,6 @@ const handleSubmit = async () => {
   try {
     const formData = new FormData()
     author.value.imageExtension = image.name.split(".").pop()
-    
-    
 
     const response = await createAuthor(author.value)
     if (response && response.image_path) {
@@ -55,8 +53,6 @@ const cleanForm = () => {
   author.value.nationality = ''
   author.value.image = null
 };
-
-
 </script>
 
 <template>
@@ -65,8 +61,18 @@ const cleanForm = () => {
       <fieldset class="register-fieldset">
         <legend>Añadir Autor</legend>
         <v-form @submit.prevent="handleSubmit" class="register-form">
-          <v-text-field v-model="author.name" label="Nombre" required></v-text-field>
-          <v-date-picker v-model="fNac" label="Fecha de Nacimiento" required></v-date-picker>
+          <v-text-field 
+          v-model="author.name" 
+          label="Nombre" 
+          required>
+        </v-text-field>
+
+          <v-date-picker 
+          v-model="fNac" 
+          label="Fecha de Nacimiento" 
+          required>
+        </v-date-picker>
+          
           <v-text-field v-model="author.nationality" label="Nacionalidad" required></v-text-field>
           <input type="file" @change="handleFileChange" required />
           <v-row>

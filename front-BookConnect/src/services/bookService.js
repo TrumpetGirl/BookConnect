@@ -4,7 +4,7 @@ import axios from 'axios';
 // Función para cargar todos los libros
 export const loadAllBooks = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/books');
+    const response = await axios.get('http://localhost:3000/book');
     return response.data;
   } catch (error) {
     console.error('Error al obtener libros:', error);
@@ -29,11 +29,23 @@ export const loadBooksbyAuthorId = () => {
 // Función para buscar libros
 export const searchBooksByTitle = async (title) => {
   try {
-    const response = await axios.get(`http://localhost:3000/books/search/${title}`);
+    const response = await axios.get(`http://localhost:3000/book/${title}`);
     return response.data;
   } catch (error) {
     console.error('Error al buscar libros por título:', error);
     return [];
   }
 };
+
+export const createBook = async (bookData) => {
+  try {
+    const response = await axios.post('http://localhost:3000/book', bookData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al agregar libro:', error);
+    throw error;
+  }
+};
+
+
 

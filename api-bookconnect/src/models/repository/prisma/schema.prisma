@@ -24,6 +24,7 @@ model book {
   author                         Int
   genre                          Int
   synopsis                       String?     @db.Text
+  image_path                     String      @db.VarChar(255)
   author_book_authorToauthor     author      @relation("book_authorToauthor", fields: [author], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_author")
   genre_book_genreTogenre        genre       @relation("book_genreTogenre", fields: [genre], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_genre")
   user_book_user_book_bookTobook user_book[] @relation("user_book_bookTobook")

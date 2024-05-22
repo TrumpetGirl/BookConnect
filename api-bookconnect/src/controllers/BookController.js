@@ -1,5 +1,16 @@
 // Importamos el repositorio para utilizar sus métodos
-import { findBooksByAuthor, findBooksByTitle } from '../models/repository/bookRepository.js'
+import { findBooksByAuthor, findBooksByTitle, addBook } from '../models/repository/bookRepository.js'
+
+// Función asíncrona para añadir un nuevo libro
+export const createBook = async (req, res) => {
+  const { isbn, title, publicationYear, author, genre, synopsis, imageExtension } = req.body;
+  try {
+    const newBook = await addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension);
+    res.status(201).json(newBook);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // Función asíncrona que maneja la solicitud (req)--> título del libro,
 // y la respuesta (res)--> libros que coinciden con el título proporcionado
