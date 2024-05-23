@@ -1,5 +1,5 @@
 <script setup>
-    import { loadBooksbyAuthorId } from '../services/bookService';
+    // import { loadBooksbyAuthorId } from '../services/bookService';
     import { onMounted, onUnmounted, ref } from 'vue';
 
     // Variables reactivas para los libros por autor

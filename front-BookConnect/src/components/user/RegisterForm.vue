@@ -4,8 +4,6 @@ import { useDate } from 'vuetify';
 import { ref, watch } from 'vue';
 import { useUserStore } from '@/stores';
 
-const adapter = useDate();
-
 const user = ref({
   username: '',
   birth_date: new Date(),
@@ -19,7 +17,7 @@ const snackbarMessage = ref('');
 
 
 const fNac = ref(new Date());
-
+const adapter = useDate();
 watch(fNac, (newVal) => {
   if (newVal) {
     user.value.birth_date = adapter.toISO(newVal);
@@ -68,21 +66,24 @@ const cleanForm = () => {
 
 <template>
   <div class="container">
-    <div class="left-pane">
+    <div class="left-panel">
       <fieldset class="register-fieldset">
         <legend>Regístrate aquí para formar parte de la comunidad</legend>
         <v-form @submit.prevent="handleRegister" ref="form" class="register-form">        
           <v-text-field
             v-model="user.username"
             label="Nombre de Usuario"
+            type="text"
             required
           ></v-text-field>
 
-          <v-date-picker 
-          v-model="fNac" 
-          label="Fecha de Nacimiento" 
-          required>
-        </v-date-picker>
+    
+        <v-text-field
+        v-model="fNac"
+        label="Fecha de Nacimiento"
+        type="date"
+        required
+      ></v-text-field>
 
           <v-text-field
             v-model="user.email"
@@ -117,11 +118,10 @@ const cleanForm = () => {
             </v-col>
             <v-col cols="6">
               <v-btn type="submit" color="#ff7eb9" block>Enviar</v-btn>
-                Enviar
             </v-col>
           </v-row>
         </v-form>
-        <p>¿Ya estás registrado? <RouterLink to="/login">Inicia sesión aquí</RouterLink></p>
+        <p>¿Ya estás registrado? <RouterLink to="/user/login">Inicia sesión aquí</RouterLink></p>
       </fieldset>
     </div>
     <v-snackbar v-model="showSnackbar">
@@ -144,10 +144,9 @@ const cleanForm = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
-.left-pane {
+.left-panel {
   width: 80%;
   max-width: 500px;
 }
@@ -169,5 +168,5 @@ p {
   text-align: center;
   margin-top: 15px;
 }
-</style>
 
+</style>

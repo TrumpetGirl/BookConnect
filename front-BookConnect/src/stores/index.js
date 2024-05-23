@@ -1,2 +1,7 @@
 export * from './user.store'
 export * from './auth.store'
+export * from './author.store'
+export * from './book.store'
+export * from './list.store'
+export * from './genre.store'
+export * from './file.store'

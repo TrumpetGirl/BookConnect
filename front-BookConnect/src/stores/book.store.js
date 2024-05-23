@@ -1,47 +1,34 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
-const baseUrl = `${import.meta.env.VITE_API_URL}/user`;
+const baseUrl = `${import.meta.env.VITE_API_URL}/book`;
 
-export const useUserStore = defineStore({
-    id: 'user',
+export const useBookStore = defineStore({
+    id: 'book',
     state: () => ({
-        users: {},
-        user: {}
+        books: {},
+        book: {}
     }),
     actions: {
-        async register(user) {
-            await axios.post(baseUrl, user);
+        async create(book) {
+            await axios.post(baseUrl, book);
         },
         async getAll() {
             try {
-                this.users = await axios.get(baseUrl); 
+                this.books = await axios.get(baseUrl); 
             } catch (error) {
                 console.log(error)
             }
         },
         async getById(id) {
             try {
-                this.user = await axios.get(`${baseUrl}/${id}`);
-            } catch (error) {
-                console.log(error)
-            }
-        },
-        async existsUser(user) {
-            try {
-                return await axios.post(`${baseUrl}/existsUser`, JSON.parse(user));
+                this.book = await axios.get(`${baseUrl}/${id}`);
             } catch (error) {
                 console.log(error)
             }
         },
         async update(id, params) {
             await axios.put(`${baseUrl}/${id}`, params);
-            // update stored user if the logged in user updated their own record
-            const authStore = useAuthStore();
-            if (id === authStore.user.id) {
-                 // update auth user in pinia state
-                authStore.user = user;
-            }
         },
         async delete(id) {
             // add isDeleting prop to user being deleted

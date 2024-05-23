@@ -1,10 +1,10 @@
 <script setup>
-import AddAuthorForm from '../components/AddAuthorForm.vue'
+import AddAuthor from '@/components/author/AddAuthorForm.vue'
 </script>
 
 <template>
   <div class="container">
-    <AddAuthorForm />
+    <AddAuthor />
   </div>
    
 

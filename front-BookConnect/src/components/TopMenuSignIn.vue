@@ -1,14 +1,17 @@
 <script setup>
   import { useAuthStore } from '@/stores';
+  import { storeToRefs } from 'pinia'
+  import { ref } from 'vue';
 
-  const profilePicture = 'profile-picture.png';
-  let showDropdownMenu = false;
+  const profilePicture = '../assets/images/profile_image.png';
+  let showDropdownMenu = ref(false);
 
   const authStore = useAuthStore();
-  const userName = authStore.user.username;
+  const { user }= storeToRefs(authStore);
 
   const toggleDropdownMenu = () => {
-    showDropdownMenu = !showDropdownMenu;
+    showDropdownMenu.value = !showDropdownMenu.value;
+    console.log(showDropdownMenu)
   };
 </script>
 
@@ -17,12 +20,12 @@
     <div class="container">
       <div class="title">
         <h1>BookConnect</h1> 
-        <img class="logo" src="../assets/logo.png" alt="IconoBookConnect">
+        <img class="logo" src="../assets/images/logo.png" alt="IconoBookConnect">
       </div>
       <div class="menu-right">
-        <div class="welcome-message">Bienvenido/a, {{ userName }}</div>
+        <div class="welcome-message">Bienvenido/a, {{ user.username }}</div>
         <img class="profile-picture" :src="profilePicture" @click="toggleDropdownMenu">
-        <img class="logout-icon" src="../assets/logout-icon.png" @click="authStore.logout()">
+        <img class="logout-icon" src="../assets/images/logout-icon.png" @click="authStore.logout()">
       </div>
     </div>
     <div v-if="showDropdownMenu" class="dropdown-menu">
@@ -72,6 +75,8 @@ h1 {
 
 .welcome-message {
   margin-right: 20px;
+  font-size: larger;
+  font-family: 'Tahoma';
 }
 
 .profile-picture {

@@ -1,13 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import userRoutes from './user.routes'
-import LoginView from '../views/LoginView.vue'
-import MainView from '../views/MainView.vue'
-import SearcherView from '../views/SearcherView.vue'
-import BookView from '../views/BookView.vue'
-import MyCollection from '../views/CollectionView.vue'
-import AddAuthor from '../views/AddAuthorView.vue'
-import AuthorsView from '../views/AuthorsView.vue'
-import AddBook from '../views/AddBookView.vue'
+import authorRoutes from './author.routes'
+import bookRoutes from './book.routes'
+import { Forbidden, Unauthorized, Dashboard, Searcher}  from '@/views'
 import { useAuthStore } from '@/stores';
 
 const router = createRouter({
@@ -15,59 +10,89 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'main',
-      component: MainView
+      redirect: '/user/login'
     },
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView
+      path: '/:catchAll(.*)',
+      redirect: '/forbidden'
+    },
+    { ...userRoutes },
+    { ...authorRoutes },
+    { ...bookRoutes },
+    {
+      path: '/forbidden',
+      name: 'forbidden',
+      component: Forbidden
+    },
+    {
+      path: '/unauthorized',
+      name: 'unauthorized',
+      component: Unauthorized
     },
     {
       path: '/search',
       name: 'search',
-      component: SearcherView, 
-      meta: { 
-        requiresAuth: true 
-      }
+      component: Searcher
     },
     {
-      path: '/bookinfo',
-      name: 'book',
-      component: BookView
-    },
-    {
-      path: '/mycollection',
-      name: 'mycollection',
-      component: MyCollection
-    },
-    {
-      path: '/add/author',
-      name: 'addAuthor',
-      component: AddAuthor
-    },
-    {
-      path: '/allAuthors',
-      name: 'Authors',
-      component: AuthorsView
-    },
-    {
-      path: '/add/book',
-      name: 'addBook',
-      component: AddBook
-    },
-    {
-      ...userRoutes
+      path: '/dashboard',
+      name: 'dashboard',
+      component: Dashboard, 
+      meta: { requiresAdmin: true }
     }
   ]
 })
 
+const publicPages = ['/user/login', '/user/register', '/forbidden', '/unauthorized']
+
 router.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore();
-  if (to.meta.requiresAuth && !(await authStore.hasToken())) {
-    next('/login');
+  const authStore = useAuthStore()
+  const isLoggedIn = await authStore.hasToken()
+  const isAdmin = authStore.isAdmin()
+  const isPublicPage = publicPages.includes(to.path)
+  // if (isLoggedIn) {
+  //   if (isPublicPage) {
+  //     if (isAdmin) {
+  //       next('/dashboard');
+  //     } else {
+  //       next('/search');
+  //     }
+  //   } else if (to.meta.requiresAdmin && !isAdmin) {
+  //     next('/unauthorized');
+  //   } else {
+  //     next();
+  //   }
+  // } else {
+  //   if (isPublicPage) {
+  //     next();
+  //   } else {
+  //     next('/forbidden');
+  //   }
+  // }
+
+  // Si el usuario no está conectado y trata de acceder a una página pública, permite la navegación
+  if (!isLoggedIn) {
+    if (isPublicPage) {
+      next();
+    } else {
+      next('/user/login');
+    }
   } else {
-    next();
+    // Si el usuario está conectado y trata de acceder a una página pública, redirige según su rol
+    if (isPublicPage) {
+      if (isAdmin) {
+        next('/dashboard');
+      } else {
+        next('/search');
+      }
+    } else {
+      // Si el usuario está conectado y la ruta requiere autorización especial, maneja los roles
+      if (to.meta.requiresAdmin && !isAdmin) {
+        next('/unauthorized');
+      } else {
+        next();
+      }
+    }
   }
 });
 

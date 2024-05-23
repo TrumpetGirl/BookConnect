@@ -1,8 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { createAuthor } from '../services/authorService.js';
+import { useAuthStore, useFileStore } from '@/stores';
 import { useDate } from 'vuetify';
-import { uploadImage } from '../services/fileService.js'
 
 const adapter = useDate();
 
@@ -33,11 +32,11 @@ const handleSubmit = async () => {
     const formData = new FormData()
     author.value.imageExtension = image.name.split(".").pop()
 
-    const response = await createAuthor(author.value)
+    const response = await useAuthStore.create(author.value)
     if (response && response.image_path) {
       formData.append('path', response.image_path)
       formData.append('file', image)
-      await uploadImage(formData)
+      await useFileStore.uploadImage(formData)
     }
     cleanForm()
   } catch (error) {

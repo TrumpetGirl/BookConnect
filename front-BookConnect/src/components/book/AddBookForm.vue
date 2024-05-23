@@ -1,10 +1,10 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue';
-import { createBook } from '../services/bookService.js';
-import { fetchAuthors } from '../services/authorService.js';
-import { fetchGenres } from '../services/genreService.js';
+import { useBookStore } from '@/stores/book.store.js';
+import { useAuthorStore } from '@/stores/author.store.js';
+import { useGenreStore } from '@/stores/genre.store.js';
 import { useDate } from 'vuetify';
-import { uploadImage } from '../services/fileService.js'
+import { useFileStore } from '@/stores/file.store.js'
 
 const adapter = useDate();
 
@@ -34,11 +34,11 @@ const handleSubmit = async () => {
     const formData = new FormData();
     book.value.imageExtension = image.value.name.split('.').pop();
 
-    const response = await createBook(book.value);
+    const response = await useBookStore.create(book.value);
     if (response && response.image_path) {
       formData.append('path', response.image_path);
       formData.append('file', image.value);
-      await uploadImage(formData);
+      await useFileStore.uploadImage(formData);
     }
     cleanForm();
   } catch (error) {
@@ -58,8 +58,8 @@ const cleanForm = () => {
 
 const fetchInitialData = async () => {
   try {
-    authors.value = await fetchAuthors();
-    genres.value = await fetchGenres();
+    authors.value = await useAuthorStore.getAll();
+    genres.value = await useGenreStore.getAll();
   } catch (error) {
     console.error('Error al obtener datos iniciales:', error);
   }

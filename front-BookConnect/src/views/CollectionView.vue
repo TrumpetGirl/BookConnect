@@ -1,5 +1,5 @@
 <script setup>
-import CollectionView from '../components/CollectionBooks.vue';
+import CollectionView from '../components/book/CollectionBooks.vue';
 </script>
 
 <template>

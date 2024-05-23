@@ -1,6 +1,6 @@
 <script setup>
-import WelcomeMessage from '../components/WelcomeMessage.vue';
-import RegisterForm from '../components/RegisterForm.vue';
+import { WelcomeMessage } from '@/components';
+import { LoginForm } from '@/components/user';
 </script>
 
 <template>
@@ -9,7 +9,7 @@ import RegisterForm from '../components/RegisterForm.vue';
       <WelcomeMessage></WelcomeMessage>
     </div>
     <div class="right-pane">
-      <RegisterForm></RegisterForm>
+      <LoginForm></LoginForm>
     </div>
   </div>
 </template>
@@ -18,8 +18,7 @@ import RegisterForm from '../components/RegisterForm.vue';
 .container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  align-items: stretch;
   font-family: "Ubuntu Sans", sans-serif;
   font-optical-sizing: auto;
   font-weight: 100;

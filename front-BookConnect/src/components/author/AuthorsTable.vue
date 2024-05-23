@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { fetchAuthors } from '../services/authorService';
-import { downloadImage } from '../services/fileService'
+import { useAuthorStore, useFileStore } from '@/stores';
 
 const search = ref('');
 const headers = ref([
@@ -14,7 +13,7 @@ const authors = ref([]);
 
 const getAuthors = async () => {
   try {
-    const response = await fetchAuthors();
+    const response = await useAuthorStore.getAll();
     authors.value = response.map(author => ({
       ...author,
       birth_date: new Date(author.birth_date),

@@ -1,2 +1,5 @@
+export {default as Index} from './Index.vue'
 export {default as UserList} from './UserList.vue'
 export {default as UserCreateEdit} from './UserCreateEdit.vue'
+export {default as Login} from './Login.vue'
+export {default as Register} from './Register.vue'

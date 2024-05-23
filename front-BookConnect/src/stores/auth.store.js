@@ -32,7 +32,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('user');
       this.user = null;
       this.isAuthenticated = false;
-      router.push('/login');
+      router.push('/user/login');
     },
     async hasToken() {
       const token = localStorage.getItem('token')
@@ -45,8 +45,15 @@ export const useAuthStore = defineStore('auth', {
         this.isAuthenticated = true
         this.token = token
         return true
+      } else {
+        this.isAuthenticated = false
+        this.token = null
+        return false
       }
+      
+    }, 
+    isAdmin () {
       return false
     }
-  },
+  }
 })

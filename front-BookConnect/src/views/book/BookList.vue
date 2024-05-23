@@ -1,10 +1,10 @@
 <script setup>
-import AddBookForm from '../components/AddBookForm.vue'
+
 </script>
 
 <template>
   <div class="container">
-    <AddBookForm />
+    <BookInfo />
   </div>
    
 

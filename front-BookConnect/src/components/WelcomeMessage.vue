@@ -16,8 +16,9 @@
 <style scoped>
 .container {
   background-color: #f9e3e3; /* Color de fondo */
-  height: 100vh; /* Altura del 100% de la pantalla */
-  width: 100%; /* Ancho del 100% de la pantalla */
+  height: 500px;
+  /* width: 100%; Ancho del 100% de la pantalla */
+  align-items: center;
   display: flex;
   flex-direction: column;
   justify-content: center;

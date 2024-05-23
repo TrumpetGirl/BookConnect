@@ -6,7 +6,7 @@
     <div class="container">
       <div class="title">
         <h1>BookConnect</h1> 
-        <img src="../assets/logo.png" alt="IconoBookConnect">
+        <img src="../assets/images/logo.png" alt="IconoBookConnect">
       </div>
     </div>
   </div>
