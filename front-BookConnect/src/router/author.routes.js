@@ -1,8 +1,8 @@
-import {AuthorList, AuthorCreateEdit} from '@/views/author'
+import {Index, AuthorList, AuthorCreateEdit} from '@/views/author'
 
 export default {
     path: '/author',
-    // component: UserList,
+    component: Index,
     children: [
         {path: '', component: AuthorList},
         {path: 'create', component: AuthorCreateEdit},

@@ -1,12 +1,13 @@
 // Modelo de la clase usuario
 export default class User {
 
-    constructor(id, username, password, birthdayDate, role) {
+    constructor(id, username, password, birth_date, role, image_path) {
       this.id = id;
       this.username = username;
       this.password = password;
-      this.birthdayDate = birthdayDate;
+      this.birth_date = birth_date;
       this.role = role;
+      this.image_path = image_path;
     }
   
   }

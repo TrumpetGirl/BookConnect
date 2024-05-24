@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useAuthorStore, useFileStore } from '@/stores';
+import { storeToRefs } from 'pinia';
 
 const search = ref('');
 const headers = ref([
@@ -9,20 +10,17 @@ const headers = ref([
   { text: 'Nacionalidad', value: 'nationality' },
   { text: 'Imagen', value: 'image_path' }
 ]);
-const authors = ref([]);
+  const authorStore = useAuthorStore();
+  const { authors } = storeToRefs(authorStore);
 
-const getAuthors = async () => {
-  try {
-    const response = await useAuthorStore.getAll();
-    authors.value = response.map(author => ({
+  onMounted(async () => {
+    await authorStore.getAll();
+    authors.value = authors.value.map(author => ({
       ...author,
-      birth_date: new Date(author.birth_date),
+      birth_date: new Date(author.birth_date).toLocaleDateString(),
       image_path: loadImage(author.image_path)
-    }));    
-  } catch (error) {
-    console.error('Error fetching authors:', error);
-  }
-};
+    }));
+});
 
 const loadImage = (image_path) => {
   if (image_path) {
@@ -31,10 +29,6 @@ const loadImage = (image_path) => {
     return ""
   }
 };
-
-onMounted(() => {
-  getAuthors();
-});
 </script>
 
 <template>
@@ -60,7 +54,7 @@ onMounted(() => {
           </v-toolbar>
         </template>
         <template v-slot:item.birth_date="{ item }">
-          <span>{{ new Date(item.birth_date).toLocaleDateString() }}</span>
+          <span>{{ item.birth_date }}</span>
         </template>
         <template v-slot:item.image_path="{ item }">
           <v-img :src="item.image_path" 

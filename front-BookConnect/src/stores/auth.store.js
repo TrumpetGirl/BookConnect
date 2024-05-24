@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await axios.post('http://localhost:3000/login', { username, password });
         this.user = response.data.user;
-        const user = {id: this.user.id, username: this.user.username}
+        const user = {id: this.user.id, username: this.user.username, image_path: this.user.image_path}
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(user));
         this.isAuthenticated = true;

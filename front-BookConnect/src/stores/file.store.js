@@ -25,7 +25,8 @@ export const useFileStore = defineStore({
         },
         async downloadImage (imageUrl) {
             try {
-              const response = await axios.get(`${baseUrl}/donwload/${imageUrl}`)
+              console.log(`${baseUrl}/download/${imageUrl}`)
+              const response = await axios.get(`${baseUrl}/download/${imageUrl}`)
               return response.data;
             } catch (error) {
               console.error('Error al descargar imagen:', error);

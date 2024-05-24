@@ -6,7 +6,7 @@ const baseUrl = `${import.meta.env.VITE_API_URL}/author`;
 export const useAuthorStore = defineStore({
     id: 'author',
     state: () => ({
-        authors: {},
+        authors: [],
         author: {}
     }),
     actions: {
@@ -15,7 +15,7 @@ export const useAuthorStore = defineStore({
         },
         async getAll() {
             try {
-                this.authors = await axios.get(baseUrl); 
+                this.authors = (await axios.get(baseUrl)).data; 
             } catch (error) {
                 console.log(error)
             }

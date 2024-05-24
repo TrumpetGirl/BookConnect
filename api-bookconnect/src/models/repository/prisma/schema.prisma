@@ -68,6 +68,7 @@ model user {
   password                                   String           @db.VarChar(80)
   birth_date                                 DateTime         @db.Date
   role                                       Int
+  image_path                                 String           @db.VarChar(255)
   list_list_userTouser                       list[]           @relation("list_userTouser")
   role_user_roleTorole                       role             @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_role_user")
   user_book_user_book_userTouser             user_book[]      @relation("user_book_userTouser")

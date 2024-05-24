@@ -1,13 +1,26 @@
 <script setup>
-  import { useAuthStore } from '@/stores';
+  import { useAuthStore, useFileStore } from '@/stores';
   import { storeToRefs } from 'pinia'
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
 
-  const profilePicture = '../assets/images/profile_image.png';
   let showDropdownMenu = ref(false);
 
   const authStore = useAuthStore();
+  const fileStore = useFileStore();
   const { user }= storeToRefs(authStore);
+
+  onMounted(async () => {
+    user.value.image_path = await fileStore.downloadImage(user.value.image_path)
+  })
+
+  const loadImage = (image_path) => {
+    if (image_path) {
+      console.log(image_path)
+      return "http://localhost:3000/file/download/" + image_path
+    } else {
+      return ""
+    }
+  };
 
   const toggleDropdownMenu = () => {
     showDropdownMenu.value = !showDropdownMenu.value;
@@ -24,7 +37,7 @@
       </div>
       <div class="menu-right">
         <div class="welcome-message">Bienvenido/a, {{ user.username }}</div>
-        <img class="profile-picture" :src="profilePicture" @click="toggleDropdownMenu">
+        <img class="profile-picture" :src="user.image_path" @click="toggleDropdownMenu">
         <img class="logout-icon" src="../assets/images/logout-icon.png" @click="authStore.logout()">
       </div>
     </div>
