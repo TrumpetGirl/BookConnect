@@ -18,17 +18,17 @@ const headers = ref([
     authors.value = authors.value.map(author => ({
       ...author,
       birth_date: new Date(author.birth_date).toLocaleDateString(),
-      image_path: loadImage(author.image_path)
+      image_path: useFileStore().downloadImage(author.image_path)
     }));
 });
 
-const loadImage = (image_path) => {
-  if (image_path) {
-    return "http://localhost:3000/file/download/" + image_path
-  } else {
-    return ""
-  }
-};
+// const loadImage = (image_path) => {
+//   if (image_path) {
+//     return "http://localhost:3000/file/download/" + image_path
+//   } else {
+//     return ""
+//   }
+// };
 </script>
 
 <template>

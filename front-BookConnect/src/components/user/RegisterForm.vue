@@ -1,67 +1,76 @@
 <script setup>
-import { RouterLink } from 'vue-router';
-import { useDate } from 'vuetify';
-import { ref, watch } from 'vue';
-import { useUserStore } from '@/stores';
+  import { RouterLink } from 'vue-router';
+  import { ref, watch, computed } from 'vue';
+  import { useUserStore } from '@/stores';
+  import { useDate } from 'vuetify';
 
-const user = ref({
-  username: '',
-  birth_date: new Date(),
-  email: '',
-  password: ''
-});
+  const user = ref({
+    username: '',
+    birth_date: new Date().toISOString().substr(0, 10), 
+    email: '',
+    password: ''
+  });
 
-const confirmPassword = ref('');
-const showSnackbar = ref(false);
-const snackbarMessage = ref('');
+  const confirmPassword = ref('');
+  const showSnackbar = ref(false);
+  const snackbarMessage = ref('');
+  const successSnackbar = ref(false);
 
+  const fNac = ref(new Date().toISOString().substr(0, 10)); 
+  const adapter = useDate();
 
-const fNac = ref(new Date());
-const adapter = useDate();
-watch(fNac, (newVal) => {
-  if (newVal) {
-    user.value.birth_date = adapter.toISO(newVal);
-  }
-});
-
-const handleRegister = async () => {
-  try {
-    console.log(confirmPassword.value)
-    console.log(user.value.password)
-
-    if (!user.value.username || !user.value.birth_date || !user.value.email || 
-    !user.value.password || !confirmPassword.value) {
-    snackbarMessage.value = "Todos los campos son obligatorios";
-    showSnackbar.value = true;
-    return;
-  }
-
-  const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-  if (!emailPattern.test(user.value.email)) {
-    snackbarMessage.value = "Correo electrónico no válido";
-    showSnackbar.value = true;
-    return;
-  }
-
-    if (confirmPassword.value === user.value.password) {
-      await useUserStore().register(user.value)
-      cleanForm()
-    } else {
-      console.log("Passwords distintas")
+  watch(fNac, (newVal) => {
+    if (newVal) {
+      user.value.birth_date = newVal;
     }
-  } catch (error) {
-    console.error('Error al agregar el usuario:', error);
-  }
-};
+  });
 
-const cleanForm = () => {
-  user.value.name = ''
-  user.value.birth_date = new Date()
-  fNac.value = new Date()
-  user.value.email = ''
-  user.value.password = ''
-  confirmPassword.value = ''
-};
+  const fNacFormatted = computed({
+    get: () => {
+      return fNac.value;
+    },
+    set: (val) => {
+      fNac.value = val;
+    }
+  });
+
+  const handleRegister = async () => {
+    try {
+      if (!user.value.username || !user.value.birth_date || !user.value.email || 
+        !user.value.password || !confirmPassword.value) {
+        snackbarMessage.value = "Todos los campos son obligatorios";
+        showSnackbar.value = true;
+        return;
+      }
+
+      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!emailPattern.test(user.value.email)) {
+        snackbarMessage.value = "Correo electrónico no válido";
+        showSnackbar.value = true;
+        return;
+      }
+
+      if (confirmPassword.value === user.value.password) {
+        await useUserStore().register(user.value)
+        successSnackbar.value = true;
+        cleanForm()
+      } else {
+        snackbarMessage.value = "Las contraseñas no coinciden";
+        showSnackbar.value = true;
+      }
+    } catch (error) {
+      console.error('Error al agregar el usuario:', error);
+    }
+  };
+
+  const cleanForm = () => {
+    user.value.username = ''
+    user.value.birth_date = new Date().toISOString().substr(0, 10)
+    fNac.value = new Date().toISOString().substr(0, 10)
+    user.value.email = ''
+    user.value.password = ''
+    confirmPassword.value = ''
+  };
 </script>
 
 <template>
@@ -77,13 +86,12 @@ const cleanForm = () => {
             required
           ></v-text-field>
 
-    
-        <v-text-field
-        v-model="fNac"
-        label="Fecha de Nacimiento"
-        type="date"
-        required
-      ></v-text-field>
+          <v-text-field
+            v-model="fNacFormatted"
+            label="Fecha de Nacimiento"
+            type="date"
+            required
+          ></v-text-field>
 
           <v-text-field
             v-model="user.email"
@@ -110,7 +118,7 @@ const cleanForm = () => {
             <v-col cols="6">
               <v-btn
                 color="#d3d3d3"
-                @click="cancel"
+                @click="cleanForm"
                 block
               >
                 Cancelar
@@ -136,8 +144,13 @@ const cleanForm = () => {
         </v-btn>
       </template>
     </v-snackbar>
+    <v-snackbar v-model="successSnackbar" timeout="3000" color="green">
+      Registro realizado con éxito
+    </v-snackbar>
   </div>
 </template>
+
+
 
 <style scoped>
 .container {
@@ -168,5 +181,4 @@ p {
   text-align: center;
   margin-top: 15px;
 }
-
 </style>

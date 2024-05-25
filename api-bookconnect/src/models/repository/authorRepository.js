@@ -43,7 +43,7 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
 };
 
 // OBTENER AUTORES POR NOMBRE
-export const findAuthorByName = async (name) => {
+export const findAuthorsByName = async (name) => {
   try {
     return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
   } catch (error) {

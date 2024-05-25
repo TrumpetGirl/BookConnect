@@ -48,10 +48,10 @@ export const registerUser = async (username, password, email, birth_date) => {
   }
 };
 
-// OBTENER USUARIOS POR NOMBRE
+// OBTENER USUARIOS POR NOMBRE --> EXISTSUSER
 export const findUserByIdAndUsername = async (id, username) => {
   try {
-    return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true, image_path: true} });
+    return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true, image_path: true, role: true} });
   } catch (error) {
     console.error('Error obteniendo usuario por id y nombre:', error);
     throw error;

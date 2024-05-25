@@ -7,7 +7,8 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({ 
     user: JSON.parse(localStorage.getItem('user')), 
     isAuthenticated: null,
-    token: localStorage.getItem('token')
+    token: localStorage.getItem('token'),
+    adminRole: 1
   }),
   getters: {
     isLoggedIn: (state) => state.isAuthenticated
@@ -17,11 +18,16 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await axios.post('http://localhost:3000/login', { username, password });
         this.user = response.data.user;
-        const user = {id: this.user.id, username: this.user.username, image_path: this.user.image_path}
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(this.user));
         this.isAuthenticated = true;
-        router.push('/search');
+        console.log(this.isAdmin())
+        console.log(this.user.role)
+        if (this.isAdmin()) {
+          router.push('/dashboard')
+        } else {
+          router.push('/search')
+        }
       } catch (error) {
         console.error('Error al iniciar sesión:', error);
         isAuthenticated.value = false;
@@ -53,7 +59,12 @@ export const useAuthStore = defineStore('auth', {
       
     }, 
     isAdmin () {
-      return false
+      if (this.user && this.adminRole === this.user.role) {
+        return true
+      } else {
+        return false
+      }
+      
     }
   }
 })
