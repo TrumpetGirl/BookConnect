@@ -1,12 +1,11 @@
 <script setup>
   import { RouterLink } from 'vue-router';
   import { ref, watch, computed } from 'vue';
-  import { useUserStore } from '@/stores';
-  import { useDate } from 'vuetify';
+  import { useUserStore, useSnackbarStore } from '@/stores';
 
   const user = ref({
     username: '',
-    birth_date: new Date().toISOString().substr(0, 10), 
+    birth_date: new Date().toLocaleDateString(), 
     email: '',
     password: ''
   });
@@ -16,8 +15,7 @@
   const snackbarMessage = ref('');
   const successSnackbar = ref(false);
 
-  const fNac = ref(new Date().toISOString().substr(0, 10)); 
-  const adapter = useDate();
+  const fNac = ref(new Date().toLocaleDateString()); 
 
   watch(fNac, (newVal) => {
     if (newVal) {
@@ -65,8 +63,8 @@
 
   const cleanForm = () => {
     user.value.username = ''
-    user.value.birth_date = new Date().toISOString().substr(0, 10)
-    fNac.value = new Date().toISOString().substr(0, 10)
+    user.value.birth_date = new Date().toLocaleDateString()
+    fNac.value = new Date().toLocaleDateString()
     user.value.email = ''
     user.value.password = ''
     confirmPassword.value = ''

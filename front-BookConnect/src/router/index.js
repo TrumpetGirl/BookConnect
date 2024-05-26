@@ -12,10 +12,10 @@ const router = createRouter({
       path: '/',
       redirect: '/user/login'
     },
-    {
-      path: '/:catchAll(.*)',
-      redirect: '/forbidden'
-    },
+    // {
+    //   path: '/:catchAll(.*)',
+    //   redirect: '/forbidden'
+    // },
     { ...userRoutes },
     { ...authorRoutes },
     { ...bookRoutes },
@@ -38,14 +38,16 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard, 
-      meta: { requiresAdmin: true }
+      meta: { requiresAdmin: true}
     }
   ]
 })
 
-const publicPages = ['/user/login', '/user/register', '/forbidden', '/unauthorized']
+const publicPages = ['/user/login', '/user/register']
 
 router.beforeEach(async (to, from, next) => {
+  console.log(from.path)
+  console.log(to.path)
   const authStore = useAuthStore()
   const isLoggedIn = await authStore.hasToken()
   const isAdmin = authStore.isAdmin()
@@ -71,7 +73,9 @@ router.beforeEach(async (to, from, next) => {
   // }
 
   // Si el usuario no está conectado y trata de acceder a una página pública, permite la navegación
+  console.log(isLoggedIn)
   if (!isLoggedIn) {
+    console.log(isPublicPage)
     if (isPublicPage) {
       next();
     } else {
@@ -79,14 +83,18 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     // Si el usuario está conectado y trata de acceder a una página pública, redirige según su rol
+    console.log(isPublicPage)
     if (isPublicPage) {
-      if (isAdmin) {
-        next('/dashboard');
-      } else {
-        next('/search');
-      }
+      console.log(isAdmin)
+       if (isAdmin) {
+         next('/dashboard');
+       } else {
+         next('/search');
+       }
     } else {
       // Si el usuario está conectado y la ruta requiere autorización especial, maneja los roles
+      console.log(to.meta.requiresAdmin)
+      console.log(isAdmin)
       if (to.meta.requiresAdmin && !isAdmin) {
         next('/unauthorized');
       } else {

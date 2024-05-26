@@ -1,36 +1,37 @@
 <script setup>
-import { RouterLink } from 'vue-router';
-import { useAuthStore } from '@/stores';
-import { ref } from 'vue';
+  import { RouterLink } from 'vue-router';
+  import { useAuthStore, useSnackbarStore } from '@/stores';
+  import { ref } from 'vue';
+  import router from '@/router'
 
-const authStore = useAuthStore();
+  const authStore = useAuthStore();
+  const snackbarStore = useSnackbarStore();
 
-const username = ref('');
-const password = ref('');
-const errorMessage = ref('');
+  const username = ref('');
+  const password = ref('');
 
-const handleLogin = async () => {
-  try {
-    await authStore.login(username.value, password.value);
-    if (authStore.isAuthenticated) {
-      // Redirigir o mostrar mensaje de éxito
-      console.log('Login exitoso');
-    } else {
-      // Mostrar mensaje de error
-      console.log('Login fallido');
+  const handleLogin = async () => {
+    try {
+      const response = await authStore.login(username.value, password.value);
+      if (authStore.isLoggedIn) {
+        if (authStore.isAdmin()) {
+          router.push('/dashboard');
+        } else {
+          router.push('/search');
+        }
+        snackbarStore.success(response)
+      } else {
+        snackbarStore.error('Login fallido')
+      }
+    } catch (error) {
+      snackbarStore.error('Login fallido')
     }
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    errorMessage.value = error.response?.res?.message || 'Error al iniciar sesión';
-  }
-};
+  };
 
-const cancel = () => {
-  // Limpiar los campos en caso de cancelación
-  username.value = '';
-  password.value = '';
-  errorMessage.value = '';
-};
+  const cancel = () => {
+    username.value = '';
+    password.value = '';
+  };
 </script>
 
 <template>
@@ -62,7 +63,6 @@ const cancel = () => {
               </v-btn>
             </v-col>
           </v-row>
-          <p v-if="errorMessage">{{ errorMessage }}</p>
         </v-form>
         <p>¿No tienes cuenta? <RouterLink to="/user/register">Regístrate aquí</RouterLink></p>
       </fieldset>

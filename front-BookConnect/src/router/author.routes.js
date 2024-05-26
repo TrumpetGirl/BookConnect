@@ -4,8 +4,8 @@ export default {
     path: '/author',
     component: Index,
     children: [
-        {path: '', component: AuthorList},
+        {path: '', component: AuthorList, meta: {requiresAdmin: true}},
         {path: 'create', component: AuthorCreateEdit},
-        {path: 'edit/:id', component: AuthorCreateEdit}
+        {path: 'edit/:id(\\d+)', component: AuthorCreateEdit, meta: {requiresAdmin: true}}
     ]
 }

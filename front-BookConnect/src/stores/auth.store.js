@@ -21,16 +21,10 @@ export const useAuthStore = defineStore('auth', {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("user", JSON.stringify(this.user));
         this.isAuthenticated = true;
-        console.log(this.isAdmin())
-        console.log(this.user.role)
-        if (this.isAdmin()) {
-          router.push('/dashboard')
-        } else {
-          router.push('/search')
-        }
+        return this.user.username + ', has iniciado sesión'
       } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        isAuthenticated.value = false;
+        this.isAuthenticated = false;
+        throw new Error(error.response.data.message || 'Error al iniciar sesión');
       }
     },
     logout() {
@@ -59,12 +53,7 @@ export const useAuthStore = defineStore('auth', {
       
     }, 
     isAdmin () {
-      if (this.user && this.adminRole === this.user.role) {
-        return true
-      } else {
-        return false
-      }
-      
+      return this.user && this.adminRole === this.user.role;
     }
   }
 })

@@ -43,12 +43,14 @@ axios.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      if (error.response.status === 401) {
-        // Redirect to login page
-        router.push('/login')
-      } else {
-        // Show a generic error message
-        alert('An error occurred. Please try again later.')
+      if (useAuthStore().isLoggedIn) {
+        if (error.response.status === 401) {
+          router.push('/unauthorized')
+        } else  if (error.response.status === 403) {
+          router.push('/forbidden')
+        } else {
+          alert('Parece que ha ocurrido un error. Vuelve a intentarlo.')
+        }
       }
     }
     return Promise.reject(error)
