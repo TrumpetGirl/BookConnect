@@ -1,7 +1,7 @@
 <script setup>
   import { RouterLink } from 'vue-router';
   import { useAuthStore, useSnackbarStore } from '@/stores';
-  import { ref } from 'vue';
+  import { ref, onMounted  } from 'vue';
   import router from '@/router'
 
   const authStore = useAuthStore();
@@ -21,10 +21,10 @@
         }
         snackbarStore.success(response)
       } else {
-        snackbarStore.error('Login fallido')
+        snackbarStore.error('La contraseña es incorrecta')
       }
     } catch (error) {
-      snackbarStore.error('Login fallido')
+      snackbarStore.error(error.message)
     }
   };
 
@@ -32,6 +32,13 @@
     username.value = '';
     password.value = '';
   };
+
+  onMounted(() => {
+  if (localStorage.getItem('logout')) {
+    snackbarStore.success('Has cerrado sesión correctamente');
+    localStorage.removeItem('logout');
+  }
+});
 </script>
 
 <template>

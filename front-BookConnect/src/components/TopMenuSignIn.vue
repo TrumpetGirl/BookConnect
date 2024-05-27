@@ -1,11 +1,13 @@
 <script setup>
   import { useAuthStore, useFileStore } from '@/stores';
+  import { useRouter } from 'vue-router'
   import { storeToRefs } from 'pinia'
   import { onMounted, ref } from 'vue';
 
   let showDropdownMenu = ref(false);
 
   const authStore = useAuthStore();
+  const router = useRouter();
   const fileStore = useFileStore();
   const { user }= storeToRefs(authStore);
 
@@ -15,7 +17,6 @@
 
   const loadImage = (image_path) => {
     if (image_path) {
-      console.log(image_path)
       return "http://localhost:3000/file/download/" + image_path
     } else {
       return ""
@@ -24,7 +25,6 @@
 
   const toggleDropdownMenu = () => {
     showDropdownMenu.value = !showDropdownMenu.value;
-    console.log(showDropdownMenu)
   };
 </script>
 
@@ -38,14 +38,19 @@
       <div class="menu-right">
         <div class="welcome-message">Bienvenido/a, {{ user.username }}</div>
         <img class="profile-picture" :src="user.image_path" @click="toggleDropdownMenu">
-        <img class="logout-icon" src="../assets/images/logout-icon.png" @click="authStore.logout()">
+        <img class="logout-icon" src="../assets/images/logout-icon.png" @click="authStore.logout()" title="Cerrar sesión">
       </div>
     </div>
     <div v-if="showDropdownMenu" class="dropdown-menu">
       <ul>
-        <li>Buscador</li>
-        <li>Mi colección</li>
-        <li>Configuración</li>
+        <li v-if="!authStore.isAdmin()" @click="router.push('/search');">Buscador</li>
+        <li v-if="!authStore.isAdmin()">Mi colección</li>
+        <li v-if="!authStore.isAdmin()">Configuración</li>
+
+        <li v-if="authStore.isAdmin()" @click="router.push('/dashboard');">Dashboard</li>
+        <li v-if="authStore.isAdmin()" @click="router.push('/book');">Listado libros</li>
+        <li v-if="authStore.isAdmin()" @click="router.push('/author');">Listado autores</li>
+        <li v-if="authStore.isAdmin()" @click="router.push('/user');">Listado usuarios</li>
       </ul>
     </div>
   </div>
@@ -114,6 +119,7 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 .dropdown-menu ul {
@@ -128,7 +134,7 @@ h1 {
 }
 
 .dropdown-menu li:hover {
-  background-color: #f0f0f0;
+  background-color: #fc9ec7;
 }
 </style>
 

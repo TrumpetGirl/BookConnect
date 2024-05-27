@@ -11,11 +11,13 @@
   });
 
   const confirmPassword = ref('');
-  const showSnackbar = ref(false);
-  const snackbarMessage = ref('');
-  const successSnackbar = ref(false);
+  const fNac = ref(new Date().toLocaleDateString());
 
-  const fNac = ref(new Date().toLocaleDateString()); 
+  let usernameError = false;
+  let usernameMessage = '';
+  
+  const userStore = useUserStore();
+  const snackbarStore = useSnackbarStore();
 
   watch(fNac, (newVal) => {
     if (newVal) {
@@ -32,33 +34,82 @@
     }
   });
 
+  const checkUsernameAvailability = async () => {
+    console.log(user.value.username)
+    if (user.value.username) {
+      try {
+        const response = await userStore.existsUsername( user.value.username );
+        if (response.data === user.value.username) {
+          usernameError = true;
+          usernameMessage = 'El usuario ya existe';
+        } else {
+          usernameError = false;
+          usernameMessage = 'El usuario está disponible';
+        }
+      } catch (error) {
+        console.error('Error al verificar la disponibilidad del usuario:', error);
+        usernameError = true;
+        usernameMessage = 'Error al verificar la disponibilidad del usuario';
+      }
+    }
+  };
+
+  const validatePassword = (password) => {
+    const hasNumber = /[0-9]/.test(password);
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    return password.length >= 10 && hasNumber && hasLetter && hasSpecialChar;
+  };
+
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birthDateObj = new Date(birthDate);
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDiff = today.getMonth() - birthDateObj.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+    age--;
+  }
+  return age;
+};
+
   const handleRegister = async () => {
     try {
+      
       if (!user.value.username || !user.value.birth_date || !user.value.email || 
         !user.value.password || !confirmPassword.value) {
-        snackbarMessage.value = "Todos los campos son obligatorios";
-        showSnackbar.value = true;
+          snackbarStore.error('Todos los campos son obligatorios')
         return;
+      }
+
+      const age = calculateAge(user.value.birth_date);
+        if (age < 5) {
+          snackbarStore.error('Revise su fecha de nacimiento');
+          return;
       }
 
       const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
       if (!emailPattern.test(user.value.email)) {
-        snackbarMessage.value = "Correo electrónico no válido";
-        showSnackbar.value = true;
+        snackbarStore.error('Correo electrónico no válido')
         return;
       }
 
-      if (confirmPassword.value === user.value.password) {
-        await useUserStore().register(user.value)
-        successSnackbar.value = true;
-        cleanForm()
-      } else {
-        snackbarMessage.value = "Las contraseñas no coinciden";
-        showSnackbar.value = true;
+      if (confirmPassword.value !== user.value.password) {
+      snackbarStore.error('Las contraseñas no coinciden');
+      return;
       }
+
+    if (!validatePassword(user.value.password)) {
+      snackbarStore.error('La contraseña debe tener al menos 10 caracteres de longitud y, al menos, 1 número, 1 letra y 1 caracter de tipo especial');
+      return;
+      }
+
+    const response = await userStore.register(user.value);
+    snackbarStore.success(response);
+    cleanForm();
     } catch (error) {
       console.error('Error al agregar el usuario:', error);
-    }
+      snackbarStore.error(error.message);
+  }
   };
 
   const cleanForm = () => {
@@ -82,7 +133,10 @@
             label="Nombre de Usuario"
             type="text"
             required
+            :error="usernameError"
+            @input="checkUsernameAvailability"
           ></v-text-field>
+          <p v-if="usernameMessage">{{ usernameMessage }}</p>
 
           <v-text-field
             v-model="fNacFormatted"
@@ -130,21 +184,6 @@
         <p>¿Ya estás registrado? <RouterLink to="/user/login">Inicia sesión aquí</RouterLink></p>
       </fieldset>
     </div>
-    <v-snackbar v-model="showSnackbar">
-      {{ snackbarMessage }}
-      <template v-slot:actions>
-        <v-btn
-          color="pink"
-          variant="text"
-          @click="showSnackbar = false"
-        >
-          CERRAR
-        </v-btn>
-      </template>
-    </v-snackbar>
-    <v-snackbar v-model="successSnackbar" timeout="3000" color="green">
-      Registro realizado con éxito
-    </v-snackbar>
   </div>
 </template>
 

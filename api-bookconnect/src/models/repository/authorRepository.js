@@ -17,6 +17,7 @@ export const findAllAuthors = async () => {
   }
 };
 
+
 // CREAR AUTOR
 export async function addAuthor(name, birthDate, nationality, imageExtension) {
   try {
@@ -42,12 +43,58 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
   }
 };
 
+// EDITAR AUTOR
+export const editAuthor = async (id, name, birth_date, nationality, imageExtension) => {
+  try {
+    await prisma.author.update({
+      where: {
+        id: id
+      },
+      data: {
+        name: name,
+        birth_date: birth_date,
+        nationality: nationality,
+        image_path: "authors/imagenAutor_" + id + "." + imageExtension
+      },
+    });
+  } catch (error) {
+    console.error('Error editando al autor:', error);
+    throw error;
+  }
+};
+
+// ELIMINAR AUTOR
+export const deleteAuthor = async (id) => {
+  try {
+    const deletedAuthor = await prisma.author.delete({
+      where: {
+        id: parseInt(id)
+      }
+    });
+    return deletedAuthor;
+  } catch (error) {
+    console.error('Error eliminando autor:', error);
+    throw error;
+  }
+};
+
+
 // OBTENER AUTORES POR NOMBRE
 export const findAuthorsByName = async (name) => {
   try {
     return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
   } catch (error) {
     console.error('Error obteniendo autor por nombre:', error);
+    throw error;
+  }
+};
+
+// OBTENER AUTOR POR ID
+export const findAuthorById = async (id) => {
+  try {
+    return await prisma.author.findUnique({ where: { id: id } });
+  } catch (error) {
+    console.error('Error obteniendo autor por id:', error);
     throw error;
   }
 };

@@ -10,8 +10,7 @@
     <v-snackbar
         v-model="snackbar.visible"
         :color="snackbar.type === 'error' ? 'red' : 'green'"
-        icon="mdi-alert-circle"
-        timeout="5000"
+        timeout="4000"
         @timeout="snackbarStore.clear"
     >
         {{ snackbar.message }}

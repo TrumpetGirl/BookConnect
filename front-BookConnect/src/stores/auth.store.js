@@ -11,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
     adminRole: 1
   }),
   getters: {
-    isLoggedIn: (state) => state.isAuthenticated
+    isLoggedIn: (state) => state.isAuthenticated,
   },
   actions: {
     async login(username, password) {
@@ -32,6 +32,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('user');
       this.user = null;
       this.isAuthenticated = false;
+      localStorage.setItem('logout', 'true');
       router.push('/user/login');
     },
     async hasToken() {

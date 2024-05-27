@@ -9,15 +9,13 @@ export const login = async (username, password) => {
     const secretKey = 'secret-password-1234.';
     try {
       const user = await prisma.user.findUnique({ where: { username: username } });
-      console.log(user)
-      // , select: {id: true, username: true, image_path: true, role: true}
       if (!user) {
-        return { success: false, message: 'El nombre de usuario debe ser único' };
+        return { success: false, message: 'El usuario no está registrado' };
       }
       
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        return { success: false, message: 'La contraseña no es correcta' };
+        return { success: false, message: 'La contraseña es incorrecta' };
       }
       const basicUser = {id: user.id, username: user.username, image_path: user.image_path, role: user.role}
       const token = jwt.sign({ id: user.id }, secretKey, { expiresIn: '3h' });

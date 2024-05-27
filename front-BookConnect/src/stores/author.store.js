@@ -11,7 +11,12 @@ export const useAuthorStore = defineStore({
     }),
     actions: {
         async create(author) {
-            await axios.post(baseUrl, author);
+            try {
+                await axios.post(baseUrl, author);
+                return 'El autor ha sido registrado con éxito'
+            } catch (error) {
+                throw new Error(error.response.data.message || 'Error al añadir autor');
+            }            
         },
         async getAll() {
             try {
@@ -24,25 +29,24 @@ export const useAuthorStore = defineStore({
             try {
                 this.author = await axios.get(`${baseUrl}/${id}`);
             } catch (error) {
-                console.log(error)
+                throw new Error(error.response.data.message || 'No se ha podido recuperar el autor');
             }
         },
         async update(id, params) {
-            await axios.put(`${baseUrl}/${id}`, params);
+            try {
+                await axios.put(`${baseUrl}/${id}`, params);
+                return 'El autor ha sido editado con éxito'
+            } catch {
+                throw new Error(error.response.data.message || 'Error al editar el autor');
+            }
+ 
         },
         async delete(id) {
-            // add isDeleting prop to user being deleted
-            this.users.find(x => x.id === id).isDeleting = true;
-
-            await fetchWrapper.delete(`${baseUrl}/${id}`);
-
-            // remove user from list after deleted
-            this.users = this.users.filter(x => x.id !== id);
-
-            // auto logout if the logged in user deleted their own record
-            const authStore = useAuthStore();
-            if (id === authStore.user.id) {
-                authStore.logout();
+            try {
+                await axios.delete(`${baseUrl}/${id}`);
+                this.authors = this.authors.filter(author => author.id !== id); 
+            } catch (error) {
+                console.log(error);
             }
         }
     }

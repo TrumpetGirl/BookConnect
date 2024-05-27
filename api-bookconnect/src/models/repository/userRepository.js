@@ -1,32 +1,27 @@
-// Importamos el modelo de usuario y el objeto de PrismaClient para utilizar sus métodos
 import User  from '../model/User.js'
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
-// Creamos el objeto de Prisma
 const prisma = new PrismaClient();
 
 // OBTENER TODOS LOS USUARIOS
 export const findAllUsers = async () => {
   try {
-    // Utilizamos el método findMany de Prisma para obtener todos los autores
     const users = await prisma.user.findMany();
     
-    // Mapea los libros de Prisma al modelo de autor
     const arrUsers = users.map(user => new User(user.id, user.username, user.password, 
       user.birth_date, user.role, user.image_path));
 
     return arrUsers;
   } catch (error) {
     console.error('Error al obtener todos los autores:', error);
-    return []; // Devuelve un array vacío en caso de error
+    return []; 
   }
 };
 
 // CREAR USUARIO
 export const registerUser = async (username, password, email, birth_date) => {
   try {
-     // Ciframos la contraseña usando bcrypt
     const hashedPassword = await bcrypt.hash(password, 10); 
     const newUser = await prisma.user.create({
       data: {
@@ -43,7 +38,7 @@ export const registerUser = async (username, password, email, birth_date) => {
       Object.entries(newUser).filter(([key]) => !excludeKeys.includes(key))
     );
   } catch (error) {
-    console.error('Error registering user:', error);
+    console.error('Error al registrar al usuario:', error);
     throw error;
   }
 };
@@ -52,6 +47,20 @@ export const registerUser = async (username, password, email, birth_date) => {
 export const findUserByIdAndUsername = async (id, username) => {
   try {
     return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true, image_path: true, role: true} });
+  } catch (error) {
+    console.error('Error obteniendo usuario por id y nombre:', error);
+    throw error;
+  }
+};
+
+// OBTENER USUARIO NOMBRE DE USUARIO
+export const findUserByUsername = async (username) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { username: username }, select: { username: true} });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+    return user;
   } catch (error) {
     console.error('Error obteniendo usuario por id y nombre:', error);
     throw error;

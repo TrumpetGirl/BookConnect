@@ -1,21 +1,47 @@
 <script setup>
-import { ref, watch } from 'vue';
-import { useAuthStore, useFileStore } from '@/stores';
-import { useDate } from 'vuetify';
-
-const adapter = useDate();
-
-const author = ref({
+import { ref, watch, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useAuthorStore, useFileStore, useSnackbarStore, useAuthStore  } from '@/stores';
+let author = {
   name: '',
-  birth_date: new Date(),
+  birth_date: new Date().toLocaleDateString(), 
   nationality: ''
-});
+ };
 
-const fNac = ref(new Date());
+const fNac = ref(new Date().toLocaleDateString());
+
+const route = useRoute();
+const authorStore = useAuthorStore();
+const fileStore = useFileStore();
+const snackbarStore = useSnackbarStore();
+const authStore = useAuthStore();
+
+console.log(route)
+const id = route.params.id;
+
+
+let title = 'Añadir autor';
+
+if (id) {
+    // edit mode
+    title = 'Editar autor';
+    ({ author } = storeToRefs(authorStore));
+    authorStore.getById(id);
+}
 
 watch(fNac, (newVal) => {
-  if (newVal) {
-    author.value.birth_date = adapter.toISO(newVal);
+    if (newVal) {
+      author.value.birth_date = newVal;
+    }
+  });
+
+const fNacFormatted = computed({
+  get: () => {
+    return fNac.value;
+  },
+  set: (val) => {
+    fNac.value = val;
   }
 });
 
@@ -31,14 +57,19 @@ const handleSubmit = async () => {
   try {
     const formData = new FormData()
     author.value.imageExtension = image.name.split(".").pop()
-
-    const response = await useAuthStore.create(author.value)
-    if (response && response.image_path) {
-      formData.append('path', response.image_path)
-      formData.append('file', image)
-      await useFileStore.uploadImage(formData)
+    if(author) {
+      const response = await authorStore.update(author.value.id, values)
+      snackbarStore.success(response);
+    } else {
+      const response = await authorStore.create(author.value)
+      if (response && response.image_path) {
+        formData.append('path', response.image_path)
+        formData.append('file', image)
+        await fileStore.uploadImage(formData)
+      }
+      snackbarStore.success(response);
+      cleanForm()
     }
-    cleanForm()
   } catch (error) {
     console.error('Error al agregar autor:', error);
   }
@@ -56,9 +87,8 @@ const cleanForm = () => {
 
 <template>
   <div class="container">
-    <div class="left-pane">
       <fieldset class="register-fieldset">
-        <legend>Añadir Autor</legend>
+        <legend>{{ title}}</legend>
         <v-form @submit.prevent="handleSubmit" class="register-form">
           <v-text-field 
           v-model="author.name" 
@@ -66,14 +96,14 @@ const cleanForm = () => {
           required>
         </v-text-field>
 
-          <v-date-picker 
-          v-model="fNac" 
-          label="Fecha de Nacimiento" 
-          required>
-        </v-date-picker>
+        <v-text-field
+          v-model="fNacFormatted"
+          label="Fecha de Nacimiento"
+          type="date"
+        ></v-text-field>
           
-          <v-text-field v-model="author.nationality" label="Nacionalidad" required></v-text-field>
-          <input type="file" @change="handleFileChange" required />
+          <v-text-field v-model="author.nationality" label="Nacionalidad (País)"></v-text-field>
+          <input type="file" @change="handleFileChange" class="mb-5"/>
           <v-row>
             <v-col cols="6">
               <v-btn color="#d3d3d3" @click="cancel" block>Cancelar</v-btn>
@@ -84,22 +114,21 @@ const cleanForm = () => {
           </v-row>
         </v-form>
       </fieldset>
+      <v-row>
+        <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
+            <v-btn @click="() => router.push('/author')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+              Volver al listado
+            </v-btn>
+          </v-col>
+      </v-row>
     </div>
-  </div>
 </template>
 
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.left-pane {
   width: 80%;
   max-width: 500px;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .register-fieldset {

@@ -11,7 +11,13 @@ export const useUserStore = defineStore({
     }),
     actions: {
         async register(user) {
-            await axios.post(baseUrl, user);
+            try {
+                await axios.post(baseUrl, user);
+                return 'El usuario ha sido registrado con éxito'
+            } catch (error) {
+                throw new Error(error.response.data.message || 'Error al registrar usuario');
+              }
+           
         },
         async getAll() {
             try {
@@ -31,7 +37,15 @@ export const useUserStore = defineStore({
             try {
                 return await axios.post(`${baseUrl}/existsUser`, JSON.parse(user));
             } catch (error) {
-                console.log(error)
+                throw new Error('Error al verificar la disponibilidad del usuario');
+            }
+        },
+        async existsUsername(username) {
+            try {
+                return await axios.post(`${baseUrl}/existsUsername`, { username });
+            } catch (error) {
+                console.log(error);
+                throw new Error('Error al verificar la disponibilidad del usuario');
             }
         },
         async update(id, params) {

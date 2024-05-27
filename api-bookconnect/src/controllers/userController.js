@@ -1,4 +1,4 @@
-import { findAllUsers, registerUser, findUserByIdAndUsername  } from '../models/repository/userRepository.js';
+import { findAllUsers, registerUser, findUserByIdAndUsername, findUserByUsername  } from '../models/repository/userRepository.js';
 
 //OBTENER TODOS LOS USUARIOS
 export const getUsers = async (req, res) => {
@@ -21,7 +21,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// OBTENER USUARIOS POR NOMBRE
+// OBTENER USUARIO POR ID Y NOMBRE DE USUARIO
 export const getUserByIdAndUsername = async (req, res) => {
   try {
     const { id, username } = req.body;
@@ -30,6 +30,22 @@ export const getUserByIdAndUsername = async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// OBTENER USUARIO NOMBRE DE USUARIO
+export const getUserByUsername = async (req, res) => {
+  try {
+    const { username } = req.body;
+    const user = await findUserByUsername(username);
+    res.json(user);
+  } catch (error) {
+    if (error.message === 'Usuario no encontrado') {
+      res.status(404).json({ message: 'Usuario no encontrado' });
+    } else {
+      console.error('Error al obtener usuario por nombre:', error);
+      res.status(500).json({ message: 'Error al obtener usuario nombre' });
+    }
   }
 };
 
