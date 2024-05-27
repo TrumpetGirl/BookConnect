@@ -17,6 +17,17 @@ export const findAllAuthors = async () => {
   }
 };
 
+// OBTENER EL NÚMERO TOTAL DE AUTORES
+export const countAuthors = async () => {
+  try {
+    const count = await prisma.author.count();
+    return count;
+  } catch (error) {
+    console.error('Error al obtener el número total de autores:', error);
+    throw error;
+  }
+};
+
 
 // CREAR AUTOR
 export async function addAuthor(name, birthDate, nationality, imageExtension) {
@@ -28,15 +39,19 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
         nationality: nationality
       }
     });
-    const updateAuthor = await prisma.author.update({
-      where: {
-        id: newAuthor.id
-      },
-      data: {
-        image_path: "authors/imagenAutor_" + newAuthor.id + "." + imageExtension
-      }
-    })
-    return updateAuthor;
+    if (imageExtension) {
+      const updateAuthor = await prisma.author.update({
+        where: {
+          id: newAuthor.id
+        },
+        data: {
+          image_path: "authors/imagenAutor_" + newAuthor.id + "." + imageExtension
+        }
+      })
+      return updateAuthor;
+    } else {
+      return newAuthor
+    }
   } catch (error) {
     console.error('Error añadiendo autor:', error);
     throw error;
@@ -45,6 +60,7 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
 
 // EDITAR AUTOR
 export const editAuthor = async (id, name, birth_date, nationality, imageExtension) => {
+  let image_path = imageExtension ? "authors/imagenAutor_" + id + "." + imageExtension : null
   try {
     await prisma.author.update({
       where: {
@@ -54,7 +70,7 @@ export const editAuthor = async (id, name, birth_date, nationality, imageExtensi
         name: name,
         birth_date: birth_date,
         nationality: nationality,
-        image_path: "authors/imagenAutor_" + id + "." + imageExtension
+        image_path: image_path
       },
     });
   } catch (error) {
@@ -92,6 +108,7 @@ export const findAuthorsByName = async (name) => {
 // OBTENER AUTOR POR ID
 export const findAuthorById = async (id) => {
   try {
+
     return await prisma.author.findUnique({ where: { id: id } });
   } catch (error) {
     console.error('Error obteniendo autor por id:', error);

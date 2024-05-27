@@ -88,7 +88,7 @@ router.beforeEach(async (to, from, next) => {
     } else {
       // Si el usuario está conectado y la ruta requiere autorización especial, maneja los roles
       if (to.meta.requiresAdmin && !isAdmin) {
-        next('/unauthorized');
+        next('/forbidden');
       } else {
         next();
       }

@@ -23,19 +23,19 @@ export const useFileStore = defineStore({
               throw error;
             }
         },
-        // async downloadImage (imageUrl) {
-        //     try {
-        //       console.log(`${baseUrl}/download/${imageUrl}`)
-        //       const response = await axios.get(`${baseUrl}/download/${imageUrl}`)
-        //       return response.data;
-        //     } catch (error) {
-        //       console.error('Error al descargar imagen:', error);
-        //       throw error;
-        //     }
-        // }
         downloadImage (imageUrl) {
           return `${baseUrl}/download/${imageUrl}`;
-        }
+        },
+        async deleteImage (imageUrl) {
+          try {
+            const response = await axios.delete(`${baseUrl}/delete/${imageUrl}`)
+            return response.data;
+          } catch (error) {
+            console.error('Error al eliminar la imagen:', error);
+            throw error;
+          }
+      }
+        
     }
 });
 

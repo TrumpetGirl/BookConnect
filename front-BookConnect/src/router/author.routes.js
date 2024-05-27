@@ -6,6 +6,6 @@ export default {
     children: [
         {path: '', component: AuthorList, meta: {requiresAdmin: true}},
         {path: 'create', component: AuthorCreateEdit},
-        {path: 'edit/:id(\\d+)', component: AuthorCreateEdit, meta: {requiresAdmin: true}}
+        {path: 'edit/:id(\\d+)', name: 'editAuthor', component: AuthorCreateEdit, meta: {requiresAdmin: true}}
     ]
 }

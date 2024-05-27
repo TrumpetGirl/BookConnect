@@ -12,8 +12,8 @@ export const useAuthorStore = defineStore({
     actions: {
         async create(author) {
             try {
-                await axios.post(baseUrl, author);
-                return 'El autor ha sido registrado con éxito'
+                const response = await axios.post(baseUrl, author);
+                return {author: response.data, message:'El autor ha sido registrado con éxito'}
             } catch (error) {
                 throw new Error(error.response.data.message || 'Error al añadir autor');
             }            
@@ -27,15 +27,15 @@ export const useAuthorStore = defineStore({
         },
         async getById(id) {
             try {
-                this.author = await axios.get(`${baseUrl}/${id}`);
+                this.author = (await axios.get(`${baseUrl}/${id}`)).data;
             } catch (error) {
                 throw new Error(error.response.data.message || 'No se ha podido recuperar el autor');
             }
         },
         async update(id, params) {
             try {
-                await axios.put(`${baseUrl}/${id}`, params);
-                return 'El autor ha sido editado con éxito'
+                const response = await axios.put(`${baseUrl}/${id}`, params);
+                return {author: response.data, message:'El autor ha sido editado con éxito'}
             } catch {
                 throw new Error(error.response.data.message || 'Error al editar el autor');
             }
@@ -45,6 +45,7 @@ export const useAuthorStore = defineStore({
             try {
                 await axios.delete(`${baseUrl}/${id}`);
                 this.authors = this.authors.filter(author => author.id !== id); 
+                return 'El autor ha sido eliminado'
             } catch (error) {
                 console.log(error);
             }

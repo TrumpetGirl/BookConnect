@@ -1,36 +1,45 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, watch, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthorStore, useFileStore, useSnackbarStore, useAuthStore  } from '@/stores';
-let author = {
-  name: '',
-  birth_date: new Date().toLocaleDateString(), 
-  nationality: ''
- };
+// let author = ref({
+//   name: '',
+//   birth_date: new Date().toLocaleDateString(), 
+//   nationality: ''
+//  });
 
 const fNac = ref(new Date().toLocaleDateString());
 
 const route = useRoute();
+const router = useRouter();
 const authorStore = useAuthorStore();
 const fileStore = useFileStore();
 const snackbarStore = useSnackbarStore();
 const authStore = useAuthStore();
 
-console.log(route)
 const id = route.params.id;
-
+const { author } = storeToRefs(authorStore);
 
 let title = 'Añadir autor';
 
 if (id) {
     // edit mode
     title = 'Editar autor';
-    ({ author } = storeToRefs(authorStore));
-    authorStore.getById(id);
+    onMounted(async ()=>{
+      await authorStore.getById(id);
+      // fNac.value = new Date(author.value.birth_date).toLocaleDateString();
+      // fNacFormatted.set(new Date(author.value.birth_date).toLocaleDateString())
+      console.log('este es el console de la tienda de libros ' + fNac.value)
+      console.log('este es el console del author.value.birth_date ' + author.value.birth_date)
+    }) 
+} else {
+  author.value = {}
 }
 
+
 watch(fNac, (newVal) => {
+  console.log('newVal ' + newVal)
     if (newVal) {
       author.value.birth_date = newVal;
     }
@@ -38,9 +47,11 @@ watch(fNac, (newVal) => {
 
 const fNacFormatted = computed({
   get: () => {
+    console.log('get ' + fNac.value)
     return fNac.value;
   },
   set: (val) => {
+    console.log('set ' + val)
     fNac.value = val;
   }
 });
@@ -54,34 +65,35 @@ const handleFileChange = (event) => {
 };
 
 const handleSubmit = async () => {
+  let response
   try {
     const formData = new FormData()
-    author.value.imageExtension = image.name.split(".").pop()
-    if(author) {
-      const response = await authorStore.update(author.value.id, values)
-      snackbarStore.success(response);
+    author.value.imageExtension = image.name ? image.name.split(".").pop() : null
+    if(id) {
+      response = await authorStore.update(id, author.value)
     } else {
-      const response = await authorStore.create(author.value)
-      if (response && response.image_path) {
-        formData.append('path', response.image_path)
-        formData.append('file', image)
-        await fileStore.uploadImage(formData)
-      }
-      snackbarStore.success(response);
+      response = await authorStore.create(author.value)
+      
+      snackbarStore.success(response.message);
       cleanForm()
     }
+    console.log(image)
+    console.log(response)
+    if (image && response && response.author.image_path) {
+        formData.append('path', response.author.image_path)
+        formData.append('file', image)
+        await fileStore.uploadImage(formData)
+    }
+    snackbarStore.success(response.message);
   } catch (error) {
     console.error('Error al agregar autor:', error);
   }
 };
 
 const cleanForm = () => {
-  author.value.name = ''
-  author.value.birth_date = new Date()
+  author.value = {}
   fNac.value = new Date()
   image.value = ref(new File([""], "filename"))
-  author.value.nationality = ''
-  author.value.image = null
 };
 </script>
 
@@ -100,13 +112,13 @@ const cleanForm = () => {
           v-model="fNacFormatted"
           label="Fecha de Nacimiento"
           type="date"
-        ></v-text-field>
+        ></v-text-field> 
           
           <v-text-field v-model="author.nationality" label="Nacionalidad (País)"></v-text-field>
           <input type="file" @change="handleFileChange" class="mb-5"/>
           <v-row>
             <v-col cols="6">
-              <v-btn color="#d3d3d3" @click="cancel" block>Cancelar</v-btn>
+              <v-btn color="#d3d3d3" @click="cleanForm" block>Cancelar</v-btn>
             </v-col>
             <v-col cols="6">
               <v-btn type="submit" color="#ff7eb9" block>Enviar</v-btn>

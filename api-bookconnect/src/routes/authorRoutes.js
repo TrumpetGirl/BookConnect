@@ -1,9 +1,11 @@
 import express from 'express';
-import { getAuthors, createAuthor, getAuthorsByName, removeAuthor, getAuthorById } from '../controllers/authorController.js';
+import { getAuthors, getAuthorCount, createAuthor, getAuthorsByName, removeAuthor, getAuthorById } from '../controllers/authorController.js';
 
 const router = express.Router();
 
 router.get('/author', getAuthors);
+
+router.get('/author/total', getAuthorCount);
 
 router.post('/author', createAuthor);
 

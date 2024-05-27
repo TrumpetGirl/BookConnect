@@ -1,7 +1,7 @@
 <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useAuthorStore, useFileStore } from '@/stores';
+  import { useAuthorStore, useFileStore, useSnackbarStore } from '@/stores';
   import { storeToRefs } from 'pinia';
 
   const search = ref('');
@@ -14,6 +14,7 @@
   ]);
 
   const authorStore = useAuthorStore();
+  const snackbarStore = useSnackbarStore();
   const { authors } = storeToRefs(authorStore);
   const router = useRouter();
 
@@ -22,30 +23,35 @@
   };
 
   const editAuthor = (id) => {
-    router.push({ name: 'AuthorCreateEdit', params: { id } });
+    router.push({ name: 'editAuthor', params: { id } });
   };
 
   const confirmDelete = (author) => {
     if (confirm(`¿Estás seguro de que deseas eliminar a ${author.name}?`)) {
-      deleteAuthor(author.id);
+      deleteAuthor(author.id, author.image_path);
     }
   };
 
-  const deleteAuthor = async (id) => {
-    try {
-      await authorStore.delete(id);
-    } catch (error) {
-      console.error('Error al eliminar el autor:', error);
-    }
-  };
+  const deleteAuthor = async (id, image_path) => {
+     try {
+      if(image_path) {
+        await useFileStore().deleteImage(image_path)
+      }
+      const response = await authorStore.delete(id);
+       snackbarStore.success(response)
+     } catch (error) {
+       snackbarStore.error('Error al eliminar el autor')
+     }
+   };
 
   onMounted(async () => {
     await authorStore.getAll();
     authors.value = authors.value.map(author => ({
       ...author,
       birth_date: new Date(author.birth_date).toLocaleDateString(),
-      image_path: useFileStore().downloadImage(author.image_path)
+      full_path: author.image_path ? useFileStore().downloadImage(author.image_path) : null
     }));
+    console.log(authors.value)
 });
 
 </script>
@@ -79,7 +85,7 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.image_path" 
+        <v-img :src="item.full_path" 
         max-height="100" max-width="100">
       </v-img>
       </template>
