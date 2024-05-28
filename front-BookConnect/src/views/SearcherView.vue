@@ -1,15 +1,11 @@
 <script setup>
 import Searcher from '../components/SearchTool.vue';
-import Results from '../components/Results.vue';
   </script>
 
   <template>
   <div class="container">
     <div class="search-container">
       <Searcher></Searcher>
-    </div>
-    <div class="results-container">
-      <Results></Results>
     </div>
   </div>
 </template>
@@ -26,8 +22,8 @@ import Results from '../components/Results.vue';
   font-style: normal;
 }
 
-.search-container, .results-container {
-  margin-top: 20px; /* Agrega un poco de separación entre los contenedores */
+.search-container {
+  margin-top: 20px;
   width: 800px;
 }
 </style>

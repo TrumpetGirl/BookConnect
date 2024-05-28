@@ -1,4 +1,3 @@
-export {default as Results} from './Results.vue'
 export {default as SearchTool} from './SearchTool.vue'
 export {default as TopMenu } from './TopMenu.vue'
 export {default as TopMenuSignIn } from './TopMenuSignIn.vue'

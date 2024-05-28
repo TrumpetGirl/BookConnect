@@ -15,9 +15,22 @@ export const useGenreStore = defineStore({
         },
         async getAll() {
             try {
-                this.genres = await axios.get(baseUrl); 
+                const response = await axios.get(baseUrl);
+                this.genres = response.data;
+                return response.data; 
             } catch (error) {
-                console.log(error)
+                console.log(error);
+                return []; 
+            }
+        },
+        async getGenreNames() {
+            try {
+                const response = await axios.get(`${baseUrl}/names`);
+                this.genreNames = response.data;
+                return response.data; 
+            } catch (error) {
+                console.log(error);
+                return []; 
             }
         },
         async getById(id) {

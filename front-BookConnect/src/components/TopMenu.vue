@@ -14,7 +14,7 @@
 
 <style scoped>
   .top-menu {
-    background-color: #bdb9b9; 
+    background: linear-gradient(to bottom, #bdb9b9, #8e8c8c);
     color: white;
     font-family: "Poetsen One", sans-serif;
     font-weight: 400;

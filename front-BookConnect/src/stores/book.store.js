@@ -22,9 +22,9 @@ export const useBookStore = defineStore({
         },
         async getById(id) {
             try {
-                this.book = await axios.get(`${baseUrl}/${id}`);
+                this.book = (await axios.get(`${baseUrl}/${id}`)).data;
             } catch (error) {
-                console.log(error)
+                throw new Error(error.response.data.message || 'No se ha podido recuperar el libro');
             }
         },
         async update(id, params) {

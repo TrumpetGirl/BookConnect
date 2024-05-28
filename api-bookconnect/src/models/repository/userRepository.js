@@ -8,10 +8,8 @@ const prisma = new PrismaClient();
 export const findAllUsers = async () => {
   try {
     const users = await prisma.user.findMany();
-    
     const arrUsers = users.map(user => new User(user.id, user.username, user.password, 
       user.birth_date, user.role, user.image_path));
-
     return arrUsers;
   } catch (error) {
     console.error('Error al obtener todos los autores:', error);

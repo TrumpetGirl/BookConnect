@@ -26,6 +26,10 @@
   const toggleDropdownMenu = () => {
     showDropdownMenu.value = !showDropdownMenu.value;
   };
+
+  const closeDropdownMenu = () => {
+    showDropdownMenu.value = false;
+  };
 </script>
 
 <template>
@@ -41,7 +45,7 @@
         <img class="logout-icon" src="../assets/images/logout-icon.png" @click="authStore.logout()" title="Cerrar sesión">
       </div>
     </div>
-    <div v-if="showDropdownMenu" class="dropdown-menu">
+    <div v-if="showDropdownMenu" class="dropdown-menu" @click="closeDropdownMenu">
       <ul>
         <li v-if="!authStore.isAdmin()" @click="router.push('/search');">Buscador</li>
         <li v-if="!authStore.isAdmin()">Mi colección</li>
@@ -58,7 +62,7 @@
 
 <style scoped>
 .top-menu {
-  background-color: #bdb9b9; 
+  background: linear-gradient(to bottom, #bdb9b9, #8e8c8c);
   color: white;
   font-family: "Poetsen One", sans-serif;
   font-weight: 400;

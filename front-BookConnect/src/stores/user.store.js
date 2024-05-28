@@ -21,7 +21,7 @@ export const useUserStore = defineStore({
         },
         async getAll() {
             try {
-                this.users = await axios.get(baseUrl); 
+                this.users = (await axios.get(baseUrl)).data; 
             } catch (error) {
                 console.log(error)
             }
@@ -58,19 +58,14 @@ export const useUserStore = defineStore({
             }
         },
         async delete(id) {
-            // add isDeleting prop to user being deleted
-            this.users.find(x => x.id === id).isDeleting = true;
-
-            await fetchWrapper.delete(`${baseUrl}/${id}`);
-
-            // remove user from list after deleted
-            this.users = this.users.filter(x => x.id !== id);
-
-            // auto logout if the logged in user deleted their own record
-            const authStore = useAuthStore();
-            if (id === authStore.user.id) {
-                authStore.logout();
+            try {
+                await axios.delete(`${baseUrl}/${id}`);
+                this.users = this.users.filter(user => user.id !== id); 
+                return 'El usuario ha sido eliminado'
+            } catch (error) {
+                console.log(error);
             }
         }
+  
     }
 });

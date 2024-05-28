@@ -7,11 +7,25 @@ const prisma = new PrismaClient();
 export const findAllGenres = async () => {
     try {
       const genres = await prisma.genre.findMany();
-      // Mapea los libros de Prisma al modelo de género
       const arrGenres = genres.map(genre => new Genre(genre.id, genre.name));
       return arrGenres;
     } catch (error) {
-      console.error('Error al obtener todos los autores:', error);
-      return []; // Devuelve un array vacío en caso de error
+      console.error('Error al obtener todos los géneros:', error);
+      return []; 
     }
   };
+
+// OBTENER TODOS LOS NOMBRES DE LOS GÉNEROS
+export const findAllGenreNames = async () => {
+  try {
+      const genres = await prisma.genre.findMany({
+          select: {
+              name: true
+          }
+      });
+      return genres.map(genre => genre.name);
+  } catch (error) {
+      console.error('Error al obtener los nombres de los géneros:', error);
+      return []; 
+  }
+};

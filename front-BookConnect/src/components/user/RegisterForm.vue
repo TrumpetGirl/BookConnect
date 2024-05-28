@@ -1,4 +1,6 @@
 <script setup>
+  import * as validation from '../../utils/validations';
+  import * as constant from '../../utils/constants';
   import { RouterLink } from 'vue-router';
   import { ref, watch, computed } from 'vue';
   import { useUserStore, useSnackbarStore } from '@/stores';
@@ -11,15 +13,13 @@
   });
 
   const confirmPassword = ref('');
-  const fNac = ref(new Date().toLocaleDateString());
-
   let usernameError = false;
   let usernameMessage = '';
   
   const userStore = useUserStore();
   const snackbarStore = useSnackbarStore();
 
-  watch(fNac, (newVal) => {
+  watch(constant.fNac, (newVal) => {
     if (newVal) {
       user.value.birth_date = newVal;
     }
@@ -27,10 +27,10 @@
 
   const fNacFormatted = computed({
     get: () => {
-      return fNac.value;
+      return constant.fNac.value;
     },
     set: (val) => {
-      fNac.value = val;
+      constant.fNac.value = val;
     }
   });
 
@@ -54,24 +54,6 @@
     }
   };
 
-  const validatePassword = (password) => {
-    const hasNumber = /[0-9]/.test(password);
-    const hasLetter = /[a-zA-Z]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return password.length >= 10 && hasNumber && hasLetter && hasSpecialChar;
-  };
-
-  const calculateAge = (birthDate) => {
-    const today = new Date();
-    const birthDateObj = new Date(birthDate);
-    let age = today.getFullYear() - birthDateObj.getFullYear();
-    const monthDiff = today.getMonth() - birthDateObj.getMonth();
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
-    age--;
-  }
-  return age;
-};
-
   const handleRegister = async () => {
     try {
       
@@ -81,14 +63,13 @@
         return;
       }
 
-      const age = calculateAge(user.value.birth_date);
+      const age = validation.calculateAge(user.value.birth_date);
         if (age < 5) {
           snackbarStore.error('Revise su fecha de nacimiento');
           return;
       }
 
-      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-      if (!emailPattern.test(user.value.email)) {
+      if (!constant.emailPattern.test(user.value.email)) {
         snackbarStore.error('Correo electrónico no válido')
         return;
       }
@@ -98,7 +79,7 @@
       return;
       }
 
-    if (!validatePassword(user.value.password)) {
+    if (!validation.validatePassword(user.value.password)) {
       snackbarStore.error('La contraseña debe tener al menos 10 caracteres de longitud y, al menos, 1 número, 1 letra y 1 caracter de tipo especial');
       return;
       }

@@ -7,13 +7,27 @@ const prisma = new PrismaClient();
 export const findAllAuthors = async () => {
   try {
     const authors = await prisma.author.findMany();
-    // Mapea los libros de Prisma al modelo de autor
     const arrAuthors = authors.map(author => new Author(author.id, author.name, author.birth_date, 
     author.nationality, author.image_path));
     return arrAuthors;
   } catch (error) {
     console.error('Error al obtener todos los autores:', error);
-    return []; // Devuelve un array vacío en caso de error
+    return []; 
+  }
+};
+
+// OBTENER TODOS LOS NOMBRES DE LOS AUTORES
+export const findAllAuthorNames = async () => {
+  try {
+      const authors = await prisma.author.findMany({
+          select: {
+              name: true
+          }
+      });
+      return authors.map(author => author.name);
+  } catch (error) {
+      console.error('Error al obtener los nombres de los autores:', error);
+      return []; 
   }
 };
 

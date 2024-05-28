@@ -25,6 +25,16 @@ export const useAuthorStore = defineStore({
                 console.log(error)
             }
         },
+        async getAuthorNames() {
+            try {
+                const response = await axios.get(`${baseUrl}/names`);
+                this.authorNames = response.data;
+                return response.data; 
+            } catch (error) {
+                console.log(error);
+                return []; 
+            }
+        },
         async getById(id) {
             try {
                 this.author = (await axios.get(`${baseUrl}/${id}`)).data;

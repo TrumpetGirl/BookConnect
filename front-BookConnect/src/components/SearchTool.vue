@@ -6,7 +6,6 @@
   const books = ref([]);
   const filteredBooks = ref([]);
 
-  // Función para buscar libros al cambiar el término de búsqueda
   const searchBooks = async () => {
     if (!searchQuery.value.trim()) {
       filteredBooks.value = [];
@@ -21,14 +20,12 @@
     }
   };
 
-  // Función para filtrar libros según el término de búsqueda
   const filterBooks = () => {
     filteredBooks.value = books.value.filter(book =>
       book.title.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
   };
 
-  // Observador para llamar a la función de búsqueda al cambiar el término de búsqueda
   watch(searchQuery, searchBooks);
 </script>
 

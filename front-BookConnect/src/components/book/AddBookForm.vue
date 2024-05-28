@@ -1,127 +1,164 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
-import { useBookStore } from '@/stores/book.store.js';
-import { useAuthorStore } from '@/stores/author.store.js';
-import { useGenreStore } from '@/stores/genre.store.js';
-import { useDate } from 'vuetify';
-import { useFileStore } from '@/stores/file.store.js'
+  import * as constant from '../../utils/constants';
+  import { useRoute, useRouter } from 'vue-router';
+  import { ref, watch, computed, onMounted } from 'vue';
+  import { storeToRefs } from 'pinia';
 
-const adapter = useDate();
+  import { useAuthorStore, useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
 
-const book = ref({
-  title: '',
-  isbn: '',
-  publication_year: new Date().getFullYear(),
-  author: '',
-  genre: '',
-  synopsis: '',
-  imageExtension: ''
-});
+ const route = useRoute();
+ const router = useRouter();
+ const authorStore = useAuthorStore();
+ const fileStore = useFileStore();
+ const snackbarStore = useSnackbarStore();
+ const bookStore = useBookStore();
+ const authStore = useAuthStore();
+ const genreStore = useGenreStore();
 
-const authors = ref([]);
-const genres = ref([]);
+  const id = route.params.id;
+  const { book } = storeToRefs(bookStore);
 
-let image = ref(new File([""], "filename"));
-const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    image.value = file;
+  let title = 'Añadir libro';
+  const genreNames = ref([]);
+  let authors = [];
+  let selectedGenre = null;
+  let selectedAuthor = null;
+
+  if (id) {
+      title = 'Editar libro';
+      onMounted(async () => {
+        await bookStore.getById(id);
+        selectedAuthor = book.author.id;
+      }) 
   }
-};
 
-const handleSubmit = async () => {
-  try {
-    const formData = new FormData();
-    book.value.imageExtension = image.value.name.split('.').pop();
+  const filteredAuthors = computed(() => {
+    return authors.filter(author => author.id === selectedAuthor);
+  });
 
-    const response = await useBookStore.create(book.value);
-    if (response && response.image_path) {
-      formData.append('path', response.image_path);
-      formData.append('file', image.value);
-      await useFileStore.uploadImage(formData);
+  watch(selectedAuthor, () => {
+    book.author = selectedAuthor ? authors.find(author => author.id === selectedAuthor) : null;
+  });
+
+  onMounted(async () => {
+    genreNames.value = await genreStore.getGenreNames();
+    authors = await authorStore.getAll();
+  });
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      book.cover = file;
     }
-    cleanForm();
-  } catch (error) {
-    console.error('Error al agregar libro:', error);
-  }
-};
+  };
 
-const cleanForm = () => {
-  book.value.title = '';
-  book.value.isbn = '';
-  book.value.publication_year = new Date().getFullYear();
-  book.value.author = '';
-  book.value.genre = '';
-  book.value.synopsis = '';
-  image.value = new File([""], "filename");
-};
+  const handleSubmit = async () => {
+    try {
+      let response;
+      book.genre = selectedGenre;
+      if (id) {
+        response = await bookStore.update(id, book);
+      } else {
+        response = await bookStore.create(book);
+      }
 
-const fetchInitialData = async () => {
-  try {
-    authors.value = await useAuthorStore.getAll();
-    genres.value = await useGenreStore.getAll();
-  } catch (error) {
-    console.error('Error al obtener datos iniciales:', error);
-  }
-};
+      if (response.success && book.cover) {
+        const formData = new FormData();
+        formData.append('file', book.cover);
+        formData.append('path', response.book.cover_path);
+        await fileStore.uploadImage(formData);
+      }
 
-onMounted(fetchInitialData);
+      snackbarStore.success(response.message);
+      cleanForm();
+    } catch (error) {
+      console.error('Error al agregar libro:', error);
+      snackbarStore.error('Error al agregar libro');
+    }
+  };
 
+  const cleanForm = () => {
+    book.value = {};
+    selectedAuthor = null;
+  };
 </script>
 
 <template>
   <div class="container">
-    <div class="left-pane">
-      <fieldset class="register-fieldset">
-        <legend>Añadir Libro</legend>
-        <v-form @submit.prevent="handleSubmit" class="register-form">
-          <v-text-field v-model="book.title" label="Título" required></v-text-field>
-          <v-text-field v-model="book.isbn" label="ISBN" required></v-text-field>
-          <v-text-field v-model="book.publication_year" label="Año de Publicación" required></v-text-field>
-          <v-autocomplete
-            v-model="book.author"
-            :items="authors"
-            item-text="name"
-            item-value="id"
-            label="Autor"
-            required
-          ></v-autocomplete>
-          <v-select
-            v-model="book.genre"
-            :items="genres"
-            item-text="name"
-            item-value="id"
-            label="Género"
-            required
-          ></v-select>
-          <v-textarea v-model="book.synopsis" label="Sinopsis" required></v-textarea>
-          <input type="file" @change="handleFileChange" required />
-          <v-row>
-            <v-col cols="6">
-              <v-btn color="#d3d3d3" @click="cleanForm" block>Cancelar</v-btn>
-            </v-col>
-            <v-col cols="6">
-              <v-btn type="submit" color="#ff7eb9" block>Enviar</v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
-      </fieldset>
-    </div>
+    <fieldset class="register-fieldset">
+      <legend>{{ title }}</legend>
+      <v-form @submit.prevent="handleSubmit" class="register-form">
+
+        <p>Portada: <input type="file" @change="handleFileChange" class="mb-5" accept="image/*"/></p>
+        
+        <v-text-field 
+        v-model="book.title" 
+        label="Título" 
+        required>
+        </v-text-field>
+
+        <v-text-field 
+        v-model="book.isbn" 
+        label="ISBN" 
+        required>
+        </v-text-field>
+
+        <v-text-field 
+        v-model="book.year" 
+        label="Año de publicación" 
+        type="number" 
+        required>
+        </v-text-field>
+
+        <v-textarea 
+        v-model="book.synopsis" 
+        label="Sinopsis" 
+        required>
+        </v-textarea>
+
+        <v-select 
+        v-model="selectedGenre" 
+        :items="genreNames" 
+        label="Género" 
+        required>
+        </v-select>
+
+        <v-autocomplete 
+        v-model="selectedAuthor" 
+        :items="filteredAuthors" 
+        label="Autor" 
+        item-text="name" 
+        item-value="id" 
+        @change="selectAuthor">
+        </v-autocomplete>
+
+        <v-row>
+          <v-col cols="6">
+            <v-btn color="#d3d3d3" @click="cleanForm" block>Cancelar</v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn type="submit" color="#ff7eb9" block>Enviar</v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </fieldset>
+    <v-row>
+      <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
+        <v-btn @click="() => router.push('/book')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+          Volver al listado
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
+
+
 <style scoped>
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.left-pane {
   width: 80%;
   max-width: 500px;
-  margin-top: 100px;
+  margin-top: 50px;
 }
 
 .register-fieldset {

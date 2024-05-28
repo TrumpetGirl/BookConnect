@@ -1,17 +1,13 @@
 <script setup>
-import { AddBookForm } from '@/components/book'
+import  AddBookForm  from '@/components/book/AddBookForm.vue'
 </script>
 
 <template>
   <div class="container">
     <AddBookForm />
   </div>
-   
-
 </template>
 
 <style scoped>
-.container {
-    margin-top: 30px;
-}
+
 </style>
