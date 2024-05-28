@@ -1,71 +1,70 @@
 <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useAuthorStore, useFileStore, useSnackbarStore } from '@/stores';
+  import { useUserStore, useFileStore, useSnackbarStore } from '@/stores';
   import { storeToRefs } from 'pinia';
 
   const search = ref('');
   const headers = ref([
-    { title: 'Nombre', value: 'name' },
+    { title: 'Nombre de usuario', value: 'username' },
+    { title: 'Correo electrónico', value: 'email' },
     { title: 'Fecha de Nacimiento', value: 'birth_date' },
-    { title: 'Nacionalidad', value: 'nationality' },
     { title: 'Imagen', value: 'image_path' },
     { title: 'Acciones', value: 'actions', sortable: false }
   ]);
 
-  const authorStore = useAuthorStore();
+  const userStore = useUserStore();
   const snackbarStore = useSnackbarStore();
-  const { authors } = storeToRefs(authorStore);
+  const { users } = storeToRefs(userStore);
   const router = useRouter();
 
-  const addAuthor = () => {
-    router.push('/author/create');
+  const addUser = () => {
+    router.push('/user/create');
   };
 
-  const editAuthor = (id) => {
-    router.push({ name: 'editAuthor', params: { id } });
+  const editUser = (id) => {
+    router.push({ name: 'editUser', params: { id } });
   };
 
-  const viewAuthor = (author) => {
-    router.push({ name: 'authorInfo', params: { id: author.id } });
+  const viewUser = (author) => {
+    router.push({ name: 'userInfo', params: { id: author.id } });
   };
 
-  const confirmDelete = (author) => {
-    if (confirm(`¿Estás seguro de que deseas eliminar a ${author.name}?`)) {
-      deleteAuthor(author.id, author.image_path);
+  const confirmDelete = (user) => {
+    if (confirm(`¿Estás seguro de que deseas eliminar a ${user.name}?`)) {
+      deleteUser(user.id, user.image_path);
     }
   };
 
-  const deleteAuthor = async (id, image_path) => {
+  const deleteUser = async (id, image_path) => {
      try {
       console.log(image_path)
       if(image_path) {
         await useFileStore().deleteImage(image_path);
       }
-      const response = await authorStore.delete(id);
+      const response = await userStore.delete(id);
       snackbarStore.success(response);
      } catch (error) {
-       snackbarStore.error('Error al eliminar el autor');
+       snackbarStore.error('Error al eliminar el usuario');
      }
    };
 
   onMounted(async () => {
-    await authorStore.getAll();
-    authors.value = authors.value.map(author => ({
-      ...author,
-      birth_date: new Date(author.birth_date).toLocaleDateString(),
-      full_path: author.image_path ? useFileStore().downloadImage(author.image_path) : null
+    await userStore.getAll();
+    users.value = users.value.map(user => ({
+      ...user,
+      birth_date: new Date(user.birth_date).toLocaleDateString(),
+      full_path: user.image_path ? useFileStore().downloadImage(user.image_path) : null
     }));
-    console.log(authors.value);
   });
 </script>
 
 <template>
   <v-container>
     <div class="header-container custom-width mb-5">
-      <h2 class="title">Autores</h2>
-      <v-btn color="success" @click="addAuthor" prepend-icon="mdi-plus" variant="outlined" rounded="xl" class="add-author-button">
-        Añadir Autor
+      <h2 class="title">Usuarios</h2>
+      <v-btn color="success" @click="addUser" prepend-icon="mdi-plus" variant="outlined" rounded="xl" class="add-user-button">
+        Añadir Usuario
       </v-btn>
     </div>
 
@@ -81,10 +80,10 @@
 
     <v-data-table
       :headers="headers"
-      :items="authors"
+      :items="users"
       :search="search"
       class="custom-data-table"
-      @click:row="viewAuthor"
+      @click:row="viewUser"
     >
       <template v-slot:column.header="{ column }">
         <th class="custom-header">{{ column.text }}</th>
@@ -99,7 +98,7 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-icon class="mr-2" @click="() => {editAuthor(item.id)}">
+        <v-icon class="mr-2" @click="() => {editUser(item.id)}">
           mdi-pencil
         </v-icon>
         <v-icon class="ml-2" @click="confirmDelete(item)">
@@ -121,7 +120,7 @@
     margin: 0;
   }
 
-  .add-author-button {
+  .add-user-button {
     margin-left: 20px;
   }
 

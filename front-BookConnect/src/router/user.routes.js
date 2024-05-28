@@ -7,7 +7,7 @@ export default {
         {path: '', component: UserList, meta: {requiresAdmin: true}},
         {path: 'login', component: Login},
         {path: 'register', component: Register},
-        {path: 'create', component: UserCreateEdit, meta: {requiresAdmin: true}},
-        {path: 'edit/:id(\\d+)', component: UserCreateEdit, meta: {requiresAdmin: true}}
+        {path: 'create', component: UserCreateEdit},
+        {path: 'edit/:id(\\d+)', name: 'editUser', component: UserCreateEdit, meta: {requiresAdmin: true}}
     ]
 }

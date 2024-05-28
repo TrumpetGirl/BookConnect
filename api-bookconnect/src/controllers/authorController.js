@@ -21,6 +21,28 @@ export const getAuthorCount = async (req, res) => {
   }
 };
 
+// OBTENER AUTORES POR NOMBRE
+export const getAuthorsByName = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const author = await findAuthorsByName(name);
+    res.json(author);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// OBTENER AUTOR POR ID
+export const getAuthorById = async (req, res) => {
+  try {
+    const id  = parseInt(req.params.id);
+    const author = await findAuthorById(id);
+    res.json(author);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // AÑADIR UN NUEVO AUTOR
 export const createAuthor = async (req, res) => {
   const { name, birth_date, nationality, imageExtension } = req.body;
@@ -55,25 +77,5 @@ export const removeAuthor = async (req, res) => {
   }
 };
 
-// OBTENER AUTORES POR NOMBRE
-export const getAuthorsByName = async (req, res) => {
-  try {
-    const { name } = req.body;
-    const author = await findAuthorsByName(name);
-    res.json(author);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
-// OBTENER AUTOR POR ID
-export const getAuthorById = async (req, res) => {
-  try {
-    const id  = parseInt(req.params.id);
-    const author = await findAuthorById(id);
-    res.json(author);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 

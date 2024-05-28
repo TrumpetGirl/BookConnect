@@ -1,7 +1,7 @@
 <script setup>
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
-  import { useAuthorStore, useFileStore, useSnackbarStore } from '@/stores';
+  import { useBookStore, useFileStore, useSnackbarStore } from '@/stores';
   import { storeToRefs } from 'pinia';
 
   const search = ref('');

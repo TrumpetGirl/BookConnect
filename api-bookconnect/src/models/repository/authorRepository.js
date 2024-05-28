@@ -28,6 +28,26 @@ export const countAuthors = async () => {
   }
 };
 
+// OBTENER AUTORES POR NOMBRE
+export const findAuthorsByName = async (name) => {
+  try {
+    return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
+  } catch (error) {
+    console.error('Error obteniendo autor por nombre:', error);
+    throw error;
+  }
+};
+
+// OBTENER AUTOR POR ID
+export const findAuthorById = async (id) => {
+  try {
+    return await prisma.author.findUnique({ where: { id: id } });
+  } catch (error) {
+    console.error('Error obteniendo autor por id:', error);
+    throw error;
+  }
+};
+
 
 // CREAR AUTOR
 export async function addAuthor(name, birthDate, nationality, imageExtension) {
@@ -95,24 +115,5 @@ export const deleteAuthor = async (id) => {
 };
 
 
-// OBTENER AUTORES POR NOMBRE
-export const findAuthorsByName = async (name) => {
-  try {
-    return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
-  } catch (error) {
-    console.error('Error obteniendo autor por nombre:', error);
-    throw error;
-  }
-};
 
-// OBTENER AUTOR POR ID
-export const findAuthorById = async (id) => {
-  try {
-
-    return await prisma.author.findUnique({ where: { id: id } });
-  } catch (error) {
-    console.error('Error obteniendo autor por id:', error);
-    throw error;
-  }
-};
 
