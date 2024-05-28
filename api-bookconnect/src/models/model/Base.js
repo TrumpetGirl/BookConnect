@@ -1,4 +1,4 @@
-export default class Author {
+export default class Base {
 
     constructor(id, description) {
       this.id = id;

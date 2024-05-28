@@ -6,7 +6,7 @@ const baseUrl = `${import.meta.env.VITE_API_URL}/book`;
 export const useBookStore = defineStore({
     id: 'book',
     state: () => ({
-        books: {},
+        books: [],
         book: {}
     }),
     actions: {
@@ -15,7 +15,7 @@ export const useBookStore = defineStore({
         },
         async getAll() {
             try {
-                this.books = await axios.get(baseUrl); 
+                this.books = (await axios.get(baseUrl)).data; 
             } catch (error) {
                 console.log(error)
             }

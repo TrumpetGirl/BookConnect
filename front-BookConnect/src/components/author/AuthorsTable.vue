@@ -26,8 +26,8 @@
     router.push({ name: 'editAuthor', params: { id } });
   };
 
-  const viewAuthor = (author) => {
-    router.push({ name: 'authorInfo', params: { id: author.id } });
+  const viewAuthor = (id) => {
+    router.push({ name: 'authorInfo', params: { id } });
   };
 
   const confirmDelete = (author) => {
@@ -84,10 +84,13 @@
       :items="authors"
       :search="search"
       class="custom-data-table"
-      @click:row="viewAuthor"
     >
       <template v-slot:column.header="{ column }">
         <th class="custom-header">{{ column.text }}</th>
+      </template>
+
+      <template v-slot:item.name="{ item }">
+        <span @click="viewAuthor(item.id)">{{ item.name}}</span>
       </template>
 
       <template v-slot:item.birth_date="{ item }">
@@ -99,10 +102,10 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-icon class="mr-2" @click="() => {editAuthor(item.id)}">
+        <v-icon class="mr-2" @click="editAuthor(item.id)">
           mdi-pencil
         </v-icon>
-        <v-icon class="ml-2" @click="confirmDelete(item)">
+        <v-icon v-if="item.books === 0" class="ml-2" @click="confirmDelete(item)">
           mdi-delete
         </v-icon>
       </template>

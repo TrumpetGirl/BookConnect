@@ -6,9 +6,16 @@ const prisma = new PrismaClient();
 // OBTENER TODOS LOS AUTORES
 export const findAllAuthors = async () => {
   try {
-    const authors = await prisma.author.findMany();
+    const authors = await prisma.author.findMany({
+      include: {
+        _count:{
+          select:{book_book_authorToauthor: true}
+        }
+      }
+    });
+    console.log(authors)
     const arrAuthors = authors.map(author => new Author(author.id, author.name, author.birth_date, 
-    author.nationality, author.image_path));
+    author.nationality, author.image_path, author._count.book_book_authorToauthor));
     return arrAuthors;
   } catch (error) {
     console.error('Error al obtener todos los autores:', error);

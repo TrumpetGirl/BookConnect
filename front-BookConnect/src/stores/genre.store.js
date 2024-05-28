@@ -6,8 +6,9 @@ const baseUrl = `${import.meta.env.VITE_API_URL}/genre`;
 export const useGenreStore = defineStore({
     id: 'genre',
     state: () => ({
-        genres: {},
-        genre: {}
+        genres: [],
+        genre: {},
+        genreNames: []
     }),
     actions: {
         async create(genre) {
@@ -17,20 +18,16 @@ export const useGenreStore = defineStore({
             try {
                 const response = await axios.get(baseUrl);
                 this.genres = response.data;
-                return response.data; 
             } catch (error) {
                 console.log(error);
-                return []; 
             }
         },
-        async getGenreNames() {
+        async getAllGenresSelector() {
             try {
                 const response = await axios.get(`${baseUrl}/names`);
                 this.genreNames = response.data;
-                return response.data; 
             } catch (error) {
                 console.log(error);
-                return []; 
             }
         },
         async getById(id) {

@@ -6,7 +6,7 @@ const baseUrl = `${import.meta.env.VITE_API_URL}/user`;
 export const useUserStore = defineStore({
     id: 'user',
     state: () => ({
-        users: {},
+        users: [],
         user: {}
     }),
     actions: {

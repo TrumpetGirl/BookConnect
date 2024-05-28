@@ -1,4 +1,4 @@
-import { findAllGenres, findAllGenreNames } from '../models/repository/genreRepository.js'
+import { findAllGenres, findAllGenresSelector } from '../models/repository/genreRepository.js'
 
 // OBTENER TODOS LOS GÉNEROS
 export const getGenres = async (req, res) => {
@@ -11,9 +11,9 @@ export const getGenres = async (req, res) => {
   };
 
 // OBTENER EL NOMBRE DE LOS GÉNEROS
-export const getGenreNames = async (req, res) => {
+export const getGenresSelector = async (req, res) => {
   try {
-      const genreNames = await findAllGenreNames();
+      const genreNames = await findAllGenresSelector();
       res.status(200).json(genreNames);
   } catch (error) {
       res.status(500).json({ error: 'Error al obtener los nombres de los géneros' });

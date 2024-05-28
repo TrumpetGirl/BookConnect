@@ -19,7 +19,7 @@
   const { book } = storeToRefs(bookStore);
 
   let title = 'Añadir libro';
-  const genreNames = ref([]);
+  const { genreNames } = storeToRefs(genreStore);
   let authors = [];
   let selectedGenre = null;
   let selectedAuthor = null;
@@ -41,8 +41,9 @@
   });
 
   onMounted(async () => {
-    genreNames.value = await genreStore.getGenreNames();
+    await genreStore.getAllGenresSelector();
     authors = await authorStore.getAll();
+    console.log(genreNames)
   });
 
   const handleFileChange = (event) => {
@@ -118,7 +119,9 @@
 
         <v-select 
         v-model="selectedGenre" 
-        :items="genreNames" 
+        :items="genreNames"
+        item-title="description"
+        item-value="id" 
         label="Género" 
         required>
         </v-select>

@@ -1,4 +1,5 @@
 import Genre  from '../model/Genre.js'
+import Base  from '../model/Base.js'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -16,14 +17,18 @@ export const findAllGenres = async () => {
   };
 
 // OBTENER TODOS LOS NOMBRES DE LOS GÉNEROS
-export const findAllGenreNames = async () => {
+export const findAllGenresSelector = async () => {
   try {
       const genres = await prisma.genre.findMany({
-          select: {
-              name: true
-          }
+        select: {
+          id: true,
+          name: true
+        },
+        orderBy:[
+          {name:'asc'}
+        ]
       });
-      return genres.map(genre => genre.name);
+      return genres.map(genre => new Base (genre.id, genre.name));
   } catch (error) {
       console.error('Error al obtener los nombres de los géneros:', error);
       return []; 

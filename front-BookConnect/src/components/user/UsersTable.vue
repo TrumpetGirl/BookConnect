@@ -26,8 +26,8 @@
     router.push({ name: 'editUser', params: { id } });
   };
 
-  const viewUser = (author) => {
-    router.push({ name: 'userInfo', params: { id: author.id } });
+  const viewUser = (id) => {
+    router.push({ name: 'userInfo', params: { id } });
   };
 
   const confirmDelete = (user) => {
