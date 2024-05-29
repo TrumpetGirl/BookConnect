@@ -7,14 +7,28 @@ const prisma = new PrismaClient()
 // OBTENER TODOS LOS LIBROS
 export const findAllBooks = async () => {
   try {
-    const books = await prisma.book.findMany();
-    // Mapea los libros de Prisma al modelo de libro
+    const books = await prisma.book.findMany({
+      include: {
+        author_book_authorToauthor: {
+          select: {
+            name: true,
+            id: true
+          }
+        },
+        genre_book_genreTogenre: {
+          select: {
+            name: true,
+            id: true
+          }
+        }
+      }
+    });
     const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
       book.publication_year, book.author, book.genre, book.synopsis, book.image_path));
     return arrBooks;
   } catch (error) {
     console.error('Error al obtener todos los libros:', error);
-    return []; // Devuelve un array vacío en caso de error
+    return []; 
   }
 };
 

@@ -87,8 +87,6 @@
       :search="search"
       class="custom-data-table"
     >
-
-
       <template v-slot:item.title="{ item }">
         <span class="book-title" @click="viewBook(item.id)">{{ item.title }}</span>
       </template>

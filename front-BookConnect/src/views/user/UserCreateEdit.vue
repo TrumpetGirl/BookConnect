@@ -9,5 +9,7 @@ import AddUser from '@/components/user/AddUserForm.vue'
 </template>
 
 <style scoped>
-
+.container {
+  margin: auto;
+}
 </style>

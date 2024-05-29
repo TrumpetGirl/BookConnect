@@ -80,11 +80,9 @@
   };
 
   const cleanForm = () => {
-    user.value.username = ''
+    user.value = {}
     user.value.birth_date = new Date().toLocaleDateString()
     fNac.value = new Date().toLocaleDateString()
-    user.value.email = ''
-    user.value.password = ''
     confirmPassword.value = ''
   };
 </script>

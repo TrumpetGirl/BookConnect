@@ -31,7 +31,7 @@
   };
 
   const confirmDelete = (user) => {
-    if (confirm(`¿Estás seguro de que deseas eliminar a ${user.name}?`)) {
+    if (confirm(`¿Estás seguro de que deseas eliminar a ${user.username}?`)) {
       deleteUser(user.id, user.image_path);
     }
   };
@@ -73,7 +73,7 @@
 
     <v-text-field
       v-model="search"
-      label="Search"
+      label="Buscar"
       prepend-inner-icon="mdi-magnify"
       variant="outlined"
       hide-details
@@ -86,10 +86,13 @@
       :items="users"
       :search="search"
       class="custom-data-table"
-      @click:row="viewUser"
     >
       <template v-slot:column.header="{ column }">
         <th class="custom-header">{{ column.text }}</th>
+      </template>
+
+      <template v-slot:item.username="{ item }">
+        <span class="user-name" @click="viewUser(item.id)">{{ item.username}}</span>
       </template>
 
       <template v-slot:item.birth_date="{ item }">
@@ -140,5 +143,15 @@
 
   .custom-header {
     background-color: #f2f2f2 !important; 
+  }
+
+  .user-name {
+    text-decoration: underline;
+    cursor: pointer;
+    color: rgb(114, 114, 221);
+  }
+
+  .user-name:hover {
+    color: darkblue;
   }
 </style>

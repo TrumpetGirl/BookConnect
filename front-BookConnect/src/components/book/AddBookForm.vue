@@ -43,7 +43,6 @@
   onMounted(async () => {
     await genreStore.getAllGenresSelector();
     authors = await authorStore.getAll();
-    console.log(genreNames)
   });
 
   const handleFileChange = (event) => {
@@ -118,11 +117,11 @@
         </v-textarea>
 
         <v-select 
-        v-model="selectedGenre" 
-        :items="genreNames"
+        v-model="selectedRole" 
+        :items="roleNames"
         item-title="description"
         item-value="id" 
-        label="Género" 
+        label="Tipo de rol" 
         required>
         </v-select>
 

@@ -2,7 +2,7 @@
 import { ref, watch, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useUserStore, useFileStore, useSnackbarStore, useAuthStore  } from '@/stores';
+import { useUserStore, useFileStore, useSnackbarStore, useAuthStore, useRoleStore  } from '@/stores';
 
 const fNac = ref(new Date().toLocaleDateString());
 
@@ -12,9 +12,15 @@ const userStore = useUserStore();
 const fileStore = useFileStore();
 const snackbarStore = useSnackbarStore();
 const authStore = useAuthStore();
+const roleStore = useRoleStore();
 
 const id = route.params.id;
 const { user } = storeToRefs(userStore);
+const { roleNames } = storeToRefs(roleStore);
+
+const confirmPassword = ref('');
+let usernameError = false;
+let usernameMessage = '';
 
 let title = 'Añadir usario';
 
@@ -23,10 +29,6 @@ if (id) {
     title = 'Editar usuario';
     onMounted(async ()=>{
       await userStore.getById(id);
-      // fNac.value = new Date(author.value.birth_date).toLocaleDateString();
-      // fNacFormatted.set(new Date(author.value.birth_date).toLocaleDateString())
-      console.log('este es el console de la tienda de libros ' + fNac.value)
-      console.log('este es el console del author.value.birth_date ' + user.value.birth_date)
     }) 
 } else {
   user.value = {}
@@ -59,25 +61,25 @@ const handleFileChange = (event) => {
   }
 };
 
-const checkUsernameAvailability = async () => {
-    console.log(user.value.username)
-    if (user.value.username) {
-      try {
-        const response = await userStore.existsUsername( user.value.username );
-        if (response.data === user.value.username) {
-          usernameError = true;
-          usernameMessage = 'El usuario ya existe';
-        } else {
-          usernameError = false;
-          usernameMessage = 'El usuario está disponible';
-        }
-      } catch (error) {
-        console.error('Error al verificar la disponibilidad del usuario:', error);
-        usernameError = true;
-        usernameMessage = 'Error al verificar la disponibilidad del usuario';
-      }
-    }
-  };
+// const checkUsernameAvailability = async () => {
+//     console.log(user.value.username)
+//     if (user.value.username) {
+//       try {
+//         const response = await userStore.existsUsername( user.value.username );
+//         if (response.data === user.value.username) {
+//           usernameError = true;
+//           usernameMessage = 'El usuario ya existe';
+//         } else {
+//           usernameError = false;
+//           usernameMessage = 'El usuario está disponible';
+//         }
+//       } catch (error) {
+//         console.error('Error al verificar la disponibilidad del usuario:', error);
+//         usernameError = true;
+//         usernameMessage = 'Error al verificar la disponibilidad del usuario';
+//       }
+//     }
+//   };
 
   const validatePassword = (password) => {
     const hasNumber = /[0-9]/.test(password);
@@ -129,7 +131,7 @@ const handleSubmit = async () => {
       return;
       }
     const formData = new FormData()
-    author.value.imageExtension = image.name ? image.name.split(".").pop() : null
+    user.value.imageExtension = image.name ? image.name.split(".").pop() : null
     if(id) {
       response = await userStore.update(id, user.value)
     } else {
@@ -153,15 +155,21 @@ const handleSubmit = async () => {
 
 const cleanForm = () => {
   user.value = {}
-  fNac.value = new Date()
+  user.value.birth_date = new Date().toLocaleDateString()
+  fNac.value = new Date().toLocaleDateString()
   image.value = ref(new File([""], "filename"))
+  confirmPassword.value = ''
 };
+
+onMounted(async () => {
+    await roleStore.getAllRolesSelector();
+  });
 </script>
 
 <template>
-  <div class="container">
+  <div class="container mt-5">
       <fieldset class="register-fieldset">
-        <legend>{{ title}}</legend>
+        <legend>{{ title }}</legend>
         <v-form @submit.prevent="handleSubmit" ref="form" class="register-form">
           <v-text-field 
           v-model="user.username" 
@@ -197,6 +205,15 @@ const cleanForm = () => {
             type="password"
             required
           ></v-text-field>
+
+          <v-select 
+          v-model="selectedGenre" 
+          :items="genreNames"
+          item-title="description"
+          item-value="id" 
+          label="Tipo de rol" 
+          required>
+        </v-select>
 
           <input type="file" @change="handleFileChange" class="mb-5"/>
 

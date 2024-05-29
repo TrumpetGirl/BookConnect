@@ -1,12 +1,16 @@
 import express from 'express';
-import  { getUsers, getUserByIdAndUsername, createUser, getUserByUsername } from '../controllers/userController.js';
+import  { getUsers, getUserById, getUserByIdAndUsername, createUser, getUserByUsername, makeNewUser } from '../controllers/userController.js';
 import  { loginUser } from '../controllers/authController.js';
 
 const router = express.Router();
 
 router.get('/user', getUsers);
 
-router.post('/user', createUser);
+router.get('/user/:id', getUserById);
+
+router.post('/user/register', createUser);
+
+router.post('/user/create', makeNewUser);
 
 router.post('/user/existsUser', getUserByIdAndUsername)
 

@@ -1,4 +1,4 @@
-import { findAllUsers, registerUser, findUserByIdAndUsername, findUserByUsername  } from '../models/repository/userRepository.js';
+import { findAllUsers, registerUser, findUserById, findUserByIdAndUsername, findUserByUsername, makeUser  } from '../models/repository/userRepository.js';
 
 //OBTENER TODOS LOS USUARIOS
 export const getUsers = async (req, res) => {
@@ -9,6 +9,17 @@ export const getUsers = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+// OBTENER USUARIO POR ID
+export const getUserById = async (req, res) => {
+  try {
+    const id  = parseInt(req.params.id);
+    const user = await findUserById(id);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // OBTENER USUARIO POR ID Y NOMBRE DE USUARIO
 export const getUserByIdAndUsername = async (req, res) => {
@@ -38,12 +49,23 @@ export const getUserByUsername = async (req, res) => {
   }
 };
 
-// CREAR USUARIO
+// REGISTRAR USUARIO
 export const createUser = async (req, res) => {
   try {
     const { username, password, email, birth_date, image_path } = req.body;
     const user = await registerUser(username, password, email, birth_date, image_path);
     res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// CREAR UN NUEVO USUARIO
+export const makeNewUser = async (req, res) => {
+  const { username, password, email, birth_date, imageExtension } = req.body;
+  try {
+    const newUser = await makeUser(username, password, email, birth_date, imageExtension);
+    res.status(201).json(newUser);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

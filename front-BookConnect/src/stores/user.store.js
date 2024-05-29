@@ -12,12 +12,20 @@ export const useUserStore = defineStore({
     actions: {
         async register(user) {
             try {
-                await axios.post(baseUrl, user);
+                await axios.post(`${baseUrl}/register`, user);
                 return 'El usuario ha sido registrado con éxito'
             } catch (error) {
                 throw new Error(error.response.data.message || 'Error al registrar usuario');
               }
            
+        },
+        async create(author) {
+            try {
+                const response = await axios.post(`${baseUrl}/create`, author);
+                return {author: response.data, message:'El usuario ha sido creado con éxito'}
+            } catch (error) {
+                throw new Error(error.response.data.message || 'Error al añadir al usuario');
+            }            
         },
         async getAll() {
             try {
@@ -28,7 +36,7 @@ export const useUserStore = defineStore({
         },
         async getById(id) {
             try {
-                this.user = await axios.get(`${baseUrl}/${id}`);
+                this.user = (await axios.get(`${baseUrl}/${id}`)).data;
             } catch (error) {
                 console.log(error)
             }
