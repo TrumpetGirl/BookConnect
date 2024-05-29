@@ -14,7 +14,7 @@ export const useAuthorStore = defineStore({
         async create(author) {
             try {
                 const response = await axios.post(baseUrl, author);
-                return {author: response.data, message:'El autor ha sido registrado con éxito'}
+                return {author: response.data, message:'El autor ha sido creado con éxito'}
             } catch (error) {
                 throw new Error(error.response.data.message || 'Error al añadir autor');
             }            

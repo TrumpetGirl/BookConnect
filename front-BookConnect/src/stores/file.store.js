@@ -6,7 +6,7 @@ const baseUrl = `${import.meta.env.VITE_API_URL}/file`;
 export const useFileStore = defineStore({
     id: 'file',
     state: () => ({
-        files: {},
+        files: [],
         file: {}
     }),
     actions: {
@@ -17,6 +17,7 @@ export const useFileStore = defineStore({
                   'Content-Type': 'multipart/form-data'
                 }
               })
+              console.log(response.data)
               return response.data;
             } catch (error) {
               console.error('Error al subir la imagen:', error);

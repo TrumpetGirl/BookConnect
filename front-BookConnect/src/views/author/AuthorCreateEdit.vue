@@ -9,5 +9,7 @@ import AddAuthor from '@/components/author/AddAuthorForm.vue'
 </template>
 
 <style scoped>
-
+.container {
+  margin: auto;
+}
 </style>

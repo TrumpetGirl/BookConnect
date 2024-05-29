@@ -1,58 +1,35 @@
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+ import * as constant from '../../utils/constants';
+import * as navigation from '../../utils/navigation';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthorStore, useFileStore, useSnackbarStore, useAuthStore  } from '@/stores';
 
-const fNac = ref(new Date().toLocaleDateString());
-
 const route = useRoute();
-const router = useRouter();
 const authorStore = useAuthorStore();
 const fileStore = useFileStore();
 const snackbarStore = useSnackbarStore();
 const authStore = useAuthStore();
 
-const id = route.params.id;
-const { author } = storeToRefs(authorStore);
-
 let title = 'Añadir autor';
 
+const id = route.params.id;
+const { author } = storeToRefs(authorStore);
 if (id) {
     title = 'Editar autor';
     onMounted(async ()=>{
       await authorStore.getById(id);
-      // fNac.value = new Date(author.value.birth_date).toLocaleDateString();
-      // fNacFormatted.set(new Date(author.value.birth_date).toLocaleDateString())
-      console.log('este es el console de la tienda de libros ' + fNac.value)
-      console.log('este es el console del author.value.birth_date ' + author.value.birth_date)
     }) 
 } else {
   author.value = {}
+  author.value.birth_date = constant.formatDateToFormInput(new Date())
 }
-
-
-watch(fNac, (newVal) => {
-  console.log('newVal ' + newVal)
-    if (newVal) {
-      author.value.birth_date = newVal;
-    }
-  });
-
-const fNacFormatted = computed({
-  get: () => {
-    console.log('get ' + fNac.value)
-    return fNac.value;
-  },
-  set: (val) => {
-    console.log('set ' + val)
-    fNac.value = val;
-  }
-});
 
 let image = ref(new File([""], "filename"))
 const handleFileChange = (event) => {
   const file = event.target.files[0]
+  console.log(file)
   if (file) {
     image = file
   }
@@ -67,18 +44,16 @@ const handleSubmit = async () => {
       response = await authorStore.update(id, author.value)
     } else {
       response = await authorStore.create(author.value)
-      
-      snackbarStore.success(response.message);
-      cleanForm()
     }
-    console.log(image)
-    console.log(response)
+
     if (image && response && response.author.image_path) {
         formData.append('path', response.author.image_path)
         formData.append('file', image)
         await fileStore.uploadImage(formData)
     }
+
     snackbarStore.success(response.message);
+    cleanForm()
   } catch (error) {
     console.error('Error al agregar autor:', error);
   }
@@ -86,13 +61,13 @@ const handleSubmit = async () => {
 
 const cleanForm = () => {
   author.value = {}
-  fNac.value = new Date()
-  image.value = ref(new File([""], "filename"))
+  author.value.birth_date = constant.formatDateToFormInput(new Date())
+  image = new File([""], "filename")
 };
 </script>
 
 <template>
-  <div class="container">
+  <div class="container mt-5">
       <fieldset class="register-fieldset">
         <legend>{{ title}}</legend>
         <v-form @submit.prevent="handleSubmit" class="register-form">
@@ -103,7 +78,7 @@ const cleanForm = () => {
         </v-text-field>
 
         <v-text-field
-          v-model="fNacFormatted"
+          v-model="author.birth_date"
           label="Fecha de Nacimiento"
           type="date"
         ></v-text-field> 
@@ -122,7 +97,7 @@ const cleanForm = () => {
       </fieldset>
       <v-row>
         <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
-            <v-btn @click="() => router.push('/author')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            <v-btn @click="navigation.redirectTo('/author')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver al listado
             </v-btn>
           </v-col>
