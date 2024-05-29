@@ -3,11 +3,6 @@ import { ref, watch, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useAuthorStore, useFileStore, useSnackbarStore, useAuthStore  } from '@/stores';
-// let author = ref({
-//   name: '',
-//   birth_date: new Date().toLocaleDateString(), 
-//   nationality: ''
-//  });
 
 const fNac = ref(new Date().toLocaleDateString());
 
@@ -24,7 +19,6 @@ const { author } = storeToRefs(authorStore);
 let title = 'Añadir autor';
 
 if (id) {
-    // edit mode
     title = 'Editar autor';
     onMounted(async ()=>{
       await authorStore.getById(id);

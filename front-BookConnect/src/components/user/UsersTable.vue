@@ -62,7 +62,10 @@
 <template>
   <v-container>
     <div class="header-container custom-width mb-5">
-      <h2 class="title">Usuarios</h2>
+      <h2 class="title d-flex align-items-center">
+        <v-icon class="mr-2">mdi-account-group</v-icon> 
+        Usuarios
+      </h2>
       <v-btn color="success" @click="addUser" prepend-icon="mdi-plus" variant="outlined" rounded="xl" class="add-user-button">
         Añadir Usuario
       </v-btn>
@@ -94,7 +97,7 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>
+        <v-img :src="item.full_path" max-height="75" max-width="75"></v-img>
       </template>
 
       <template v-slot:item.actions="{ item }">

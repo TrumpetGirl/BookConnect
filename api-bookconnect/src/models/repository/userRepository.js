@@ -9,11 +9,35 @@ export const findAllUsers = async () => {
   try {
     const users = await prisma.user.findMany();
     const arrUsers = users.map(user => new User(user.id, user.username, user.password, 
-      user.birth_date, user.role, user.image_path));
+      user.email, user.birth_date, user.role, user.image_path));
     return arrUsers;
   } catch (error) {
     console.error('Error al obtener todos los autores:', error);
     return []; 
+  }
+};
+
+// OBTENER USUARIOS POR ID Y NOMBRE --> EXISTSUSER
+export const findUserByIdAndUsername = async (id, username) => {
+  try {
+    return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true, image_path: true, role: true} });
+  } catch (error) {
+    console.error('Error obteniendo usuario por id y nombre:', error);
+    throw error;
+  }
+};
+
+// OBTENER USUARIO POR NOMBRE DE USUARIO
+export const findUserByUsername = async (username) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { username: username }, select: { id: true, username: true} });
+    if (!user) {
+      throw new Error('Usuario no encontrado');
+    }
+    return user;
+  } catch (error) {
+    console.error('Error obteniendo e nombre de usuario:', error);
+    throw error;
   }
 };
 
@@ -41,26 +65,4 @@ export const registerUser = async (username, password, email, birth_date) => {
   }
 };
 
-// OBTENER USUARIOS POR NOMBRE --> EXISTSUSER
-export const findUserByIdAndUsername = async (id, username) => {
-  try {
-    return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true, image_path: true, role: true} });
-  } catch (error) {
-    console.error('Error obteniendo usuario por id y nombre:', error);
-    throw error;
-  }
-};
 
-// OBTENER USUARIO NOMBRE DE USUARIO
-export const findUserByUsername = async (username) => {
-  try {
-    const user = await prisma.user.findUnique({ where: { username: username }, select: { username: true} });
-    if (!user) {
-      throw new Error('Usuario no encontrado');
-    }
-    return user;
-  } catch (error) {
-    console.error('Error obteniendo usuario por id y nombre:', error);
-    throw error;
-  }
-};

@@ -34,32 +34,18 @@
     }
   });
 
-  const checkUsernameAvailability = async () => {
-    console.log(user.value.username)
-    if (user.value.username) {
-      try {
-        const response = await userStore.existsUsername( user.value.username );
-        if (response.data === user.value.username) {
-          usernameError = true;
-          usernameMessage = 'El usuario ya existe';
-        } else {
-          usernameError = false;
-          usernameMessage = 'El usuario está disponible';
-        }
-      } catch (error) {
-        console.error('Error al verificar la disponibilidad del usuario:', error);
-        usernameError = true;
-        usernameMessage = 'Error al verificar la disponibilidad del usuario';
-      }
-    }
-  };
-
   const handleRegister = async () => {
     try {
       
       if (!user.value.username || !user.value.birth_date || !user.value.email || 
         !user.value.password || !confirmPassword.value) {
           snackbarStore.error('Todos los campos son obligatorios')
+        return;
+      }
+
+      const usernameExistsResponse = await userStore.existsUsername(user.value.username);
+      if (usernameExistsResponse.data === user.value.username) {
+        snackbarStore.error('El usuario ya existe');
         return;
       }
 

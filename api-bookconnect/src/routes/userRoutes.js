@@ -8,14 +8,16 @@ router.get('/user', getUsers);
 
 router.post('/user', createUser);
 
+router.post('/user/existsUser', getUserByIdAndUsername)
+
+router.post('/user/existsUsername', getUserByUsername)
+
+router.post('/login', loginUser);
+
 // router.put('/user/:id', updateUser);
 
 // router.delete('/user/:id', deleteUser);
 
-router.post('/login', loginUser);
 
-router.post('/user/existsUser', getUserByIdAndUsername)
-
-router.post('/user/existsUsername', getUserByUsername)
 
 export default router;

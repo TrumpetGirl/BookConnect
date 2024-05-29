@@ -7,7 +7,8 @@ export const useAuthorStore = defineStore({
     id: 'author',
     state: () => ({
         authors: [],
-        author: {}
+        author: {},
+        books: []
     }),
     actions: {
         async create(author) {
@@ -58,6 +59,13 @@ export const useAuthorStore = defineStore({
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
+        async getAllBooksByAuthor(id) {
+            try {
+                this.books = (await axios.get(`${baseUrl}/${id}/books`)).data;
+            } catch (error) {
+                console.log(error);
+            }
+        },
     }
 });

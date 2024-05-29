@@ -1,41 +1,46 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { useAuthorStore } from '@/stores/author.store';
-import { useFileStore } from '@/stores/file.store';
+  import { onMounted, ref, computed } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { useAuthorStore, useAuthStore } from '@/stores';
+  import { useFileStore } from '@/stores/file.store';
+  import { storeToRefs } from 'pinia';
 
-const authorStore = useAuthorStore();
-const fileStore = useFileStore();
-const route = useRoute();
-const author = ref(null);
-const imageUrl = ref(null);
+  const authorStore = useAuthorStore();
+  const authStore = useAuthStore();
+  const fileStore = useFileStore();
+  const route = useRoute();
+  const router = useRouter();
 
-onMounted(async () => {
-  const { id } = route.params;
-  try {
-    await authorStore.getById(id);
-    author.value = authorStore.author;
+  const { author } = storeToRefs(authorStore);
+  const { books } = storeToRefs(authorStore);
 
-    if (author.value.image_path) {
-      imageUrl.value = fileStore.downloadImage(author.value.image_path);
+  const imageUrl = ref(null);
+
+  onMounted(async () => {
+    const { id } = route.params;
+    try {
+      await authorStore.getById(id);
+      if (author.value.image_path) {
+        imageUrl.value = fileStore.downloadImage(author.value.image_path);
+      }
+      await authorStore.getAllBooksByAuthor(id);
+    } catch (error) {
+      console.error('Error al cargar el autor:', error);
     }
-  } catch (error) {
-    console.error('Error al cargar el autor:', error);
-  }
-});
+  });
 
-const formattedBirthDate = computed(() => {
-  if (author.value && author.value.birth_date) {
-    return new Date(author.value.birth_date).toLocaleDateString();
-  }
-  return '';
-});
+  const formattedBirthDate = computed(() => {
+    if (author.value && author.value.birth_date) {
+      return new Date(author.value.birth_date).toLocaleDateString();
+    }
+    return '';
+  });
 </script>
 
 <template>
   <v-container>
     <v-row v-if="author" align="center">
-      <!-- Foto del autor -->
+
       <v-col cols="12" md="4" class="d-flex justify-center">
         <v-avatar size="150">
           <v-img
@@ -46,7 +51,6 @@ const formattedBirthDate = computed(() => {
         </v-avatar>
       </v-col>
       
-      <!-- Información del autor -->
       <v-col cols="12" md="4">
         <v-card>
           <v-card-title>
@@ -56,10 +60,34 @@ const formattedBirthDate = computed(() => {
           <v-card-subtitle>{{ author.nationality }}</v-card-subtitle>
         </v-card>
       </v-col>
+      <v-row>
+        <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
+            <v-btn @click="() => router.push('/author')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+              Volver al listado
+            </v-btn>
+          </v-col>
+          <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin()">
+            <v-btn @click="() => router.push('/')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+              Volver atrás
+            </v-btn>
+          </v-col>
+
+          <v-col cols="12">
+        <v-card>
+          <v-card-title>
+            <h3>Libros de {{ author.name }}</h3>
+          </v-card-title>
+          <v-data-table
+            :headers="[
+              { title: 'Título', value: 'description' },
+            ]"
+            :items="books"
+            class="elevation-1"
+          ></v-data-table>
+        </v-card>
+      </v-col>
+      </v-row>
     </v-row>
-    <v-alert v-else type="error" dismissible>
-      No se ha podido cargar la información del autor.
-    </v-alert>
   </v-container>
 </template>
   

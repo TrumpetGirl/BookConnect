@@ -1,8 +1,11 @@
 import Author  from '../model/Author.js'
+import BasePath  from '../model/BasePath.js'
+import Base  from '../model/Base.js'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// ------CRUD------
 // OBTENER TODOS LOS AUTORES
 export const findAllAuthors = async () => {
   try {
@@ -23,42 +26,6 @@ export const findAllAuthors = async () => {
   }
 };
 
-// OBTENER TODOS LOS NOMBRES DE LOS AUTORES
-export const findAllAuthorNames = async () => {
-  try {
-      const authors = await prisma.author.findMany({
-          select: {
-              name: true
-          }
-      });
-      return authors.map(author => author.name);
-  } catch (error) {
-      console.error('Error al obtener los nombres de los autores:', error);
-      return []; 
-  }
-};
-
-// OBTENER EL NÚMERO TOTAL DE AUTORES
-export const countAuthors = async () => {
-  try {
-    const count = await prisma.author.count();
-    return count;
-  } catch (error) {
-    console.error('Error al obtener el número total de autores:', error);
-    throw error;
-  }
-};
-
-// OBTENER AUTORES POR NOMBRE
-export const findAuthorsByName = async (name) => {
-  try {
-    return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
-  } catch (error) {
-    console.error('Error obteniendo autor por nombre:', error);
-    throw error;
-  }
-};
-
 // OBTENER AUTOR POR ID
 export const findAuthorById = async (id) => {
   try {
@@ -68,7 +35,6 @@ export const findAuthorById = async (id) => {
     throw error;
   }
 };
-
 
 // CREAR AUTOR
 export async function addAuthor(name, birthDate, nationality, imageExtension) {
@@ -134,6 +100,70 @@ export const deleteAuthor = async (id) => {
     throw error;
   }
 };
+// ------END CRUD------
+
+// OBTENER TODOS LOS NOMBRES DE LOS AUTORES (TODO: cambiar por lo de base)
+export const findAllAuthorNames = async () => {
+  try {
+      const authors = await prisma.author.findMany({
+          select: {
+               name: true
+           }
+       });
+       return authors.map(author => author.name);
+   } catch (error) {
+      console.error('Error al obtener los nombres de los autores:', error);
+       return []; 
+   }
+ };
+
+// OBTENER EL NÚMERO TOTAL DE AUTORES
+export const countAuthors = async () => {
+  try {
+    const count = await prisma.author.count();
+    return count;
+  } catch (error) {
+    console.error('Error al obtener el número total de autores:', error);
+    throw error;
+  }
+};
+
+// OBTENER AUTORES POR NOMBRE
+export const findAuthorsByName = async (name) => {
+  try {
+    return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
+  } catch (error) {
+    console.error('Error obteniendo autor por nombre:', error);
+    throw error;
+  }
+};
+
+  // OBTENER NOMBRE DE LIBROS POR AUTOR
+  export const findAllBooksByAuthor = (async (authorId) =>{
+    try {
+      const author = await prisma.author.findUnique({
+        where: {
+          id: Number(authorId),
+        },
+        include: {
+          book_book_authorToauthor: {
+            select: {
+              title: true,
+              id: true,
+              image_path: true
+            }
+          }
+        }
+      });
+      return author.book_book_authorToauthor.map(book => new BasePath (book.id, book.title, book.image_path));
+    } catch (error) {
+      console.error('Error al obtener los nombre de los libros por autor:', error);
+      throw error;
+    }
+  });
+
+
+
 
 
 

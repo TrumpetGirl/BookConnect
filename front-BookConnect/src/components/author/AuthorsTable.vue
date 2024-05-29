@@ -63,7 +63,10 @@
 <template>
   <v-container>
     <div class="header-container custom-width mb-5">
-      <h2 class="title">Autores</h2>
+      <h2 class="title d-flex align-items-center">
+        <v-icon class="mr-2">mdi-feather</v-icon> 
+        Autores
+      </h2>
       <v-btn color="success" @click="addAuthor" prepend-icon="mdi-plus" variant="outlined" rounded="xl" class="add-author-button">
         Añadir Autor
       </v-btn>
@@ -71,7 +74,7 @@
 
     <v-text-field
       v-model="search"
-      label="Search"
+      label="Buscar"
       prepend-inner-icon="mdi-magnify"
       variant="outlined"
       hide-details
@@ -85,12 +88,12 @@
       :search="search"
       class="custom-data-table"
     >
-      <template v-slot:column.header="{ column }">
-        <th class="custom-header">{{ column.text }}</th>
-      </template>
+    <template v-slot:[`column.header`]="{ column }">
+      <th class="font-weight-bold">{{ column.text }}</th>
+    </template>
 
       <template v-slot:item.name="{ item }">
-        <span @click="viewAuthor(item.id)">{{ item.name}}</span>
+        <span class="author-name" @click="viewAuthor(item.id)">{{ item.name}}</span>
       </template>
 
       <template v-slot:item.birth_date="{ item }">
@@ -141,5 +144,15 @@
 
   .custom-header {
     background-color: #f2f2f2 !important; 
+  }
+
+  .author-name {
+    text-decoration: underline;
+    cursor: pointer;
+    color: rgb(114, 114, 221);
+  }
+
+  .author-name:hover {
+    color: darkblue;
   }
 </style>

@@ -7,7 +7,7 @@ import { useFileStore } from '@/stores/file.store';
 const bookStore = useBookStore();
 const fileStore = useFileStore();
 const route = useRoute();
-const book = ref(null);
+const { author } = storeToRefs(authorStore);
 const imageUrl = ref(null);
 
 onMounted(async () => {

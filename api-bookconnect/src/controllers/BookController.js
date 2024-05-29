@@ -10,17 +10,6 @@ export const getBooks = async (req, res) => {
   }
 };
 
-// CREAR LIBRO
-export const createBook = async (req, res) => {
-  const { isbn, title, publicationYear, author, genre, synopsis, imageExtension } = req.body;
-  try {
-    const newBook = await addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension);
-    res.status(201).json(newBook);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // OBTENER LIBRO POR NOMBRE
 export const getBooksByTitle = async (req, res) => {
   try {
@@ -42,6 +31,19 @@ export const getBooksbyAuthor = ( async(req, res)=> {
     res.status(500).json({ message: error.message });
   }
 })
+
+// CREAR LIBRO
+export const createBook = async (req, res) => {
+  const { isbn, title, publicationYear, author, genre, synopsis, imageExtension } = req.body;
+  try {
+    const newBook = await addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension);
+    res.status(201).json(newBook);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 
 

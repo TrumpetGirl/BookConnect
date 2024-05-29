@@ -10,17 +10,6 @@ export const getUsers = async (req, res) => {
   }
 }
 
-// CREAR USUARIO
-export const createUser = async (req, res) => {
-  try {
-    const { username, password, email, birth_date, image_path } = req.body;
-    const user = await registerUser(username, password, email, birth_date, image_path);
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 // OBTENER USUARIO POR ID Y NOMBRE DE USUARIO
 export const getUserByIdAndUsername = async (req, res) => {
   try {
@@ -44,10 +33,23 @@ export const getUserByUsername = async (req, res) => {
       res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
       console.error('Error al obtener usuario por nombre:', error);
-      res.status(500).json({ message: 'Error al obtener usuario nombre' });
+      res.status(500).json({ message: 'Error al obtener el nombre de usuario' });
     }
   }
 };
+
+// CREAR USUARIO
+export const createUser = async (req, res) => {
+  try {
+    const { username, password, email, birth_date, image_path } = req.body;
+    const user = await registerUser(username, password, email, birth_date, image_path);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 
 
 

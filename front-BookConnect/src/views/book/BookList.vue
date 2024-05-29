@@ -1,17 +1,16 @@
 <script setup>
+import BooksTable from '@/components/book/BooksTable.vue';
+
 
 </script>
 
 <template>
   <div class="container">
-    <BookInfo />
+    <BooksTable />
   </div>
    
 
 </template>
 
 <style scoped>
-.container {
-    margin-top: 30px;
-}
 </style>
