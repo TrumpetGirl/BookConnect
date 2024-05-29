@@ -1,15 +1,7 @@
-import { ref } from 'vue'
-// import { useRoute, useRouter } from 'vue-router';
-// import { useAuthorStore, useFileStore, useSnackbarStore, useBookStore, useAuthStore } from '@/stores';
-
-// export const route = useRoute();
-// export const router = useRouter();
-// export const authorStore = useAuthorStore();
-// export const fileStore = useFileStore();
-// export const snackbarStore = useSnackbarStore();
-// export const bookStore = useBookStore();
-// export const authStore = useAuthStore();
 
 export const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-export const fNac = ref(new Date().toLocaleDateString());
+
+export const formatDateToLocaleES = (date) => { return new Date(date).toLocaleDateString("es-ES", {day: "2-digit", month: "2-digit", year: "numeric"}) };
+
+export const formatDateToFormInput = (date) => { return new Date(date).toISOString().split('T')[0] };
 

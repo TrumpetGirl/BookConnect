@@ -43,14 +43,14 @@ export const useUserStore = defineStore({
         },
         async existsUser(user) {
             try {
-                return await axios.post(`${baseUrl}/existsUser`, JSON.parse(user));
+                return (await axios.post(`${baseUrl}/existsUser`, JSON.parse(user))).data;
             } catch (error) {
                 throw new Error('Error al verificar la disponibilidad del usuario');
             }
         },
         async existsUsername(username) {
             try {
-                return await axios.post(`${baseUrl}/existsUsername`, { username });
+                return (await axios.post(`${baseUrl}/existsUsername`, { username })).data;
             } catch (error) {
                 console.log(error);
                 throw new Error('Error al verificar la disponibilidad del nombre de usuario');

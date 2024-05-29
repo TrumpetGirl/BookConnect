@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', {
       const user = localStorage.getItem('user')
       let existsUser
       if (user) {
-        existsUser = (await useUserStore().existsUser(user)).data
+        existsUser = await useUserStore().existsUser(user)
       }
       if (token && existsUser) {
         this.isAuthenticated = true

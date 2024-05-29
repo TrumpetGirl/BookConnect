@@ -3,6 +3,7 @@
   import { useRouter } from 'vue-router';
   import { useAuthorStore, useFileStore, useSnackbarStore } from '@/stores';
   import { storeToRefs } from 'pinia';
+  import * as constant from '../../utils/constants';
 
   const search = ref('');
   const headers = ref([
@@ -53,7 +54,7 @@
     await authorStore.getAll();
     authors.value = authors.value.map(author => ({
       ...author,
-      birth_date: new Date(author.birth_date).toLocaleDateString(),
+      birth_date: constant.formatDateToLocaleES(author.birth_date),
       full_path: author.image_path ? useFileStore().downloadImage(author.image_path) : null
     }));
     console.log(authors.value);

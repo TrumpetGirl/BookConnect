@@ -42,13 +42,9 @@ export const findUserByIdAndUsername = async (id, username) => {
 // OBTENER USUARIO POR NOMBRE DE USUARIO
 export const findUserByUsername = async (username) => {
   try {
-    const user = await prisma.user.findUnique({ where: { username: username }, select: { id: true, username: true} });
-    if (!user) {
-      throw new Error('Usuario no encontrado');
-    }
-    return user;
+    return await prisma.user.findUnique({ where: { username: username }, select: { id: true, username: true} });
   } catch (error) {
-    console.error('Error obteniendo e nombre de usuario:', error);
+    console.error('Error obteniendo el nombre de usuario:', error);
     throw error;
   }
 };

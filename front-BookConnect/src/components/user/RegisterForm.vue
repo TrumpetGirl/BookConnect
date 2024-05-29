@@ -1,38 +1,24 @@
 <script setup>
   import * as validation from '../../utils/validations';
   import * as constant from '../../utils/constants';
+  import * as navigation from '../../utils/navigation';
   import { RouterLink } from 'vue-router';
-  import { ref, watch, computed } from 'vue';
+  import { ref } from 'vue';
   import { useUserStore, useSnackbarStore } from '@/stores';
 
   const user = ref({
     username: '',
-    birth_date: new Date().toLocaleDateString(), 
+    birth_date: constant.formatDateToFormInput(new Date()),
     email: '',
     password: ''
   });
-
+ 
   const confirmPassword = ref('');
   let usernameError = false;
   let usernameMessage = '';
   
   const userStore = useUserStore();
   const snackbarStore = useSnackbarStore();
-
-  watch(constant.fNac, (newVal) => {
-    if (newVal) {
-      user.value.birth_date = newVal;
-    }
-  });
-
-  const fNacFormatted = computed({
-    get: () => {
-      return constant.fNac.value;
-    },
-    set: (val) => {
-      constant.fNac.value = val;
-    }
-  });
 
   const handleRegister = async () => {
     try {
@@ -44,7 +30,7 @@
       }
 
       const usernameExistsResponse = await userStore.existsUsername(user.value.username);
-      if (usernameExistsResponse.data === user.value.username) {
+      if (usernameExistsResponse) {
         snackbarStore.error('El usuario ya existe');
         return;
       }
@@ -72,6 +58,7 @@
 
     const response = await userStore.register(user.value);
     snackbarStore.success(response);
+    navigation.redirectTo('/user/login');
     cleanForm();
     } catch (error) {
       console.error('Error al agregar el usuario:', error);
@@ -80,9 +67,8 @@
   };
 
   const cleanForm = () => {
-    user.value = {}
-    user.value.birth_date = new Date().toLocaleDateString()
-    fNac.value = new Date().toLocaleDateString()
+    user.value = {},
+    user.value.birth_date = constant.formatDateToFormInput(new Date()),
     confirmPassword.value = ''
   };
 </script>
@@ -99,12 +85,11 @@
             type="text"
             required
             :error="usernameError"
-            @input="checkUsernameAvailability"
           ></v-text-field>
           <p v-if="usernameMessage">{{ usernameMessage }}</p>
 
           <v-text-field
-            v-model="fNacFormatted"
+            v-model="user.birth_date"
             label="Fecha de Nacimiento"
             type="date"
             required

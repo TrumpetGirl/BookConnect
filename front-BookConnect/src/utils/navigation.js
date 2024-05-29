@@ -1,10 +1,5 @@
-import { useRouter } from 'vue-router';
+import  router  from '@/router';
 
-export function redirectTo(path) {
-  const router = useRouter();
-  router.push(path);
-}
+export const redirectTo = (path) => { router.push(path);}
 
-export function goBack() {
-  window.history.back();
-}
+export const goBack = () => { window.history.back();}
