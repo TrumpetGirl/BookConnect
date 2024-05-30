@@ -7,8 +7,7 @@ export const useGenreStore = defineStore({
     id: 'genre',
     state: () => ({
         genres: [],
-        genre: {},
-        genreNames: []
+        genre: {}
     }),
     actions: {
         async create(genre) {
@@ -25,7 +24,7 @@ export const useGenreStore = defineStore({
         async getAllGenresSelector() {
             try {
                 const response = await axios.get(`${baseUrl}/names`);
-                this.genreNames = response.data;
+                this.genres = response.data;
             } catch (error) {
                 console.log(error);
             }

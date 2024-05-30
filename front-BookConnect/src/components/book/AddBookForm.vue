@@ -18,8 +18,7 @@
   const { book } = storeToRefs(bookStore);
 
   let title = 'Añadir libro';
-  const { genreNames } = storeToRefs(genreStore);
-  console.log(genreNames)
+  const { genres } = storeToRefs(genreStore);
   let authors = [];
   let selectedGenre = null;
   let selectedAuthor = null;
@@ -46,11 +45,10 @@
   const handleSubmit = async () => {
     try {
       let response;
-      book.genre = selectedGenre;
       if (id) {
-        response = await bookStore.update(id, book);
+        response = await bookStore.update(id, book.value);
       } else {
-        response = await bookStore.create(book);
+        response = await bookStore.create(book.value);
       }
 
       if (response.success && book.cover) {
@@ -97,7 +95,9 @@
         <v-text-field 
         v-model="book.year" 
         label="Año de publicación" 
-        type="number" 
+        type="number"
+        min="0"
+        :max="constant.todayYear" 
         required>
         </v-text-field>
 
@@ -108,8 +108,8 @@
         </v-textarea>
 
         <v-select 
-        v-model="selectedGenre" 
-        :items="genreNames"
+        v-model="book.genre" 
+        :items="genres"
         item-title="description"
         item-value="id" 
         label="Género" 

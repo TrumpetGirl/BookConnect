@@ -33,7 +33,7 @@
 </script>
 
 <template>
-  <div class="top-menu">
+  <!-- <div class="top-menu"> -->
     <div class="container">
       <div class="title">
         <h1>BookConnect</h1> 
@@ -57,7 +57,7 @@
         <li v-if="authStore.isAdmin()" @click="router.push('/user');">Listado usuarios</li>
       </ul>
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <style scoped>

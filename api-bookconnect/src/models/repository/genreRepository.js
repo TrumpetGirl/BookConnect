@@ -22,13 +22,12 @@ export const findAllGenresSelector = async () => {
       const genres = await prisma.genre.findMany({
         select: {
           id: true,
-          description: true
+          name: true
         },
-        orderBy:[
-          {description:'asc'}
-        ]
+        orderBy:{name:'asc'}
+        
       });
-      return genres.map(genre => new Base (genre.id, genre.description));
+      return genres.map(genre => new Base (genre.id, genre.name));
   } catch (error) {
       console.error('Error al obtener los nombres de los géneros:', error);
       return []; 

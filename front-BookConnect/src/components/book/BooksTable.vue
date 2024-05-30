@@ -87,9 +87,13 @@
       :search="search"
       class="custom-data-table"
     >
-      <template v-slot:item.title="{ item }">
-        <span class="book-title" @click="viewBook(item.id)">{{ item.title }}</span>
-      </template>
+    <template v-slot:headers="{ columns }">
+      <tr>
+        <template v-for="column in columns" :key="column.key">
+          <th class="font-weight-bold custom-header"><span>{{ column.title }}</span></th>
+        </template>
+      </tr>
+    </template>
 
       <template v-slot:item.image_path="{ item }">
         <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>
@@ -123,18 +127,18 @@
   }
 
   .custom-width {
-    max-width: 90%;
+    max-width: 80%;
     margin: auto;
   }
 
   .custom-data-table {
-    max-width: 90%;
+    max-width: 80%;
     background-color: #ffe6f0; 
     margin: auto;
   }
 
   .custom-header {
-    background-color: #f2f2f2 !important; 
+    background-color: #f8c6d6 !important; 
   }
 
   .book-title {

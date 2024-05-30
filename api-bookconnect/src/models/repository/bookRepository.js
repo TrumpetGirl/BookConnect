@@ -24,7 +24,7 @@ export const findAllBooks = async () => {
       }
     });
     const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
-      book.publication_year, book.author, book.genre, book.synopsis, book.image_path));
+      book.publication_year, book.author_book_authorToauthor.name, book.genre_book_genreTogenre.name, book.synopsis, book.image_path));
     return arrBooks;
   } catch (error) {
     console.error('Error al obtener todos los libros:', error);

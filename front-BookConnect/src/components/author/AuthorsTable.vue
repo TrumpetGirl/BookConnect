@@ -148,7 +148,7 @@
 
   .custom-data-table {
     max-width: 80%;
-    background-color: #edebec; 
+    background-color: #ffe6f0; 
     margin: auto;
   }
 

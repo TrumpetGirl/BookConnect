@@ -2,14 +2,14 @@
 </script>
 
 <template>
-  <div class="top-menu">
-    <div class="container">
+  <!-- <div class="top-menu">-->
+    <div class="container"> 
       <div class="title">
         <h1>BookConnect</h1> 
         <img src="../assets/images/logo.png" alt="IconoBookConnect">
       </div>
-    </div>
-  </div>
+     </div>
+ <!-- </div> -->
 </template>
 
 <style scoped>

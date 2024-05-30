@@ -87,9 +87,13 @@
       :search="search"
       class="custom-data-table"
     >
-      <template v-slot:column.header="{ column }">
-        <th class="custom-header">{{ column.text }}</th>
-      </template>
+    <template v-slot:headers="{ columns }">
+      <tr>
+        <template v-for="column in columns" :key="column.key">
+          <th class="font-weight-bold custom-header"><span>{{ column.title }}</span></th>
+        </template>
+      </tr>
+    </template>
 
       <template v-slot:item.username="{ item }">
         <span class="user-name" @click="viewUser(item.id)">{{ item.username}}</span>
@@ -140,12 +144,12 @@
 
   .custom-data-table {
     max-width: 80%;
-    background-color: #edebec; 
+    background-color: #ffe6f0; 
     margin: auto;
   }
 
   .custom-header {
-    background-color: #f2f2f2 !important; 
+    background-color: #f8c6d6 !important; 
   }
 
   .user-name {
