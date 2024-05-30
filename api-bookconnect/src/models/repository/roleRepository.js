@@ -1,4 +1,4 @@
-import Role  from '../model/Role.js'
+import Base  from '../model/Role.js'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -8,15 +8,9 @@ const prisma = new PrismaClient();
 export const findAllRolesSelector = async () => {
     try {
         const roles = await prisma.role.findMany({
-          select: {
-            id: true,
-            description: true
-          },
-          orderBy:[
-            {description:'asc'}
-          ]
+          orderBy:{type:'asc'}
         });
-        return roles.map(role => new Base (role.id, role.description));
+        return roles.map(role => new Base (role.id, role.type));
     } catch (error) {
         console.error('Error al obtener los tipos de roles:', error);
         return []; 

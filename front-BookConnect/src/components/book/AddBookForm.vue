@@ -20,27 +20,47 @@
   let title = 'Añadir libro';
   const { genres } = storeToRefs(genreStore);
   let authors = [];
-  let selectedGenre = null;
   let selectedAuthor = null;
+
+  let image = ref(new File([""], "filename"))
+  const imagePreview = ref(null);
+  const fileInputRef = ref(null); 
+  const imageDeleted = ref(false);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      image = file;
+      const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  };
+
+  const deleteImage = () => {
+  imagePreview.value = null;
+  image.value = new File([""], "filename");
+  imageDeleted.value = true; 
+};
 
   if (id) {
       title = 'Editar libro';
       onMounted(async () => {
         await bookStore.getById(id);
         selectedAuthor = book.author.id;
+        if (book.value.image_path) {
+        imagePreview.value = fileStore.downloadImage(book.value.image_path);
+      }
       }) 
-  }
+    } else {
+  book.value = {}
+}
 
   onMounted(async () => {
     await genreStore.getAllGenresSelector();
   });
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-      book.cover = file;
-    }
-  };
 
   const handleSubmit = async () => {
     try {

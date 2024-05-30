@@ -7,8 +7,7 @@ export const useRoleStore = defineStore({
     id: 'role',
     state: () => ({
         roles: [],
-        role: {},
-        roleNames: []
+        role: {}
     }),
     actions: {
         async create(role) {
@@ -25,7 +24,7 @@ export const useRoleStore = defineStore({
         async getAllRolesSelector() {
             try {
                 const response = await axios.get(`${baseUrl}/names`);
-                this.roleNames = response.data;
+                this.roles = response.data;
             } catch (error) {
                 console.log(error);
             }

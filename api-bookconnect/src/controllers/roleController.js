@@ -6,6 +6,6 @@ export const getRolesSelector = async (req, res) => {
         const roleNames = await findAllRolesSelector();
         res.status(200).json(roleNames);
     } catch (error) {
-        res.status(500).json({ error: 'Error al obtener los nombres de los roles' });
+        res.status(500).json({ error: 'Error al obtener los roles' });
     }
   };

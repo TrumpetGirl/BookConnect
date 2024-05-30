@@ -15,7 +15,7 @@ const roleStore = useRoleStore();
 
 const id = route.params.id;
 const { user } = storeToRefs(userStore);
-const { roleNames } = storeToRefs(roleStore);
+const { roles } = storeToRefs(roleStore);
 
 const confirmPassword = ref('');
 let usernameError = false;
@@ -63,6 +63,9 @@ if (id) {
 
 }
 
+onMounted(async () => {
+    await roleStore.getAllRolesSelector();
+  });
 
   const validatePassword = (password) => {
     const hasNumber = /[0-9]/.test(password);
@@ -157,9 +160,6 @@ const cleanForm = () => {
   } 
 };
 
-onMounted(async () => {
-    await roleStore.getAllRolesSelector();
-  });
 </script>
 
 <template>
@@ -205,9 +205,9 @@ onMounted(async () => {
           ></v-text-field>
 
           <v-select 
-          v-model="selectedRole" 
-          :items="roleNames"
-          item-title="description"
+          v-model="user.role" 
+          :items="roles"
+          item-title="type"
           item-value="id" 
           label="Rol" 
           required>
