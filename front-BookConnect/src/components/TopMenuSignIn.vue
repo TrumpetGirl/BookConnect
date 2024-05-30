@@ -61,13 +61,7 @@
 </template>
 
 <style scoped>
-.top-menu {
-  background: linear-gradient(to bottom, #bdb9b9, #8e8c8c);
-  color: white;
-  font-family: "Poetsen One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
+
 
 .container {
   padding: 10px 20px;
