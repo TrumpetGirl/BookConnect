@@ -1,4 +1,4 @@
-import {Index, UserList, Login, Register, UserCreateEdit, UserInfo} from '@/views/user'
+import {Index, UserList, Login, Register, UserCreateEdit, UserInfo, ConfigurationUser} from '@/views/user'
 
 export default {
     path: '/user',
@@ -9,6 +9,7 @@ export default {
         {path: 'login', component: Login},
         {path: 'register', component: Register},
         {path: 'create', component: UserCreateEdit},
-        {path: 'edit/:id(\\d+)', name: 'editUser', component: UserCreateEdit, meta: {requiresAdmin: true}}
+        {path: 'edit/:id(\\d+)', name: 'editUser', component: UserCreateEdit, meta: {requiresAdmin: true}},
+        {path: 'configuration', component: ConfigurationUser}
     ]
 }

@@ -6,3 +6,5 @@ export const formatDateToLocaleES = (date) => { return new Date(date).toLocaleDa
 export const formatDateToFormInput = (date) => { return new Date(date).toISOString().split('T')[0] };
 
 export const todayYear = new Date().getFullYear();
+
+export const adminRoleId = 1;

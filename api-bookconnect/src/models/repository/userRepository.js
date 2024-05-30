@@ -1,8 +1,6 @@
 import User  from '../model/User.js'
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import BasePath  from '../model/BasePath.js'
-import Base  from '../model/Base.js'
 
 const prisma = new PrismaClient();
 
@@ -32,6 +30,8 @@ export const findUserById = async (id) => {
 // OBTENER USUARIOS POR ID Y NOMBRE --> EXISTSUSER
 export const findUserByIdAndUsername = async (id, username) => {
   try {
+    console.log("id "+  id)
+    console.log("username "+  username)
     return await prisma.user.findUnique({ where: { id: id, username: username }, select: {id: true, username: true, image_path: true, role: true} });
   } catch (error) {
     console.error('Error obteniendo usuario por id y nombre:', error);
@@ -59,7 +59,6 @@ export const registerUser = async (username, password, email, birth_date) => {
         password: hashedPassword,
         email: email,
         birth_date: new Date(birth_date), 
-        role: 2,
         image_path: 'users/avatar.png'
       },
       select: {

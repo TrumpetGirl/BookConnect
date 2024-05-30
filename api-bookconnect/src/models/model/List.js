@@ -1,11 +1,11 @@
 // Modelo de la clase de lista
 export default class List {
 
-    constructor(id, user, name, description) {
+    constructor(id, name, description, user) {
       this.id = id;
-      this.user = user;
       this.name = name;
       this.description = description;
+      this.user = user;
     }
   
   }

@@ -99,6 +99,18 @@ export async function addBook(isbn, title, publicationYear, author, genre, synop
   }
 }
 
+// OBTENER CANTIDAD DE LIBROS
+export const countBooks = async () => {
+  try {
+    const count = await prisma.book.count();
+    return count;
+  } catch (error) {
+    console.error('Error al contar los libros:', error);
+    throw error;
+  }
+};
+
+
 
 
 

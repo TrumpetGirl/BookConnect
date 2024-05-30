@@ -7,114 +7,117 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model author {
+model Author {
   id                       Int      @id @default(autoincrement())
   name                     String   @db.VarChar(100)
   birth_date               DateTime @db.Date
   nationality              String   @db.VarChar(50)
   image_path               String?  @db.VarChar(255)
-  book_book_authorToauthor book[]   @relation("book_authorToauthor")
+  books                    Book[]
 }
 
-model book {
+model Book {
   id                             Int         @id @default(autoincrement())
   isbn                           String      @db.VarChar(50)
   title                          String      @db.VarChar(100)
   publication_year               Int
-  author                         Int
-  genre                          Int
+  authorId                       Int         @default(1)
+  genreId                        Int         @default(1)
   synopsis                       String?     @db.Text
   image_path                     String      @db.VarChar(255)
-  author_book_authorToauthor     author      @relation("book_authorToauthor", fields: [author], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_author")
-  genre_book_genreTogenre        genre       @relation("book_genreTogenre", fields: [genre], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_genre")
-  user_book_user_book_bookTobook user_book[] @relation("user_book_bookTobook")
+  author                         Author      @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_author")
+  genre                          Genre       @relation(fields: [genreId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_genre")
+  collections                    Collection[]
 
-  @@index([author], map: "fk_book_author")
-  @@index([genre], map: "fk_book_genre")
+  @@index([authorId], map: "fk_book_author")
+  @@index([genreId], map: "fk_book_genre")
 }
 
-model genre {
+model Collection {
+  id                           Int    @id @default(autoincrement())
+  userId                       Int
+  bookId                       Int
+  stateId                      Int
+  rating                       Int
+  review                       String @db.Text
+  collection_list              Collection_list[]
+  user                         User   @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_user")
+  book                         Book   @relation(fields: [bookId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_book")
+  state                        State  @relation(fields: [stateId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_state")
+  
+
+  @@unique([userId, bookId], map: "book_collection")
+  @@index([userId], map: "fk_collection_user")
+  @@index([bookId], map: "fk_collection_book")
+  @@index([stateId], map: "fk_collection_state")
+}
+
+model Collection_list {
+  id                             Int  @id @default(autoincrement())
+  collectionId                   Int
+  listId                         Int
+  list                           List @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_list_list")
+  collection                     Collection @relation(fields: [collectionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_list_collection")
+  @@index([listId], map: "fk_collection_list_list")
+  @@index([collectionId], map: "fk_collection_list_collection")
+}
+
+model Genre {
   id                     Int    @id @default(autoincrement())
   name                   String @db.VarChar(50)
-  book_book_genreTogenre book[] @relation("book_genreTogenre")
+  books                  Book[]
 }
 
-model list {
+model List {
   id                                       Int              @id @default(autoincrement())
   name                                     String           @db.VarChar(100)
-  user                                     Int
-  user_list_userTouser                     user             @relation("list_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_list_user")
-  user_book_list_user_book_list_listTolist user_book_list[] @relation("user_book_list_listTolist")
+  description                              String           @db.Text
+  userId                                   Int
+  user                                     User             @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_list_user")
+  collection_list                          Collection_list[]
 
-  @@index([user], map: "fk_list_user")
+  @@index([userId], map: "fk_list_user")
 }
 
-model role {
+model Role {
   id                   Int    @id @default(autoincrement())
   type                 String @db.VarChar(50)
-  user_user_roleTorole user[] @relation("user_roleTorole")
+  users                User[]
 }
 
-model state {
-  id                               Int         @id @default(autoincrement())
-  type                             String      @db.VarChar(50)
-  user_book_user_book_stateTostate user_book[] @relation("user_book_stateTostate")
+model State {
+  id                               Int          @id @default(autoincrement())
+  type                             String       @db.VarChar(50)
+  collection                       Collection[]
 }
 
-model user {
+model User {
   id                                         Int              @id @default(autoincrement())
   username                                   String           @unique(map: "username") @db.VarChar(100)
   email                                      String           @db.VarChar(100)
   password                                   String           @db.VarChar(80)
   birth_date                                 DateTime         @db.Date
-  role                                       Int
+  roleId                                     Int              @default(2)
   image_path                                 String           @db.VarChar(255)
-  list_list_userTouser                       list[]           @relation("list_userTouser")
-  role_user_roleTorole                       role             @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_role_user")
-  user_book_user_book_userTouser             user_book[]      @relation("user_book_userTouser")
-  user_book_list                             user_book_list[]
-  user_follower_user_follower_followerTouser user_follower[]  @relation("user_follower_followerTouser")
-  user_follower_user_follower_userTouser     user_follower[]  @relation("user_follower_userTouser")
+  lists                                      List[]           
+  role                                       Role             @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_user")
+  collections                                Collection[]     
+  followers                                  User_follower[]  @relation("follower")
+  followings                                 User_follower[]  @relation("following")
 
-  @@index([role], map: "FK_user_role")
+  @@index([roleId], map: "fk_user_role")
 }
 
-model user_book {
-  id                           Int    @id @default(autoincrement())
-  user                         Int
-  book                         Int
-  state                        Int
-  rating                       Int
-  review                       String @db.Text
-  book_user_book_bookTobook    book   @relation("user_book_bookTobook", fields: [book], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_book")
-  state_user_book_stateTostate state  @relation("user_book_stateTostate", fields: [state], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_state")
-  user_user_book_userTouser    user   @relation("user_book_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_user")
-
-  @@unique([user, book], map: "user")
-  @@index([book], map: "FK_user_book_book")
-  @@index([state], map: "FK_user_book_state")
-}
-
-model user_book_list {
-  id                             Int  @id @default(autoincrement())
-  user_book                      Int
-  list                           Int
-  list_user_book_list_listTolist list @relation("user_book_list_listTolist", fields: [list], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_list")
-  user                           user @relation(fields: [user_book], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_book_user_book")
-
-  @@index([list], map: "FK_user_book_list")
-  @@index([user_book], map: "FK_user_book_user_book")
-}
-
-model user_follower {
+model User_follower {
   id                                Int      @id @default(autoincrement())
-  user                              Int
-  follower                          Int
+  followerId                        Int
+  followingId                       Int
   start_following                   DateTime @db.Date
   unfollow                          Boolean
-  user_user_follower_followerTouser user     @relation("user_follower_followerTouser", fields: [follower], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_follower_follower")
-  user_user_follower_userTouser     user     @relation("user_follower_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_user_follower_user")
-
-  @@index([follower], map: "FK_user_follower_follower")
-  @@index([user], map: "FK_user_follower_user")
+  follower                          User     @relation("follower", fields: [followerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_follower_follower")
+  following                         User     @relation("following", fields: [followingId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_follower_following")
+  
+  @@unique([followerId, followingId], map: "follower_following")
+  @@index([followerId], map: "fk_user_follower_follower")
+  @@index([followingId], map: "fk_user_follower_following")
 }

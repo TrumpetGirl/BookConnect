@@ -1,10 +1,10 @@
 import express from 'express';
-import { getGenres, getGenresSelector } from '../controllers/genreController.js';
+import { getGenres } from '../controllers/genreController.js';
+import { verifyToken } from '../middleware/authMiddleware.js'
 
 const router = express.Router();
 
-router.get('/genre', getGenres);
+router.get('/genre', verifyToken, getGenres);
 
-router.get('/genre/names', getGenresSelector);
 
 export default router;

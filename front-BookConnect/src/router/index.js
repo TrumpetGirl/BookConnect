@@ -4,6 +4,7 @@ import authorRoutes from './author.routes'
 import bookRoutes from './book.routes'
 import { Forbidden, Unauthorized, Dashboard, Searcher}  from '@/views'
 import { useAuthStore } from '@/stores';
+import { storeToRefs } from 'pinia'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,10 +13,6 @@ const router = createRouter({
       path: '/',
       redirect: '/user/login'
     },
-    // {
-    //   path: '/:catchAll(.*)',
-    //   redirect: '/forbidden'
-    // },
     { ...userRoutes },
     { ...authorRoutes },
     { ...bookRoutes },
@@ -47,31 +44,14 @@ const publicPages = ['/user/login', '/user/register']
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  const isLoggedIn = await authStore.hasToken()
-  const isAdmin = authStore.isAdmin()
-  const isPublicPage = publicPages.includes(to.path)
-  // if (isLoggedIn) {
-  //   if (isPublicPage) {
-  //     if (isAdmin) {
-  //       next('/dashboard');
-  //     } else {
-  //       next('/search');
-  //     }
-  //   } else if (to.meta.requiresAdmin && !isAdmin) {
-  //     next('/unauthorized');
-  //   } else {
-  //     next();
-  //   }
-  // } else {
-  //   if (isPublicPage) {
-  //     next();
-  //   } else {
-  //     next('/forbidden');
-  //   }
-  // }
-
+  const { isAuthenticated } = storeToRefs(authStore)
+  
+  if (isAuthenticated.value === null) await authStore.hasToken()
+    const isAdmin = authStore.isAdmin()
+    const isPublicPage = publicPages.includes(to.path)
+ 
   // Si el usuario no está conectado y trata de acceder a una página pública, permite la navegación
-  if (!isLoggedIn) {
+  if (!isAuthenticated.value) {
     if (isPublicPage) {
       next();
     } else {

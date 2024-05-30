@@ -2,13 +2,14 @@ import { defineStore } from 'pinia';
 import router from '@/router';
 import axios from 'axios';
 import { useUserStore } from './user.store';
+import * as constant from '@/utils/constants'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({ 
     user: JSON.parse(localStorage.getItem('user')), 
     isAuthenticated: null,
     token: localStorage.getItem('token'),
-    adminRole: 1
+    adminRole: constant.adminRoleId
   }),
   getters: {
     isLoggedIn: (state) => state.isAuthenticated,
@@ -17,10 +18,11 @@ export const useAuthStore = defineStore('auth', {
     async login(username, password) {
       try {
         const response = await axios.post('http://localhost:3000/login', { username, password });
-        this.user = response.data.user;
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(this.user));
-        this.isAuthenticated = true;
+        this.user = response.data.user
+        this.token = response.data.token
+        localStorage.setItem("token", response.data.token)
+        localStorage.setItem("user", JSON.stringify(this.user))
+        this.isAuthenticated = true
         return this.user.username + ', has iniciado sesión'
       } catch (error) {
         this.isAuthenticated = false;
@@ -45,13 +47,10 @@ export const useAuthStore = defineStore('auth', {
       if (token && existsUser) {
         this.isAuthenticated = true
         this.token = token
-        return true
       } else {
         this.isAuthenticated = false
         this.token = null
-        return false
       }
-      
     }, 
     isAdmin () {
       return this.user && this.adminRole === this.user.role;

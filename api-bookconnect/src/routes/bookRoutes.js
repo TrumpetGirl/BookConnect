@@ -1,15 +1,18 @@
 import express from 'express';
-import  { getBooks, createBook, getBooksbyAuthor, getBooksByTitle } from '../controllers/BookController.js'
+import { verifyToken } from '../middleware/authMiddleware.js'
+import  { getBooks, getBookCount, createBook, getBooksbyAuthor, getBooksByTitle } from '../controllers/bookController.js'
 
 const router = express.Router();
 
-router.get('/book', getBooks)
+router.get('/book', verifyToken, getBooks);
 
-router.post('/book', createBook);
+router.get('/book/count', verifyToken, getBookCount);
 
-router.get('/book/:title', getBooksByTitle);
+router.post('/book', verifyToken, createBook);
 
-router.get('/book/:authorId', getBooksbyAuthor);
+router.get('/book/:title', verifyToken, getBooksByTitle);
+
+router.get('/book/:authorId', verifyToken, getBooksbyAuthor);
 
 
 

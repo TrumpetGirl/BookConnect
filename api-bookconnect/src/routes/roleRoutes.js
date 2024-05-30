@@ -1,8 +1,9 @@
 import express from 'express';
-import { getRolesSelector } from '../controllers/roleController.js';
+import { getRoles } from '../controllers/roleController.js';
+import { verifyToken } from '../middleware/authMiddleware.js'
 
 const router = express.Router();
 
-router.get('/role/names', getRolesSelector);
+router.get('/role', verifyToken, getRoles);
 
 export default router;

@@ -1,4 +1,4 @@
-import { findAllBooks, findBooksByAuthor, findBooksByTitle, addBook } from '../models/repository/bookRepository.js'
+import { findAllBooks, findBooksByAuthor, findBooksByTitle, addBook, countBooks  } from '../models/repository/bookRepository.js'
 
 // OBTENER TODOS LOS LIBROS
 export const getBooks = async (req, res) => {
@@ -38,6 +38,16 @@ export const createBook = async (req, res) => {
   try {
     const newBook = await addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension);
     res.status(201).json(newBook);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// OBTENER CANTIDAD DE LIBROS
+export const getBookCount = async (req, res) => {
+  try {
+    const count = await countBooks();
+    res.json({ count });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -7,7 +7,8 @@ export const useBookStore = defineStore({
     id: 'book',
     state: () => ({
         books: [],
-        book: {}
+        book: {},
+        bookCount: 0
     }),
     actions: {
         async create(book) {
@@ -25,6 +26,14 @@ export const useBookStore = defineStore({
                 this.book = (await axios.get(`${baseUrl}/${id}`)).data;
             } catch (error) {
                 throw new Error(error.response.data.message || 'No se ha podido recuperar el libro');
+            }
+        },
+        async getCount() {
+            try {
+              const response = await axios.get(`${baseUrl}/count`);
+              this.bookCount = response.data.count;
+            } catch (error) {
+              console.log(error);
             }
         },
         async update(id, params) {

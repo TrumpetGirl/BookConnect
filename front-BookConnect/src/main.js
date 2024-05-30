@@ -1,6 +1,6 @@
 //import './assets/css/main.css'
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createPinia, storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores';
 
 import App from './App.vue'
@@ -29,10 +29,18 @@ const vuetify = createVuetify({
   }
 })
 
+const app = createApp(App)
+
+app.use(createPinia())
+app.use(router)
+app.use(vuetify)
+const authStore = useAuthStore();
+app.mount('#app')
+
 axios.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = 'Bearer ' + token
+  const { token } = storeToRefs(authStore);
+  if (token.value) {
+    config.headers.Authorization = 'Bearer ' + token.value
   }
   return config
 })
@@ -56,14 +64,3 @@ axios.interceptors.response.use(
     return Promise.reject(error)
   },
 );
-
-const app = createApp(App)
-
-app.use(createPinia())
-app.use(router)
-app.use(vuetify)
-
-const authStore = useAuthStore();
-await authStore.hasToken()
-
-app.mount('#app')

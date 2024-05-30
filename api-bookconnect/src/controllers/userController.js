@@ -27,6 +27,7 @@ export const getUserByIdAndUsername = async (req, res) => {
     const { id, username } = req.body;
     console.log(id + " - " + username)
     const user = await findUserByIdAndUsername(id, username);
+    console.log(user)
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });

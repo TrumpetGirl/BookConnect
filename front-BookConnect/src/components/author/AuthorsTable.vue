@@ -106,12 +106,19 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img 
+        <!-- <v-img 
         :src="item.full_path"
-        max-height="75" 
-        max-width="75"
+        max-height="100" 
+        max-width="100"
         class="rounded-circle">
-      </v-img>
+      </v-img> -->
+      <v-avatar size="100">
+          <v-img
+            v-if="item.full_path"
+            :src="item.full_path"
+            class="rounded-circle"
+          ></v-img>
+        </v-avatar>
       </template>
 
       <template v-slot:item.actions="{ item }">

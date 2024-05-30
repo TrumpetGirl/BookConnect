@@ -1,24 +1,25 @@
 import express from 'express';
-import { getAuthors, getAuthorNames, getAuthorCount, createAuthor, getAuthorsByName, removeAuthor, getAuthorById, updateAuthor, getBooksByAuthorId } from '../controllers/authorController.js';
+import { verifyToken } from '../middleware/authMiddleware.js'
+import { getAuthors, getAuthorNames, getNumAuthors, createAuthor, getAuthorsByName, removeAuthor, getAuthorById, updateAuthor, getBooksByAuthor } from '../controllers/authorController.js';
 
 const router = express.Router();
 
-router.get('/author', getAuthors);
+router.get('/author', verifyToken, getAuthors);
 
-router.get('/author/names', getAuthorNames);
+router.get('/author/names', verifyToken, getAuthorNames);
 
-router.get('/author/total', getAuthorCount);
+router.get('/author/num', verifyToken, getNumAuthors);
 
-router.post('/author', createAuthor);
+router.post('/author', verifyToken, createAuthor);
 
-router.put('/author/:id', updateAuthor);
+router.put('/author/:id', verifyToken, updateAuthor);
 
-router.delete('/author/:id', removeAuthor);
+router.delete('/author/:id', verifyToken, removeAuthor);
 
-router.post('/author/:name', getAuthorsByName);
+router.post('/author/:name', verifyToken, getAuthorsByName);
 
-router.get('/author/:id', getAuthorById);
+router.get('/author/:id', verifyToken, getAuthorById);
 
-router.get('/author/:id/books', getBooksByAuthorId);
+router.get('/author/:id/books', verifyToken, getBooksByAuthor);
 
 export default router;

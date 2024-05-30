@@ -10,18 +10,13 @@ const prisma = new PrismaClient();
 export const findAllAuthors = async () => {
   try {
     const authors = await prisma.author.findMany({
-      include: {
-        _count:{
-          select:{book_book_authorToauthor: true}
-        }
-      }
+      include: {  _count:{ select: {books: true} } }
     });
-    console.log(authors)
     const arrAuthors = authors.map(author => new Author(author.id, author.name, author.birth_date, 
-    author.nationality, author.image_path, author._count.book_book_authorToauthor));
+      author.nationality, author.image_path, author._count.books))
     return arrAuthors;
   } catch (error) {
-    console.error('Error al obtener todos los autores:', error);
+    console.error('Error al obtener todos los autores: ', error)
     return []; 
   }
 };
@@ -29,9 +24,9 @@ export const findAllAuthors = async () => {
 // OBTENER AUTOR POR ID
 export const findAuthorById = async (id) => {
   try {
-    return await prisma.author.findUnique({ where: { id: id } });
+    return await prisma.author.findUnique({ where: { id: id } })
   } catch (error) {
-    console.error('Error obteniendo autor por id:', error);
+    console.error(`Error obteniendo autor ${id}: `, error)
     throw error;
   }
 };
@@ -48,19 +43,15 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
     });
     if (imageExtension) {
       const updateAuthor = await prisma.author.update({
-        where: {
-          id: newAuthor.id
-        },
-        data: {
-          image_path: "authors/imagenAutor_" + newAuthor.id + "." + imageExtension
-        }
+        where: { id: newAuthor.id },
+        data: { image_path: "authors/imagenAutor_" + newAuthor.id + "." + imageExtension }
       })
-      return updateAuthor;
+      return updateAuthor
     } else {
       return newAuthor
     }
   } catch (error) {
-    console.error('Error añadiendo autor:', error);
+    console.error('Error añadiendo autor: ', error);
     throw error;
   }
 };
@@ -72,7 +63,7 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
     const updateData = {
       name: name,
       birth_date: new Date(birthDate),
-      nationality: nationality,
+      nationality: nationality
     };
    
     if (image_path) {
@@ -81,13 +72,13 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
       updateData.image_path = null;
     }
     const updatedAuthor = await prisma.author.update({
-      where: { id: parseInt(id) },
-      data: updateData,
+      where: { id: id },
+      data: updateData
     });
 
     return updatedAuthor;
   } catch (error) {
-    console.error('Error editando al autor:', error);
+    console.error('Error editando al autor: ', error);
     throw error;
   }
 };
@@ -95,41 +86,31 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
 // ELIMINAR AUTOR
 export const deleteAuthor = async (id) => {
   try {
-    const deletedAuthor = await prisma.author.delete({
-      where: {
-        id: parseInt(id)
-      }
-    });
-    return deletedAuthor;
+    return await prisma.author.delete({ where: { id: id } });
   } catch (error) {
-    console.error('Error eliminando autor:', error);
+    console.error(`Error eliminando autor ${id}: `, error);
     throw error;
   }
 };
 // ------END CRUD------
 
-// OBTENER TODOS LOS NOMBRES DE LOS AUTORES (TODO: cambiar por lo de base)
-export const findAllAuthorNames = async () => {
+// OBTENER TODOS LOS NOMBRES DE LOS AUTORES
+export const findAllAuthorsSelector = async () => {
   try {
-      const authors = await prisma.author.findMany({
-          select: {
-               name: true
-           }
-       });
-       return authors.map(author => author.name);
-   } catch (error) {
-      console.error('Error al obtener los nombres de los autores:', error);
-       return []; 
-   }
+    const authors = await prisma.author.findMany({ select: { id: true, name: true }, orderBy: { name:'asc' } });
+    return authors.map(author => new Base (author.id, author.name));
+  } catch (error) {
+    console.error('Error al obtener los nombres de los autores: ', error);
+    throw error; 
+  }
  };
 
 // OBTENER EL NÚMERO TOTAL DE AUTORES
-export const countAuthors = async () => {
+export const numAuthors = async () => {
   try {
-    const count = await prisma.author.count();
-    return count;
+    return await prisma.author.count();
   } catch (error) {
-    console.error('Error al obtener el número total de autores:', error);
+    console.error('Error al obtener el número total de autores: ', error);
     throw error;
   }
 };
@@ -137,36 +118,26 @@ export const countAuthors = async () => {
 // OBTENER AUTORES POR NOMBRE
 export const findAuthorsByName = async (name) => {
   try {
-    return await prisma.author.findMany({ where: { name: name }, select: {name: true} });
+    return await prisma.author.findMany({ where: { name: name }, select: { name: true } });
   } catch (error) {
-    console.error('Error obteniendo autor por nombre:', error);
+    console.error(`Error obteniendo autor por nombre ${name}: `, error);
     throw error;
   }
 };
 
-  // OBTENER NOMBRE DE LIBROS POR AUTOR
-  export const findAllBooksByAuthor = (async (authorId) =>{
-    try {
-      const author = await prisma.author.findUnique({
-        where: {
-          id: Number(authorId),
-        },
-        include: {
-          book_book_authorToauthor: {
-            select: {
-              title: true,
-              id: true,
-              image_path: true
-            }
-          }
-        }
-      });
-      return author.book_book_authorToauthor.map(book => new BasePath (book.id, book.title, book.image_path));
-    } catch (error) {
-      console.error('Error al obtener los nombre de los libros por autor:', error);
-      throw error;
-    }
-  });
+// OBTENER NOMBRE DE LIBROS POR AUTOR
+export const findBooksByAuthor = async (authorId) =>{
+  try {
+    const author = await prisma.author.findUnique({
+      where: { id: authorId },
+      include: { books: { select: { id: true, title: true, image_path: true } } }
+    });
+    return author.books.map(book => new BasePath (book.id, book.title, book.image_path));
+  } catch (error) {
+    console.error(`Error al obtener los libros del autor ${authorId}: `, error);
+    throw error;
+  }
+};
 
 
 

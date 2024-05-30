@@ -42,6 +42,14 @@ export const useAuthorStore = defineStore({
                 throw new Error(error.response.data.message || 'No se ha podido recuperar el autor');
             }
         },
+        async getCount() {
+            try {
+              const response = await axios.get(`${baseUrl}/count`);
+              this.authorCount = response.data.count;
+            } catch (error) {
+              console.log(error);
+            }
+          },
         async update(id, params) {
             try {
                 const response = await axios.put(`${baseUrl}/${id}`, params);

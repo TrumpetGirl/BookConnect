@@ -1,5 +1,5 @@
 <script setup>
-import * as constant from '../../utils/constants';
+import * as constant from '@/utils/constants';
 import * as navigation from '../../utils/navigation';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
