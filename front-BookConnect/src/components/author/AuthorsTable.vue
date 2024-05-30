@@ -9,7 +9,7 @@
   const headers = ref([
     { title: 'Nombre', value: 'name' },
     { title: 'Imagen', value: 'image_path' },
-    { title: 'Fecha de Nacimiento', value: 'birth_date' },
+    { title: 'Fecha de nacimiento', value: 'birth_date' },
     { title: 'Nacionalidad', value: 'nationality' },
     { title: 'Editar / Eliminar', value: 'actions', sortable: false }
   ]);
@@ -89,8 +89,12 @@
       :search="search"
       class="custom-data-table"
     >
-    <template v-slot:[`column.header`]="{ column }">
-      <th class="font-weight-bold">{{ column.text }}</th>
+    <template v-slot:headers="{ columns }">
+      <tr>
+        <template v-for="column in columns" :key="column.key">
+          <th class="font-weight-bold custom-header"><span>{{ column.title }}</span></th>
+        </template>
+      </tr>
     </template>
 
       <template v-slot:item.name="{ item }">
@@ -102,9 +106,11 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.full_path"
-        max-height="100" 
-        max-width="100">
+        <v-img 
+        :src="item.full_path"
+        max-height="75" 
+        max-width="75"
+        class="rounded-circle">
       </v-img>
       </template>
 
@@ -136,18 +142,18 @@
   }
 
   .custom-width {
-    max-width: 90%;
+    max-width: 80%;
     margin: auto;
   }
 
   .custom-data-table {
-    max-width: 90%;
-    background-color: #ffe6f0; 
+    max-width: 80%;
+    background-color: #edebec; 
     margin: auto;
   }
 
   .custom-header {
-    background-color: #f2f2f2 !important; 
+    background-color: #f8c6d6 !important; 
   }
 
   .author-name {
@@ -159,4 +165,8 @@
   .author-name:hover {
     color: darkblue;
   }
+
+  .rounded-circle {
+  border-radius: 50%;
+}
 </style>

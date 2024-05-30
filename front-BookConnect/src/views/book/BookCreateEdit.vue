@@ -9,5 +9,7 @@ import  AddBookForm  from '@/components/book/AddBookForm.vue'
 </template>
 
 <style scoped>
-
+  .container {
+    margin: auto;
+  }
 </style>

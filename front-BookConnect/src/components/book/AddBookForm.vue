@@ -1,9 +1,8 @@
 <script setup>
   import * as constant from '../../utils/constants';
   import { useRoute, useRouter } from 'vue-router';
-  import { ref, watch, computed, onMounted } from 'vue';
+  import { computed, onMounted } from 'vue';
   import { storeToRefs } from 'pinia';
-
   import { useAuthorStore, useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
 
  const route = useRoute();
@@ -20,6 +19,7 @@
 
   let title = 'Añadir libro';
   const { genreNames } = storeToRefs(genreStore);
+  console.log(genreNames)
   let authors = [];
   let selectedGenre = null;
   let selectedAuthor = null;
@@ -32,17 +32,8 @@
       }) 
   }
 
-  const filteredAuthors = computed(() => {
-    return authors.filter(author => author.id === selectedAuthor);
-  });
-
-  watch(selectedAuthor, () => {
-    book.author = selectedAuthor ? authors.find(author => author.id === selectedAuthor) : null;
-  });
-
   onMounted(async () => {
     await genreStore.getAllGenresSelector();
-    authors = await authorStore.getAll();
   });
 
   const handleFileChange = (event) => {
@@ -84,7 +75,7 @@
 </script>
 
 <template>
-  <div class="container">
+  <div class="container mt-5">
     <fieldset class="register-fieldset">
       <legend>{{ title }}</legend>
       <v-form @submit.prevent="handleSubmit" class="register-form">
@@ -117,11 +108,11 @@
         </v-textarea>
 
         <v-select 
-        v-model="selectedRole" 
-        :items="roleNames"
+        v-model="selectedGenre" 
+        :items="genreNames"
         item-title="description"
         item-value="id" 
-        label="Tipo de rol" 
+        label="Género" 
         required>
         </v-select>
 

@@ -79,7 +79,7 @@ const handleSubmit = async () => {
     snackbarStore.success(response.message);
 
     if(id) {
-      await authorStore.getAll()
+      // await authorStore.getAll()
       navigation.redirectTo('/author')
     } else {
       cleanForm()

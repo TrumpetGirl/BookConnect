@@ -18,7 +18,7 @@ export const findAllRolesSelector = async () => {
         });
         return roles.map(role => new Base (role.id, role.description));
     } catch (error) {
-        console.error('Error al obtener los nombres de los géneros:', error);
+        console.error('Error al obtener los tipos de roles:', error);
         return []; 
     }
   };

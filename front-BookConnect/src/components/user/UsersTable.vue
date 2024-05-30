@@ -7,9 +7,9 @@
   const search = ref('');
   const headers = ref([
     { title: 'Nombre de usuario', value: 'username' },
+    { title: 'Imagen', value: 'image_path' },
     { title: 'Correo electrónico', value: 'email' },
     { title: 'Fecha de Nacimiento', value: 'birth_date' },
-    { title: 'Imagen', value: 'image_path' },
     { title: 'Acciones', value: 'actions', sortable: false }
   ]);
 
@@ -100,7 +100,10 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.full_path" max-height="75" max-width="75"></v-img>
+        <v-img :src="item.full_path" 
+        max-height="75" 
+        max-width="75">
+        </v-img>
       </template>
 
       <template v-slot:item.actions="{ item }">
@@ -131,13 +134,13 @@
   }
 
   .custom-width {
-    max-width: 90%;
+    max-width: 80%;
     margin: auto;
   }
 
   .custom-data-table {
-    max-width: 90%;
-    background-color: #ffe6f0; 
+    max-width: 80%;
+    background-color: #edebec; 
     margin: auto;
   }
 

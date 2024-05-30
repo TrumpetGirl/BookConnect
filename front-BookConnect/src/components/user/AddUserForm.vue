@@ -1,13 +1,12 @@
 <script setup>
 import * as constant from '../../utils/constants';
 import * as navigation from '../../utils/navigation';
-import { ref, watch, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useUserStore, useFileStore, useSnackbarStore, useAuthStore, useRoleStore  } from '@/stores';
 
 const route = useRoute();
-const router = useRouter();
 const userStore = useUserStore();
 const fileStore = useFileStore();
 const snackbarStore = useSnackbarStore();
@@ -22,7 +21,7 @@ const confirmPassword = ref('');
 let usernameError = false;
 let usernameMessage = '';
 
-let title = 'Añadir usario';
+let title = 'Añadir usuario';
 
 let image = ref(new File([""], "filename"))
 const imagePreview = ref(null);
@@ -41,6 +40,12 @@ const handleFileChange = (event) => {
   }
 };
 
+const deleteImage = () => {
+  imagePreview.value = null;
+  image.value = new File([""], "filename");
+  imageDeleted.value = true; 
+};
+
 if (id) {
     title = 'Editar usuario';
     onMounted(async ()=>{
@@ -54,29 +59,10 @@ if (id) {
     }) 
 } else {
   user.value = {}
-  author.value.birth_date = constant.formatDateToFormInput(new Date())
+  user.value.birth_date = constant.formatDateToFormInput(new Date())
 
 }
 
-// const checkUsernameAvailability = async () => {
-//     console.log(user.value.username)
-//     if (user.value.username) {
-//       try {
-//         const response = await userStore.existsUsername( user.value.username );
-//         if (response.data === user.value.username) {
-//           usernameError = true;
-//           usernameMessage = 'El usuario ya existe';
-//         } else {
-//           usernameError = false;
-//           usernameMessage = 'El usuario está disponible';
-//         }
-//       } catch (error) {
-//         console.error('Error al verificar la disponibilidad del usuario:', error);
-//         usernameError = true;
-//         usernameMessage = 'Error al verificar la disponibilidad del usuario';
-//       }
-//     }
-//   };
 
   const validatePassword = (password) => {
     const hasNumber = /[0-9]/.test(password);
@@ -144,7 +130,16 @@ const handleSubmit = async () => {
         formData.append('file', image)
         await fileStore.uploadImage(formData)
     }
+
     snackbarStore.success(response.message);
+
+    if(id) {
+      await userStore.getAll()
+      navigation.redirectTo('/user')
+    } else {
+      cleanForm()
+    }
+
   } catch (error) {
     console.error('Error al agregar usuario:', error);
   }
@@ -152,10 +147,14 @@ const handleSubmit = async () => {
 
 const cleanForm = () => {
   user.value = {}
-  user.value.birth_date = new Date().toLocaleDateString()
-  fNac.value = new Date().toLocaleDateString()
-  image.value = ref(new File([""], "filename"))
+  user.value.birth_date = constant.formatDateToFormInput(new Date())
   confirmPassword.value = ''
+  image = new File([""], "filename")
+  imagePreview.value = null;
+  imageDeleted.value = false;
+  if (fileInputRef.value) {
+    fileInputRef.value.value = null; 
+  } 
 };
 
 onMounted(async () => {
@@ -184,28 +183,30 @@ onMounted(async () => {
         </v-text-field>
 
         <v-text-field
-          v-model="fNacFormatted"
+          v-model="user.birth_date"
           label="Fecha de Nacimiento"
           type="date"
         ></v-text-field>
         
         <v-text-field
-            v-model="user.password"
-            label="Contraseña"
-            type="password"
-            required
-          ></v-text-field>
+          v-if="(!id)"
+          v-model="user.password"
+          label="Contraseña"
+          type="password"
+          required
+        ></v-text-field>
 
           <v-text-field
-            v-model="confirmPassword"
-            label="Repite Contraseña"
-            type="password"
-            required
+          v-if="(!id)"
+          v-model="confirmPassword"
+          label="Repite Contraseña"
+          type="password"
+          required
           ></v-text-field>
 
           <v-select 
-          v-model="selectedGenre" 
-          :items="genreNames"
+          v-model="selectedRole" 
+          :items="roleNames"
           item-title="description"
           item-value="id" 
           label="Rol" 
@@ -226,7 +227,7 @@ onMounted(async () => {
       </fieldset>
       <v-row>
         <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
-            <v-btn @click="() => router.push('/user')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            <v-btn @click="navigation.redirectTo('/user')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver al listado
             </v-btn>
           </v-col>
