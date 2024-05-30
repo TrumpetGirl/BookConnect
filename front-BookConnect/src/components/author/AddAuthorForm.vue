@@ -1,5 +1,5 @@
 <script setup>
- import * as constant from '../../utils/constants';
+import * as constant from '../../utils/constants';
 import * as navigation from '../../utils/navigation';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
@@ -16,24 +16,45 @@ let title = 'Añadir autor';
 
 const id = route.params.id;
 const { author } = storeToRefs(authorStore);
+
+let image = ref(new File([""], "filename"))
+const imagePreview = ref(null);
+const fileInputRef = ref(null); 
+const imageDeleted = ref(false);
+
+const handleFileChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    image = file
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+const deleteImage = () => {
+  imagePreview.value = null;
+  image.value = new File([""], "filename");
+  imageDeleted.value = true; 
+};
+
 if (id) {
     title = 'Editar autor';
     onMounted(async ()=>{
       await authorStore.getById(id);
+      if (author.value.birth_date) {
+        author.value.birth_date = constant.formatDateToFormInput(new Date(author.value.birth_date));
+      }
+      if (author.value.image_path) {
+        imagePreview.value = fileStore.downloadImage(author.value.image_path);
+      }
     }) 
 } else {
   author.value = {}
   author.value.birth_date = constant.formatDateToFormInput(new Date())
 }
-
-let image = ref(new File([""], "filename"))
-const handleFileChange = (event) => {
-  const file = event.target.files[0]
-  console.log(file)
-  if (file) {
-    image = file
-  }
-};
 
 const handleSubmit = async () => {
   let response
@@ -45,15 +66,25 @@ const handleSubmit = async () => {
     } else {
       response = await authorStore.create(author.value)
     }
-
+    console.log(response)
+    console.log(image)
     if (image && response && response.author.image_path) {
         formData.append('path', response.author.image_path)
         formData.append('file', image)
         await fileStore.uploadImage(formData)
+    } else if (imageDeleted.value && response.author.image_path) {
+      await fileStore.deleteImage(response.author.image_path);
     }
 
     snackbarStore.success(response.message);
-    cleanForm()
+
+    if(id) {
+      await authorStore.getAll()
+      navigation.redirectTo('/author')
+    } else {
+      cleanForm()
+    }
+    
   } catch (error) {
     console.error('Error al agregar autor:', error);
   }
@@ -63,6 +94,11 @@ const cleanForm = () => {
   author.value = {}
   author.value.birth_date = constant.formatDateToFormInput(new Date())
   image = new File([""], "filename")
+  imagePreview.value = null;
+  imageDeleted.value = false;
+  if (fileInputRef.value) {
+    fileInputRef.value.value = null; 
+  } 
 };
 </script>
 
@@ -83,8 +119,18 @@ const cleanForm = () => {
           type="date"
         ></v-text-field> 
           
-          <v-text-field v-model="author.nationality" label="Nacionalidad (País)"></v-text-field>
-          <input type="file" @change="handleFileChange" class="mb-5"/>
+          <v-text-field 
+          v-model="author.nationality" 
+          label="Nacionalidad (País)">
+          </v-text-field>
+
+          <input type="file" @change="handleFileChange" ref="fileInputRef"class="mb-5"/>
+
+          <div class="image-container" v-if="imagePreview">
+            <v-img :src="imagePreview" max-width="200" max-height="200" class="mb-5"/>
+            <v-btn @click="deleteImage" color="error" class="ml-2 mb-5">Borrar imagen</v-btn>
+          </div>
+
           <v-row>
             <v-col cols="6">
               <v-btn color="#d3d3d3" @click="cleanForm" block>Cancelar</v-btn>
@@ -128,5 +174,9 @@ legend {
 p {
   text-align: center;
   margin-top: 15px;
+}
+
+.image-container .v-btn {
+  margin-left: 16px; 
 }
 </style>

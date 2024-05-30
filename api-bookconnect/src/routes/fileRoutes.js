@@ -7,8 +7,13 @@ const router = express.Router();
 const upload = multer({dest: 'src/assets/images/'})
 
 router.post('/file/upload', upload.single('file'), (req, res) => {
-    fs.renameSync(req.file.path, req.file.destination + req.body.path )
-});
+    try {
+        fs.renameSync(req.file.path, req.file.destination + req.body.path )
+        res.status(200).json({ message: "Archivo guardado." });
+    } catch (error) {
+        res.status(500).json({ message: "Error al guardar el archivo." });
+    }
+})
 
 router.use('/file/download', express.static('src/assets/images'), (req, res) => {});
 

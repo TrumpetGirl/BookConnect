@@ -66,7 +66,7 @@ export const createAuthor = async (req, res) => {
 
 // EDITAR UN AUTOR
 export const updateAuthor = async (req, res) => {
-  const { id } = req.params.id;
+  const { id } = req.params;
   const { name, birth_date, nationality, imageExtension } = req.body;
   try {
     const editedAuthor = await editAuthor(id, name, birth_date, nationality, imageExtension);

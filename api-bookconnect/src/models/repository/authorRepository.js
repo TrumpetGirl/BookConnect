@@ -66,20 +66,26 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
 };
 
 // EDITAR AUTOR
-export const editAuthor = async (id, name, birth_date, nationality, imageExtension) => {
-  let image_path = imageExtension ? "authors/imagenAutor_" + id + "." + imageExtension : null
+export const editAuthor = async (id, name, birthDate, nationality, imageExtension) => {
+  let image_path = imageExtension ? `authors/imagenAutor_${id}.${imageExtension}` : null;
   try {
-    await prisma.author.update({
-      where: {
-        id: id
-      },
-      data: {
-        name: name,
-        birth_date: birth_date,
-        nationality: nationality,
-        image_path: image_path
-      },
+    const updateData = {
+      name: name,
+      birth_date: new Date(birthDate),
+      nationality: nationality,
+    };
+   
+    if (image_path) {
+      updateData.image_path = image_path;
+    } else {
+      updateData.image_path = null;
+    }
+    const updatedAuthor = await prisma.author.update({
+      where: { id: parseInt(id) },
+      data: updateData,
     });
+
+    return updatedAuthor;
   } catch (error) {
     console.error('Error editando al autor:', error);
     throw error;

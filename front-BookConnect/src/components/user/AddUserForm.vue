@@ -1,10 +1,10 @@
 <script setup>
+import * as constant from '../../utils/constants';
+import * as navigation from '../../utils/navigation';
 import { ref, watch, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useUserStore, useFileStore, useSnackbarStore, useAuthStore, useRoleStore  } from '@/stores';
-
-const fNac = ref(new Date().toLocaleDateString());
 
 const route = useRoute();
 const router = useRouter();
@@ -24,42 +24,39 @@ let usernameMessage = '';
 
 let title = 'Añadir usario';
 
-if (id) {
-    // edit mode
-    title = 'Editar usuario';
-    onMounted(async ()=>{
-      await userStore.getById(id);
-    }) 
-} else {
-  user.value = {}
-}
-
-
-watch(fNac, (newVal) => {
-  console.log('newVal ' + newVal)
-    if (newVal) {
-      user.value.birth_date = newVal;
-    }
-  });
-
-const fNacFormatted = computed({
-  get: () => {
-    console.log('get ' + fNac.value)
-    return fNac.value;
-  },
-  set: (val) => {
-    console.log('set ' + val)
-    fNac.value = val;
-  }
-});
-
 let image = ref(new File([""], "filename"))
+const imagePreview = ref(null);
+const fileInputRef = ref(null); 
+const imageDeleted = ref(false);
+
 const handleFileChange = (event) => {
   const file = event.target.files[0]
   if (file) {
     image = file
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
   }
 };
+
+if (id) {
+    title = 'Editar usuario';
+    onMounted(async ()=>{
+      await userStore.getById(id);
+      if (user.value.birth_date) {
+        user.value.birth_date = constant.formatDateToFormInput(new Date(user.value.birth_date));
+      }
+      if (user.value.image_path) {
+        imagePreview.value = fileStore.downloadImage(user.value.image_path);
+      }
+    }) 
+} else {
+  user.value = {}
+  author.value.birth_date = constant.formatDateToFormInput(new Date())
+
+}
 
 // const checkUsernameAvailability = async () => {
 //     console.log(user.value.username)
@@ -211,7 +208,7 @@ onMounted(async () => {
           :items="genreNames"
           item-title="description"
           item-value="id" 
-          label="Tipo de rol" 
+          label="Rol" 
           required>
         </v-select>
 
