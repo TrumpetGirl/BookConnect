@@ -1,28 +1,19 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useBookStore, useAuthorStore  } from '@/stores';
+  import { ref, onMounted } from 'vue';
+  import { useBookStore, useAuthorStore  } from '@/stores';
+  import { storeToRefs } from 'pinia';
 
-const bookCount = ref(0);
-const bookStore = useBookStore();
-const authorCount = ref(0);
-const authorStore = useAuthorStore();
+  const bookStore = useBookStore()
+  const authorStore = useAuthorStore()
+  const { bookCount } = storeToRefs(bookStore)
+  const { authorCount } = storeToRefs(authorStore)
 
-
-const fetchBookCount = async () => {
-  await bookStore.getCount();
-  bookCount.value = bookStore.bookCount;
-};
-const fetchAuthorCount = async () => {
-  await authorStore.getCount();
-  authorCount.value = authorStore.authorCount;
-};
-
-onMounted(() => {
-  fetchBookCount();
-  fetchAuthorCount();
-});
+  onMounted(async () => {
+    await bookStore.getCount();
+    await authorStore.getCount();
+    console.log(authorCount)
+  });
 </script>
-
 
 <template>
   <div>
@@ -55,7 +46,7 @@ onMounted(() => {
       <v-row justify="center">
         <v-col cols="12" md="6">
           <v-alert type="info" :value="true">
-            Hay un total de {{ authorCount }} autores.
+            Hay un total de {{ authorCount.value }} autores.
           </v-alert>
         </v-col>
       </v-row>

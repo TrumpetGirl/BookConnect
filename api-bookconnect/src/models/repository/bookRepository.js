@@ -44,18 +44,20 @@ export const findBookById = async (id) => {
 };
 
 // CREAR LIBRO
-export async function addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension) {
+export async function addBook(isbn, title, publicationYear, authorId, genreId, synopsis, imageExtension) {
   try {
     const newBook = await prisma.book.create({
       data: {
         isbn: isbn,
         title: title, 
-        publicationYear: publicationYear,
-        author: author,
-        genre: genre, 
-        synopsis: synopsis
+        publication_year: publicationYear,
+        authorId: authorId,
+        genreId: genreId, 
+        synopsis: synopsis,
+        image_path: ''
       }
     });
+
     const updateBook = await prisma.book.update({
       where: {
         id: newBook.id

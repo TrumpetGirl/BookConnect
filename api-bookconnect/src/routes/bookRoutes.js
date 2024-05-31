@@ -7,10 +7,10 @@ const router = express.Router();
 
 // ------ CRUD ------
 router.get('/book', verifyToken, getBooks);
-router.get('/book/:id', verifyToken, getBookById);
+router.get('/book/:id(\\d+)', verifyToken, getBookById);
 router.post('/book', verifyToken, createBook);
-router.put('/book/:id', verifyToken, updateBook);
-router.delete('/book/:id', verifyToken, removeBook);
+router.put('/book/:id(\\d+)', verifyToken, updateBook);
+router.delete('/book/:id(\\d+)', verifyToken, removeBook);
 // ------ END CRUD ------
 
 router.get('/book/names', verifyToken, getBookNames);

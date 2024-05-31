@@ -1,31 +1,35 @@
 <script setup>
-  // import * as constant from '../../utils/constants';
-  // import { useRoute, useRouter } from 'vue-router';
-  // import { onMounted } from 'vue';
-  // import { storeToRefs } from 'pinia';
-  // import { useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
+   import * as constants from '../../utils/constants';
+   import * as navigation from '../../utils/navigation';
+   import { useRoute } from 'vue-router';
+   import { ref, onMounted } from 'vue';
+   import { storeToRefs } from 'pinia';
+   import { useFileStore, useAuthorStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
 
- const route = useRoute();
- const router = useRouter();
- const authorStore = useAuthorStore();
- const fileStore = useFileStore();
- const snackbarStore = useSnackbarStore();
- const bookStore = useBookStore();
- const authStore = useAuthStore();
- const genreStore = useGenreStore();
+  const route = useRoute();
+  const authorStore = useAuthorStore();
+  const fileStore = useFileStore();
+  const snackbarStore = useSnackbarStore();
+  const bookStore = useBookStore();
+  const authStore = useAuthStore();
+  const genreStore = useGenreStore();
 
   const id = route.params.id;
   const { book } = storeToRefs(bookStore);
+  const { genres } = storeToRefs(genreStore);
+  const { authors } = storeToRefs(authorStore);
 
   let title = 'Añadir libro';
-  const { genres } = storeToRefs(genreStore);
-  let authors = [];
-  let selectedAuthor = null;
 
   let image = ref(new File([""], "filename"))
   const imagePreview = ref(null);
   const fileInputRef = ref(null); 
   const imageDeleted = ref(false);
+
+  onMounted(async () => {
+    await genreStore.getAll();
+    await authorStore.getAuthorNames();
+  });
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -43,41 +47,46 @@
   imagePreview.value = null;
   image.value = new File([""], "filename");
   imageDeleted.value = true; 
-};
+  };
 
   if (id) {
-      title = 'Editar libro';
-      onMounted(async () => {
-        await bookStore.getById(id);
-        selectedAuthor = book.author.id;
-        if (book.value.image_path) {
+    title = 'Editar libro';
+    onMounted(async () => {
+      await bookStore.getById(id);
+      if (book.value.image_path) {
         imagePreview.value = fileStore.downloadImage(book.value.image_path);
       }
-      }) 
-    } else {
-  book.value = {}
-}
-
-  onMounted(async () => {
-    await genreStore.getAll();
-  });
+    }) 
+  } else {
+    book.value = {}
+  }
 
   const handleSubmit = async () => {
+    let response;
     try {
-      let response;
+      const formData = new FormData();
+      book.value.imageExtension = image.name ? image.name.split(".").pop() : null
       if (id) {
         response = await bookStore.update(id, book.value);
       } else {
         response = await bookStore.create(book.value);
       }
-      if (response.success && book.cover) {
-        const formData = new FormData();
-        formData.append('file', book.cover);
-        formData.append('path', response.book.cover_path);
+      console.log(response.success)
+      if (image && response && response.book.image_path) {
+        formData.append('path', response.book.image_path);
+        formData.append('file', image);
         await fileStore.uploadImage(formData);
+      } else if (imageDeleted.value && response.book.image_path) {
+        await fileStore.deleteImage(response.book.image_path);
       }
-      snackbarStore.success(response.message);
-      cleanForm();
+
+    snackbarStore.success(response.message);
+
+      if(id) {
+        navigation.redirectTo('/book')
+      } else {
+        cleanForm()
+      }
     } catch (error) {
       console.error('Error al agregar libro:', error);
       snackbarStore.error('Error al agregar libro');
@@ -86,7 +95,12 @@
 
   const cleanForm = () => {
     book.value = {};
-    selectedAuthor = null;
+    image = new File([""], "filename")
+    imagePreview.value = null;
+    imageDeleted.value = false;
+  if (fileInputRef.value) {
+    fileInputRef.value.value = null; 
+  } 
   };
 </script>
 
@@ -96,8 +110,13 @@
       <legend>{{ title }}</legend>
       <v-form @submit.prevent="handleSubmit" class="register-form">
 
-        <p>Portada: <input type="file" @change="handleFileChange" class="mb-5" accept="image/*"/></p>
-        
+        <p>Portada: <input type="file" @change="handleFileChange" class="mb-5" accept="image/*" ref="fileInputRef"/></p>
+
+        <div class="image-container" v-if="imagePreview">
+          <v-img :src="imagePreview" max-width="200" max-height="200" class="mb-5"/>
+          <v-btn @click="deleteImage" color="error" class="ml-2 mb-5">Borrar imagen</v-btn>
+        </div>
+
         <v-text-field 
         v-model="book.title" 
         label="Título" 
@@ -111,11 +130,11 @@
         </v-text-field>
 
         <v-text-field 
-        v-model="book.year" 
+        v-model="book.publicationYear" 
         label="Año de publicación" 
         type="number"
         min="0"
-        :max="constant.todayYear" 
+        :max="constants.todayYear" 
         required>
         </v-text-field>
 
@@ -126,7 +145,7 @@
         </v-textarea>
 
         <v-select 
-        v-model="book.genre" 
+        v-model="book.genreId" 
         :items="genres"
         item-title="name"
         item-value="id" 
@@ -135,12 +154,11 @@
         </v-select>
 
         <v-autocomplete 
-        v-model="selectedAuthor" 
-        :items="filteredAuthors" 
+        v-model="book.authorId" 
+        :items="authors" 
         label="Autor" 
-        item-text="name" 
-        item-value="id" 
-        @change="selectAuthor">
+        item-title="description" 
+        item-value="id" >
         </v-autocomplete>
 
         <v-row>
@@ -155,7 +173,7 @@
     </fieldset>
     <v-row>
       <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
-        <v-btn @click="() => router.push('/book')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+        <v-btn @click="() => navigation.redirectTo('/book')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
           Volver al listado
         </v-btn>
       </v-col>

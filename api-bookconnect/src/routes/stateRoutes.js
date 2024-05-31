@@ -6,10 +6,10 @@ const router = express.Router();
 
 // ------ CRUD ------
 router.get('/state', verifyToken, getStates);
-router.get('/state/:id', verifyToken, getStateById);
+router.get('/state/:id(\\d+)', verifyToken, getStateById);
 router.post('/state', verifyToken, createState);
-router.put('/state/:id', verifyToken, updateState);
-router.delete('/state/:id', verifyToken, removeState);
+router.put('/state/:id(\\d+)', verifyToken, updateState);
+router.delete('/state/:id(\\d+)', verifyToken, removeState);
 // ------ END CRUD ------
 
 export default router;

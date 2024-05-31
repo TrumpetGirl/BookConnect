@@ -62,7 +62,7 @@ export const useBookStore = defineStore({
         async getCount() {
             try {
               const response = await axios.get(`${baseUrl}/num`);
-              this.bookCount = response.data.count;
+              this.bookCount = response.data.totalBooks;
             } catch (error) {
               console.log(error);
             }

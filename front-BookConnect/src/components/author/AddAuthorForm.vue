@@ -66,8 +66,6 @@ const handleSubmit = async () => {
     } else {
       response = await authorStore.create(author.value)
     }
-    console.log(response)
-    console.log(image)
     if (image && response && response.author.image_path) {
         formData.append('path', response.author.image_path)
         formData.append('file', image)
@@ -79,7 +77,6 @@ const handleSubmit = async () => {
     snackbarStore.success(response.message);
 
     if(id) {
-      // await authorStore.getAll()
       navigation.redirectTo('/author')
     } else {
       cleanForm()
@@ -87,6 +84,7 @@ const handleSubmit = async () => {
     
   } catch (error) {
     console.error('Error al agregar autor:', error);
+    snackbarStore.error('Error al agregar el autor');
   }
 };
 
@@ -124,7 +122,7 @@ const cleanForm = () => {
           label="Nacionalidad (País)">
           </v-text-field>
 
-          <input type="file" @change="handleFileChange" ref="fileInputRef"class="mb-5"/>
+          <input type="file" @change="handleFileChange" ref="fileInputRef"class="mb-5" accept="image/*"/>
 
           <div class="image-container" v-if="imagePreview">
             <v-img :src="imagePreview" max-width="200" max-height="200" class="mb-5"/>

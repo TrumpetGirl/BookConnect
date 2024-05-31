@@ -46,13 +46,12 @@
         <div class="welcome-message">Bienvenido/a, {{ user.username }}</div>
       </v-col>
       <v-col cols="auto align-self-center ">
-        <v-menu offset-y>
+        <v-menu>
           <template v-slot:activator="{ props }">
             <img
               class="profile-picture"
               :src="user.image_path"
               v-bind="props"
-              v-on="on"
             />
           </template>
           <v-list>

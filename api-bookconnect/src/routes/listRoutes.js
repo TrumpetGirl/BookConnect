@@ -6,10 +6,10 @@ const router = express.Router();
 
 // ------ CRUD ------
 router.get('/list', verifyToken, getLists);
-router.get('/list/:id', verifyToken, getListById);
+router.get('/list/:id(\\d+)', verifyToken, getListById);
 router.post('/list', verifyToken, createList);
-router.put('/list/:id', verifyToken, updateList);
-router.delete('/list/:id', verifyToken, removeList);
+router.put('/list/:id(\\d+)', verifyToken, updateList);
+router.delete('/list/:id(\\d+)', verifyToken, removeList);
 // ------ END CRUD ------
 
 export default router;

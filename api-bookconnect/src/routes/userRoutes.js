@@ -8,11 +8,11 @@ const router = express.Router();
 
 // ------ CRUD ------
 router.get('/user', verifyToken, getUsers);
-router.get('/user/:id', verifyToken, getUserById);
+router.get('/user/:id(\\d+)', verifyToken, getUserById);
 router.post('/user/create', verifyToken, makeNewUser);
 router.post('/user/register', createUser);
-router.put('/user/:id', verifyToken, updateUser);
-router.delete('/user/:id', verifyToken, removeUser);
+router.put('/user/:id(\\d+)', verifyToken, updateUser);
+router.delete('/user/:id(\\d+)', verifyToken, removeUser);
 // ------ END CRUD ------
 
 router.get('/user/names', verifyToken, getUserNames);

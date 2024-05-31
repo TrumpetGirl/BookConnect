@@ -45,33 +45,8 @@
     </v-container>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        profileImage: '', // URL de la imagen del perfil
-        username: '', // Nombre de usuario
-        birthDate: '', // Fecha de nacimiento
-        email: '', // Correo electrónico
-        currentPassword: '', // Contraseña actual
-        newPassword: '', // Nueva contraseña
-        confirmNewPassword: '', // Confirmar nueva contraseña
-        menu: false // Controla la visibilidad del menú de selección de fecha
-      };
-    },
-    methods: {
-      handleFileChange(event) {
-        const file = event.target.files[0];
-        // Aquí puedes manejar la carga de la imagen del perfil y asignarla a profileImage
-      },
-      cancelChanges() {
-        // Lógica para cancelar los cambios
-      },
-      saveChanges() {
-        // Lógica para guardar los cambios
-      }
-    }
-  };
+  <script setup>
+  
   </script>
   
   <style scoped>

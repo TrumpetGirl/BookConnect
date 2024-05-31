@@ -73,7 +73,7 @@ export const useUserStore = defineStore({
         async getCount() {
             try {
               const response = await axios.get(`${baseUrl}/num`);
-              this.userCount = response.data.count;
+              this.userCount = response.data.totalUsers;
             } catch (error) {
               console.log(error);
             }

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/state`;
 
-export const useGenreStore = defineStore({
+export const useStateStore = defineStore({
     id: 'state',
     state: () => ({
         states: [],

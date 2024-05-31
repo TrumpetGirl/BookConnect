@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 export const findAllGenres = async () => {
   try {
       const genres = await prisma.genre.findMany({
-        orderBy:{type:'asc'}
+        orderBy:{name:'asc'}
       });
-      return genres.map(genre => new Genre (genre.id, genre.type));
+      return genres.map(genre => new Genre (genre.id, genre.name));
   } catch (error) {
       console.error('Error al obtener los géneros:', error);
       return []; 

@@ -31,9 +31,10 @@ export const getBookById = async (req, res) => {
 
 // CREAR LIBRO
 export const createBook = async (req, res) => {
-  const { isbn, title, publicationYear, author, genre, synopsis, imageExtension } = req.body;
+  const publicationYear  = parseInt(req.body.publicationYear)
+  const { isbn, title, authorId, genreId, synopsis, imageExtension } = req.body;
   try {
-    const newBook = await addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension);
+    const newBook = await addBook(isbn, title, publicationYear, authorId, genreId, synopsis, imageExtension);
     res.status(201).json(newBook);
   } catch (error) {
     res.status(500).json({ message: error.message });

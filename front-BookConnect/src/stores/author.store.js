@@ -64,7 +64,7 @@ export const useAuthorStore = defineStore({
         async getCount() {
             try {
               const response = await axios.get(`${baseUrl}/num`);
-              this.authorCount = response.data.count;
+              this.authorCount = response.data.totalAuthors;
             } catch (error) {
               console.log(error);
             }
