@@ -1,7 +1,7 @@
-// Importamos el repositorio para utilizar sus métodos
-import { findAllAuthors, findAuthorById, findAllAuthorsSelector, numAuthors,  addAuthor, editAuthor, findAuthorsByName, deleteAuthor, findBooksByAuthor  } from '../models/repository/authorRepository.js';
+import { findAllAuthors, findAuthorById, addAuthor, editAuthor, deleteAuthor, 
+  findAllAuthorsSelector, numAuthors, findAuthorsByName, findBooksByAuthor  } from '../models/repository/authorRepository.js';
 
-// ------CRUD------
+// ------ CRUD ------
 // OBTENER TODOS LOS AUTORES
 export const getAuthors = async (req, res) => {
   try {
@@ -62,7 +62,7 @@ export const removeAuthor = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// ------END CRUD------
+// ------ END CRUD ------
 
 // OBTENER EL NOMBRE DE LOS AUTORES
 export const getAuthorNames = async (req, res) => {
@@ -89,7 +89,7 @@ export const getAuthorsByName = async (req, res) => {
   try {
     const { name } = req.body;
     const author = await findAuthorsByName(name);
-    res.json(author);
+    res.status(200).json(author);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -1,9 +1,15 @@
 import express from 'express';
-import { getRoles } from '../controllers/roleController.js';
 import { verifyToken } from '../middleware/authMiddleware.js'
+import { getRoles, getRoleById, createRole, updateRole, removeRole } from '../controllers/roleController.js';
 
 const router = express.Router();
 
+// ------ CRUD ------
 router.get('/role', verifyToken, getRoles);
+router.get('/role/:id', verifyToken, getRoleById);
+router.post('/role', verifyToken, createRole);
+router.put('/role/:id', verifyToken, updateRole);
+router.delete('/role/:id', verifyToken, removeRole);
+// ------ END CRUD ------
 
 export default router;

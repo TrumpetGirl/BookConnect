@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// ------CRUD------
+// ------ CRUD ------
 // OBTENER TODOS LOS AUTORES
 export const findAllAuthors = async () => {
   try {
@@ -21,12 +21,13 @@ export const findAllAuthors = async () => {
   }
 };
 
+
 // OBTENER AUTOR POR ID
 export const findAuthorById = async (id) => {
   try {
     return await prisma.author.findUnique({ where: { id: id } })
   } catch (error) {
-    console.error(`Error obteniendo autor ${id}: `, error)
+    console.error(`Error obteniendo el autor ${id}: `, error)
     throw error;
   }
 };
@@ -88,11 +89,11 @@ export const deleteAuthor = async (id) => {
   try {
     return await prisma.author.delete({ where: { id: id } });
   } catch (error) {
-    console.error(`Error eliminando autor ${id}: `, error);
+    console.error(`Error eliminando el autor ${id}: `, error);
     throw error;
   }
 };
-// ------END CRUD------
+// ------ END CRUD ------
 
 // OBTENER TODOS LOS NOMBRES DE LOS AUTORES
 export const findAllAuthorsSelector = async () => {

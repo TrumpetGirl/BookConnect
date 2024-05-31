@@ -1,13 +1,13 @@
 <script setup>
   import * as constant from '../../utils/constants';
   import { useRoute, useRouter } from 'vue-router';
-  import { computed, onMounted } from 'vue';
+  import { onMounted } from 'vue';
   import { storeToRefs } from 'pinia';
-  import { useAuthorStore, useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
+  import { useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
 
  const route = useRoute();
  const router = useRouter();
- const authorStore = useAuthorStore();
+//  const authorStore = useAuthorStore();
  const fileStore = useFileStore();
  const snackbarStore = useSnackbarStore();
  const bookStore = useBookStore();
@@ -19,12 +19,12 @@
 
   let title = 'Añadir libro';
   const { genres } = storeToRefs(genreStore);
-  let authors = [];
+  // let authors = [];
   let selectedAuthor = null;
 
   let image = ref(new File([""], "filename"))
   const imagePreview = ref(null);
-  const fileInputRef = ref(null); 
+  // const fileInputRef = ref(null); 
   const imageDeleted = ref(false);
 
   const handleFileChange = (event) => {

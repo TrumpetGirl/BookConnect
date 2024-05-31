@@ -11,14 +11,11 @@ export const useBookStore = defineStore({
         bookCount: 0
     }),
     actions: {
-        async create(book) {
-            await axios.post(baseUrl, book);
-        },
         async getAll() {
             try {
                 this.books = (await axios.get(baseUrl)).data; 
             } catch (error) {
-                console.log(error)
+                throw new Error(error.response.data.message || 'No se han podido recuperar los libros');
             }
         },
         async getById(id) {
@@ -28,31 +25,55 @@ export const useBookStore = defineStore({
                 throw new Error(error.response.data.message || 'No se ha podido recuperar el libro');
             }
         },
+        async create(book) {
+            try {
+                const response = await axios.post(baseUrl, book);
+                return {book: response.data, message:'El libro ha sido creado con éxito'}
+            } catch (error) {
+                throw new Error(error.response.data.message || 'Error al añadir el libro');
+            }    
+        },
+        async update(id, params) {
+            try {
+                const response = await axios.put(`${baseUrl}/${id}`, params);
+                return {libro: response.data, message:'El libro ha sido editado con éxito'}
+            } catch {
+                throw new Error(error.response.data.message || 'Error al editar el libro');
+            }
+        },
+        async delete(id) {
+            try {
+                await axios.delete(`${baseUrl}/${id}`);
+                this.books = this.books.filter(book => book.id !== id); 
+                return 'El libro ha sido eliminado'
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async getBookNames() {
+            try {
+                const response = await axios.get(`${baseUrl}/names`);
+                this.books = response.data;
+            } catch (error) {
+                console.log(error);
+                return []; 
+            }
+        },
         async getCount() {
             try {
-              const response = await axios.get(`${baseUrl}/count`);
+              const response = await axios.get(`${baseUrl}/num`);
               this.bookCount = response.data.count;
             } catch (error) {
               console.log(error);
             }
         },
-        async update(id, params) {
-            await axios.put(`${baseUrl}/${id}`, params);
-        },
-        async delete(id) {
-            // add isDeleting prop to user being deleted
-            this.users.find(x => x.id === id).isDeleting = true;
-
-            await fetchWrapper.delete(`${baseUrl}/${id}`);
-
-            // remove user from list after deleted
-            this.users = this.users.filter(x => x.id !== id);
-
-            // auto logout if the logged in user deleted their own record
-            const authStore = useAuthStore();
-            if (id === authStore.user.id) {
-                authStore.logout();
+        async getBooksByTitle(title) {
+            try {
+                this.books = (await axios.get(`${baseUrl}/${title}`)).data;
+            } catch (error) {
+                console.log(error);
             }
-        }
+        },
+      
     }
 });

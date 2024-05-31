@@ -4,18 +4,19 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+// ------ CRUD ------
 // OBTENER TODOS LOS LIBROS
 export const findAllBooks = async () => {
   try {
     const books = await prisma.book.findMany({
       include: {
-        author_book_authorToauthor: {
+        author: {
           select: {
             name: true,
             id: true
           }
         },
-        genre_book_genreTogenre: {
+        genre: {
           select: {
             name: true,
             id: true
@@ -24,52 +25,23 @@ export const findAllBooks = async () => {
       }
     });
     const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
-      book.publication_year, book.author_book_authorToauthor.name, book.genre_book_genreTogenre.name, book.synopsis, book.image_path));
+      book.publication_year, book.synopsis, book.image_path, book.author.name, book.genre.name));
     return arrBooks;
   } catch (error) {
-    console.error('Error al obtener todos los libros:', error);
+    console.error('Error al obtener todos los libros: ', error);
     return []; 
   }
 };
 
-// OBTENER LIBROS POR TÍTULO
-export const findBooksByTitle = async (title) => {
+// OBTENER LIBRO POR ID
+export const findBookById = async (id) => {
   try {
-    const books = await prisma.book.findMany({
-      where: {
-        title: {
-          contains: title 
-        }
-      }
-    });
-    const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
-      book.publication_year, book.author, book.genre, book.synopsis));
-
-    return arrBooks;
+    return await prisma.book.findUnique({ where: { id: id } })
   } catch (error) {
-    console.error('Error al obtener libros por título:', error);
-    return []; 
+    console.error(`Error obteniendo el libro ${id}: `, error)
+    throw error;
   }
 };
-
-// OBTENER LIBROS POR AUTOR
-export const findBooksByAuthor = (async(authorId) => {
-  try {
-      const books = await prisma.book.findMany({
-        where: {
-          author: Number(authorId)
-        }
-      });
-      const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
-        book.publication_year, book.author, book.genre, book.synopsis));
-      
-      return arrBooks;
-      }  catch (error) {
-        console.error('Error al obtener libros por autor:', error);
-        return []; 
-      }
-  });
-
 
 // CREAR LIBRO
 export async function addBook(isbn, title, publicationYear, author, genre, synopsis, imageExtension) {
@@ -94,21 +66,88 @@ export async function addBook(isbn, title, publicationYear, author, genre, synop
     })
     return updateBook;
   } catch (error) {
-    console.error('Error añadiendo libro:', error);
+    console.error('Error añadiendo libro: ', error);
     throw error;
   }
 }
 
-// OBTENER CANTIDAD DE LIBROS
-export const countBooks = async () => {
+// EDITAR LIBRO
+export const editBook = async (id,isbn, title, publicationYear, author, genre, synopsis, imageExtension) => {
+  let image_path = imageExtension ? `books/imagenLibro_${id}.${imageExtension}` : null;
+  try {
+    const updateData = {
+      isbn: isbn,
+      title: title,
+      publicationYear: publicationYear,
+      author: author,
+      genre: genre,
+      synopsis: synopsis,
+      imageExtension: imageExtension
+    };
+   
+    if (image_path) {
+      updateData.image_path = image_path;
+    } else {
+      updateData.image_path = null;
+    }
+    const updatedBook = await prisma.book.update({
+      where: { id: id },
+      data: updateData
+    });
+
+    return updatedBook;
+  } catch (error) {
+    console.error('Error editando el libro: ', error);
+    throw error;
+  }
+};
+
+// ELIMINAR LIBRO
+export const deleteBook = async (id) => {
+  try {
+    return await prisma.book.delete({ where: { id: id } });
+  } catch (error) {
+    console.error(`Error eliminando el libro ${id}: `, error);
+    throw error;
+  }
+};
+// ------ END CRUD ------
+
+// OBTENER TODOS LOS NOMBRES DE LOS LIBROS
+export const findAllBooksSelector = async () => {
+  try {
+    const books = await prisma.book.findMany({ select: { id: true, title: true }, orderBy: { name:'asc' } });
+    return books.map(book => new Base (book.id, book.name));
+  } catch (error) {
+    console.error('Error al obtener los nombres de los libros: ', error);
+    throw error; 
+  }
+ };
+
+ // OBTENER EL NÚMERO TOTAL DE LIBROS
+export const numBooks = async () => {
   try {
     const count = await prisma.book.count();
     return count;
   } catch (error) {
-    console.error('Error al contar los libros:', error);
+    console.error('Error al obtener el número total de libros: ', error);
     throw error;
   }
 };
+
+// OBTENER LIBROS POR TÍTULO
+export const findBooksByTitle = async (title) => {
+  try {
+    return await prisma.author.findMany({ where: { title: title }, select: { title: true } });
+  } catch (error) {
+    console.error('Error al obtener libros por título:', error);
+    return []; 
+  }
+};
+
+
+
+
 
 
 

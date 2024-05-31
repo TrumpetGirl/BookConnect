@@ -8,31 +8,15 @@ export const useAuthorStore = defineStore({
     state: () => ({
         authors: [],
         author: {},
-        books: []
+        books: [],
+        authorCount: 0
     }),
     actions: {
-        async create(author) {
-            try {
-                const response = await axios.post(baseUrl, author);
-                return {author: response.data, message:'El autor ha sido creado con éxito'}
-            } catch (error) {
-                throw new Error(error.response.data.message || 'Error al añadir autor');
-            }            
-        },
         async getAll() {
             try {
                 this.authors = (await axios.get(baseUrl)).data; 
             } catch (error) {
-                console.log(error)
-            }
-        },
-        async getAuthorNames() {
-            try {
-                const response = await axios.get(`${baseUrl}/names`);
-                this.authorNames = response.data;
-            } catch (error) {
-                console.log(error);
-                return []; 
+                throw new Error(error.response.data.message || 'No se han podido recuperar los autores');
             }
         },
         async getById(id) {
@@ -42,14 +26,14 @@ export const useAuthorStore = defineStore({
                 throw new Error(error.response.data.message || 'No se ha podido recuperar el autor');
             }
         },
-        async getCount() {
+        async create(author) {
             try {
-              const response = await axios.get(`${baseUrl}/count`);
-              this.authorCount = response.data.count;
+                const response = await axios.post(baseUrl, author);
+                return {author: response.data, message:'El autor ha sido creado con éxito'}
             } catch (error) {
-              console.log(error);
-            }
-          },
+                throw new Error(error.response.data.message || 'Error al añadir autor');
+            }            
+        },
         async update(id, params) {
             try {
                 const response = await axios.put(`${baseUrl}/${id}`, params);
@@ -68,6 +52,23 @@ export const useAuthorStore = defineStore({
                 console.log(error);
             }
         },
+        async getAuthorNames() {
+            try {
+                const response = await axios.get(`${baseUrl}/names`);
+                this.authors = response.data;
+            } catch (error) {
+                console.log(error);
+                return []; 
+            }
+        },
+        async getCount() {
+            try {
+              const response = await axios.get(`${baseUrl}/num`);
+              this.authorCount = response.data.count;
+            } catch (error) {
+              console.log(error);
+            }
+          },
         async getAllBooksByAuthor(id) {
             try {
                 this.books = (await axios.get(`${baseUrl}/${id}/books`)).data;

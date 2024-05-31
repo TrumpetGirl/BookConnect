@@ -9,8 +9,7 @@
     { title: 'Título', value: 'title' },
     { title: 'Portada', value: 'image_path' },
     { title: 'Autor', value: 'author' },
-    { title: 'ISBN', value: 'isbn' },
-    { title: 'Año de publicación', value: 'publication_year' },
+    { title: 'Año de publicación', value: 'publicationYear' },
     { title: 'Género', value: 'genre' },
     { title: 'Acciones', value: 'actions', sortable: false }
   ]);

@@ -1,6 +1,6 @@
 <script setup>
   import { ref, watch } from 'vue';
-  import { searchBooksByTitle } from '@/services/bookService';
+  // import { searchBooksByTitle } from '@/services/bookService';
 
   const searchQuery = ref('');
   const books = ref([]);
@@ -13,7 +13,7 @@
     }
 
     try {
-      books.value = await searchBooksByTitle(searchQuery.value);
+      // books.value = await searchBooksByTitle(searchQuery.value);
       filterBooks();
     } catch (error) {
       console.error('Error al buscar libros:', error);

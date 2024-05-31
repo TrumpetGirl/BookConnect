@@ -10,48 +10,43 @@ export const useGenreStore = defineStore({
         genre: {}
     }),
     actions: {
-        async create(genre) {
-            await axios.post(baseUrl, genre);
-        },
         async getAll() {
             try {
-                const response = await axios.get(baseUrl);
-                this.genres = response.data;
+                this.genres = (await axios.get(baseUrl)).data;
             } catch (error) {
-                console.log(error);
-            }
-        },
-        async getAllGenresSelector() {
-            try {
-                const response = await axios.get(`${baseUrl}/names`);
-                this.genres = response.data;
-            } catch (error) {
-                console.log(error);
+                throw new Error(error.response.data.message || 'No se han podido recuperar los géneros');
             }
         },
         async getById(id) {
             try {
                 this.genre = await axios.get(`${baseUrl}/${id}`);
             } catch (error) {
-                console.log(error)
+                throw new Error(error.response.data.message || 'No se ha podido recuperar el género');
             }
         },
+        async create(genre) {
+            try {
+                const response = await axios.post(baseUrl, genre);
+                return {genre: response.data, message:'El género ha sido creado con éxito'}
+            } catch (error) {
+                throw new Error(error.response.data.message || 'Error al añadir género');
+            }          
+        },
         async update(id, params) {
-            await axios.put(`${baseUrl}/${id}`, params);
+            try {
+                const response = await axios.put(`${baseUrl}/${id}`, params);
+                return {genre: response.data, message:'El género ha sido editado con éxito'}
+            } catch {
+                throw new Error(error.response.data.message || 'Error al editar el género');
+            }
         },
         async delete(id) {
-            // add isDeleting prop to user being deleted
-            this.genres.find(x => x.id === id).isDeleting = true;
-
-            await fetchWrapper.delete(`${baseUrl}/${id}`);
-
-            // remove user from list after deleted
-            this.genres = this.genres.filter(x => x.id !== id);
-
-            // auto logout if the logged in user deleted their own record
-            const authStore = useAuthStore();
-            if (id === authStore.user.id) {
-                authStore.logout();
+            try {
+                await axios.delete(`${baseUrl}/${id}`);
+                this.genres = this.genres.filter(genre => genre.id !== id); 
+                return 'El género ha sido eliminado'
+            } catch (error) {
+                console.log(error);
             }
         }
     }
