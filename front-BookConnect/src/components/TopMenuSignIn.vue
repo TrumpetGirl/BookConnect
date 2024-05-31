@@ -47,11 +47,11 @@
       </v-col>
       <v-col cols="auto align-self-center ">
         <v-menu offset-y>
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ props }">
             <img
               class="profile-picture"
               :src="user.image_path"
-              v-bind="attrs"
+              v-bind="props"
               v-on="on"
             />
           </template>
