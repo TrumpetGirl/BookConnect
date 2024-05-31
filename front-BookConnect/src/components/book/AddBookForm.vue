@@ -1,13 +1,13 @@
 <script setup>
-  import * as constant from '../../utils/constants';
-  import { useRoute, useRouter } from 'vue-router';
-  import { onMounted } from 'vue';
-  import { storeToRefs } from 'pinia';
-  import { useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
+  // import * as constant from '../../utils/constants';
+  // import { useRoute, useRouter } from 'vue-router';
+  // import { onMounted } from 'vue';
+  // import { storeToRefs } from 'pinia';
+  // import { useFileStore, useSnackbarStore, useBookStore, useAuthStore, useGenreStore } from '@/stores';
 
  const route = useRoute();
  const router = useRouter();
-//  const authorStore = useAuthorStore();
+ const authorStore = useAuthorStore();
  const fileStore = useFileStore();
  const snackbarStore = useSnackbarStore();
  const bookStore = useBookStore();
@@ -19,12 +19,12 @@
 
   let title = 'Añadir libro';
   const { genres } = storeToRefs(genreStore);
-  // let authors = [];
+  let authors = [];
   let selectedAuthor = null;
 
   let image = ref(new File([""], "filename"))
   const imagePreview = ref(null);
-  // const fileInputRef = ref(null); 
+  const fileInputRef = ref(null); 
   const imageDeleted = ref(false);
 
   const handleFileChange = (event) => {
@@ -59,7 +59,7 @@
 }
 
   onMounted(async () => {
-    await genreStore.getAllGenresSelector();
+    await genreStore.getAll();
   });
 
   const handleSubmit = async () => {
@@ -70,14 +70,12 @@
       } else {
         response = await bookStore.create(book.value);
       }
-
       if (response.success && book.cover) {
         const formData = new FormData();
         formData.append('file', book.cover);
         formData.append('path', response.book.cover_path);
         await fileStore.uploadImage(formData);
       }
-
       snackbarStore.success(response.message);
       cleanForm();
     } catch (error) {
@@ -130,7 +128,7 @@
         <v-select 
         v-model="book.genre" 
         :items="genres"
-        item-title="description"
+        item-title="name"
         item-value="id" 
         label="Género" 
         required>

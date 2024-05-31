@@ -1,43 +1,21 @@
-<script setup>
-</script>
-
 <template>
-  <!-- <div class="top-menu">-->
-    <div class="container"> 
-      <div class="title">
-        <h1>BookConnect</h1> 
-        <img src="../assets/images/logo.png" alt="IconoBookConnect">
-      </div>
-     </div>
- <!-- </div> -->
+  <v-row>
+    <v-col cols="auto">
+      <v-app-bar-title>BookConnect</v-app-bar-title>
+    </v-col>
+    <v-col cols="auto">
+      <img src="../assets/images/logo.png" alt="IconoBookConnect" class="logo-icon">
+    </v-col>
+  </v-row>
 </template>
 
 <style scoped>
-  .top-menu {
-    background: linear-gradient(to bottom, #bdb9b9, #8e8c8c);
-    color: white;
-    font-family: "Poetsen One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
+  .v-app-bar-title {
+    font-size: xx-large;
+    padding: 15px;
   }
 
-  .container {
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-  }
-
-  .title {
-    display: flex;
-    align-items: center;
-  }
-
-  h1 {
-    margin-right: 30px;
-  }
-
-  img {
+  .logo-icon {
     width: 70px;
     height: 60px;
   }

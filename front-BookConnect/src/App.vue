@@ -6,11 +6,11 @@
 
 <template>
   <v-layout ref="app" class="container">
-    <v-app-bar name="app-bar">
-      <TopMenuSignIn v-if="authStore.isLoggedIn" />
+    <v-app-bar name="app-bar" class="top-menu">
+      <TopMenuSignIn v-if="authStore.isLoggedIn"/>
       <TopMenu v-else />
     </v-app-bar>
-    <v-main class="main-container"> 
+    <v-main> 
       <RouterView/>
       <Snackbar />
     </v-main>
@@ -21,16 +21,14 @@
 </template>
 
 <style scoped>
-  .main-container {
-    height: 100px !important;
-  }
 
   .top-menu {
-  background: linear-gradient(to bottom, #bdb9b9, #8e8c8c);
-  color: white;
-  font-family: "Poetsen One", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+  background: linear-gradient(to bottom, #bdb9b9, #8e8c8c) !important;
+  color: white !important;
+  font-family: "Poetsen One", sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
 }
+
 </style>
 
