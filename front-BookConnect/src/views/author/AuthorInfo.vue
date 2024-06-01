@@ -16,6 +16,10 @@
 
   const imageUrl = ref(null);
 
+  const viewBook = (id) => {
+    router.push({ name: 'bookInfo', params: { id } });
+  };
+
   onMounted(async () => {
     const { id } = route.params;
     try {
@@ -24,6 +28,8 @@
         imageUrl.value = fileStore.downloadImage(author.value.image_path);
       }
       await authorStore.getAllBooksByAuthor(id);
+      console.log(books.value.length)
+      if (books.value.length > 0) books.value.map((book) => book.path = useFileStore().downloadImage(book.path)) 
     } catch (error) {
       console.error('Error al cargar el autor:', error);
     }
@@ -85,11 +91,20 @@
           </v-card-title>
           <v-data-table
             :headers="[
-              { title: 'Título', value: 'description' },
+              { title: 'Portada', value: 'path' },
+              { title: 'Título', value: 'description' }
             ]"
             :items="books"
             class="elevation-1"
-          ></v-data-table>
+          >
+          <template v-slot:item.path="{ item }">
+            <v-img :src="item.path" max-height="100" max-width="100"></v-img>
+          </template>
+
+          <template v-slot:item.description="{ item }">
+            <span class="book-title" @click="viewBook(item.id)">{{item.description}}</span>
+          </template>
+          </v-data-table>
         </v-card>
       </v-col>
       </v-row>
@@ -98,7 +113,15 @@
 </template>
   
   <style scoped>
+  .book-title {
+    text-decoration: underline;
+    cursor: pointer;
+    color: rgb(114, 114, 221);
+  }
 
+  .book-title:hover {
+    color: darkblue;
+  }
 
   .rounded-circle {
   border-radius: 50%;
