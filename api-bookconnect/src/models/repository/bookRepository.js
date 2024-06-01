@@ -25,7 +25,7 @@ export const findAllBooks = async () => {
       }
     });
     const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
-      book.publication_year, book.synopsis, book.image_path, book.author.name, book.genre.name));
+      book.publication_year, book.synopsis, book.image_path, book.author.name, book.genre.name, book.authorId, book.genreId));
     return arrBooks;
   } catch (error) {
     console.error('Error al obtener todos los libros: ', error);
@@ -36,7 +36,25 @@ export const findAllBooks = async () => {
 // OBTENER LIBRO POR ID
 export const findBookById = async (id) => {
   try {
-    return await prisma.book.findUnique({ where: { id: id } })
+    const book = await prisma.book.findUnique({ where: { id: id }, 
+      include: {
+        author: {
+          select: {
+            name: true,
+            id: true
+          }
+        },
+        genre: {
+          select: {
+            name: true,
+            id: true
+          }
+        }
+      } 
+    })
+    return new Book(book.id, book.isbn, book.title, 
+      book.publication_year, book.synopsis, book.image_path, book.author.name, 
+      book.genre.name, book.authorId, book.genreId)
   } catch (error) {
     console.error(`Error obteniendo el libro ${id}: `, error)
     throw error;

@@ -27,11 +27,11 @@
     router.push({ name: 'editBook', params: { id } });
   };
 
-  const viewAuthor = (author) => {
-    router.push({ name: 'bookInfo', params: { id: author.id } });
+  const viewBook = (id) => {
+    router.push({ name: 'bookInfo', params: { id } });
   };
 
-  const confirmDelete = (author) => {
+  const confirmDelete = (book) => {
     if (confirm(`¿Estás seguro de que deseas eliminar ${book.title}?`)) {
       deleteBook(book.id, book.image_path);
     }
@@ -93,6 +93,10 @@
         </template>
       </tr>
     </template>
+
+    <template v-slot:item.title="{ item }">
+        <span class="book-title" @click="viewBook(item.id)">{{ item.title}}</span>
+      </template>
 
       <template v-slot:item.image_path="{ item }">
         <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>

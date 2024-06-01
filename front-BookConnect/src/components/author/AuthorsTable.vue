@@ -106,12 +106,6 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <!-- <v-img 
-        :src="item.full_path"
-        max-height="100" 
-        max-width="100"
-        class="rounded-circle">
-      </v-img> -->
       <v-avatar size="100">
           <v-img
             v-if="item.full_path"

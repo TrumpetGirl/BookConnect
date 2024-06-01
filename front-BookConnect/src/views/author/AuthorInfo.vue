@@ -35,6 +35,12 @@
     }
     return '';
   });
+
+  const backToList = () => {
+    author.value = {};
+    books.value = [];
+    router.push('/author');
+  }
 </script>
 
 <template>
@@ -62,7 +68,7 @@
       </v-col>
       <v-row>
         <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
-            <v-btn @click="() => router.push('/author')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            <v-btn @click="backToList()" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver al listado
             </v-btn>
           </v-col>

@@ -1,23 +1,23 @@
 <script setup>
   import { useAuthStore } from '@/stores';
-  import { TopMenu, TopMenuSignIn, Snackbar, Footer } from '@/components';
+  import { TopMenu, TopMenuSignIn, Snackbar, FooterElement } from '@/components';
   const authStore = useAuthStore();
 </script>
 
 <template>
-  <v-layout ref="app" class="container">
-    <v-app-bar name="app-bar" class="top-menu">
+  <v-app>
+    <v-app-bar class="top-menu">
       <TopMenuSignIn v-if="authStore.isLoggedIn"/>
       <TopMenu v-else />
     </v-app-bar>
-    <v-main> 
+    <v-main>
       <RouterView/>
       <Snackbar />
     </v-main>
-    <v-footer app class="d-flex flex-column">
-      <Footer />
+    <v-footer class="d-flex flex-column">
+      <FooterElement/>
     </v-footer>
-  </v-layout>
+  </v-app>
 </template>
 
 <style scoped>
