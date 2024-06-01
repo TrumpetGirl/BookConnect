@@ -46,9 +46,9 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
   const { isAuthenticated } = storeToRefs(authStore)
   
-  if (isAuthenticated.value === null) await authStore.hasToken()
-    const isAdmin = authStore.isAdmin()
-    const isPublicPage = publicPages.includes(to.path)
+  if (isAuthenticated.value == null) await authStore.hasToken()
+  const isAdmin = authStore.isAdmin()
+  const isPublicPage = publicPages.includes(to.path)
  
   // Si el usuario no está conectado y trata de acceder a una página pública, permite la navegación
   if (!isAuthenticated.value) {

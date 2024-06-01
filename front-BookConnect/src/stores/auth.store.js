@@ -9,8 +9,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({ 
     user: JSON.parse(localStorage.getItem('user')), 
     isAuthenticated: null,
-    token: localStorage.getItem('token'),
-    adminRole: constant.adminRoleId
+    token: localStorage.getItem('token')
   }),
   getters: {
     isLoggedIn: (state) => state.isAuthenticated,
@@ -35,8 +34,8 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.user = null;
-      this.isAuthenticated = false;
-      localStorage.setItem('logout', 'true');
+      this.isAuthenticated = null;
+      this.token = null;
       router.push('/user/login');
     },
     async hasToken() {
@@ -45,6 +44,8 @@ export const useAuthStore = defineStore('auth', {
       let existsUser
       if (user) {
         existsUser = await useUserStore().existsUser(user)
+        existsUser.image_path = useFileStore().downloadImage(existsUser.image_path)
+        this.user = existsUser
       }
       if (token && existsUser) {
         this.isAuthenticated = true
@@ -55,7 +56,7 @@ export const useAuthStore = defineStore('auth', {
       }
     }, 
     isAdmin () {
-      return this.user && this.adminRole === this.user.role;
+      return this.user && constant.adminRoleId === this.user.role;
     }
   }
 })

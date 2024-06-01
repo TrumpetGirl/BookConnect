@@ -6,15 +6,17 @@
 
 <template>
   <v-app>
-    <v-app-bar class="top-menu">
+    <v-app-bar app class="top-menu">
       <TopMenuSignIn v-if="authStore.isLoggedIn"/>
       <TopMenu v-else />
     </v-app-bar>
     <v-main>
-      <RouterView/>
-      <Snackbar />
+      <v-container>
+        <RouterView/>
+        <Snackbar />
+      </v-container>
     </v-main>
-    <v-footer class="d-flex flex-column">
+    <v-footer app class="d-flex flex-column">
       <FooterElement/>
     </v-footer>
   </v-app>
