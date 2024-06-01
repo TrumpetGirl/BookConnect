@@ -141,7 +141,7 @@ export const numUsers = async () => {
   try {
     return await prisma.user.count();
   } catch (error) {
-    console.error('Error al obtener el número total de uusarios: ', error);
+    console.error('Error al obtener el número total de usarios: ', error);
     throw error;
   }
 };

@@ -1,136 +1,74 @@
 <script setup>
   import { ref, onMounted } from 'vue';
-  import { useBookStore, useAuthorStore  } from '@/stores';
+  import { useBookStore, useAuthorStore, useUserStore } from '@/stores';
   import { storeToRefs } from 'pinia';
 
   const bookStore = useBookStore()
   const authorStore = useAuthorStore()
+  const userStore = useUserStore()
   const { bookCount } = storeToRefs(bookStore)
   const { authorCount } = storeToRefs(authorStore)
+  const { userCount } = storeToRefs(userStore)
 
   onMounted(async () => {
     await bookStore.getCount();
     await authorStore.getCount();
-    console.log(authorCount)
+    await userStore.getCount();
   });
 </script>
 
 <template>
-  <div>
-    <v-card-title class="headline">
-      Dashboard
-    </v-card-title>
+  <v-container>
+    <v-card class="pa-3 mb-4">
+      <v-card-title class="headline">
+        Dashboard
+      </v-card-title>
 
-    <v-card>
-      <v-card-title>
+      <v-card-title class="subtitle-1 text-center">
         Estadísticas
       </v-card-title>
-      <v-card-text>
-      </v-card-text>
     </v-card>
-    <v-card>
-    <v-card-title>Contador de Libros</v-card-title>
-    <v-card-text>
-      <v-row justify="center">
-        <v-col cols="12" md="6">
-          <v-alert type="info" :value="true">
-            Hay un total de {{ bookCount }} libros.
-          </v-alert>
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
-  <v-card>
-    <v-card-title>Contador de Autores</v-card-title>
-    <v-card-text>
-      <v-row justify="center">
-        <v-col cols="12" md="6">
-          <v-alert type="info" :value="true">
-            Hay un total de {{ authorCount.value }} autores.
-          </v-alert>
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
-  </div>
 
-  <v-container>
     <v-row>
       <v-col cols="12" md="4">
-        <v-card class="pa-3" outlined>
-          <v-card-title>
-            <v-icon left>mdi-book</v-icon>
-            Libros
+        <v-card class="pa-3 text-center" outlined>
+          <v-card-title class="d-flex align-center justify-center">
+            <v-icon class="mr-2">mdi-book-open-page-variant</v-icon>
+            {{ bookCount }} Libros
           </v-card-title>
           <v-card-text>
-            <v-row justify="center">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-counter :value="bookCount" color="primary"></v-counter>
-              </v-col>
-            </v-row>
+            <v-counter :value="bookCount" color="primary" />
           </v-card-text>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-card class="pa-3" outlined>
-          <v-card-title>
-            <v-icon left>mdi-account</v-icon>
-            Autores {{ bookCount }}
+        <v-card class="pa-3 text-center" outlined>
+          <v-card-title class="d-flex align-center justify-center">
+            <v-icon class="mr-2">mdi-feather</v-icon>
+            {{ authorCount }} Autores
           </v-card-title>
           <v-card-text>
-            <v-row justify="center">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-counter :value="authorCount" color="secondary"></v-counter>
-              </v-col>
-            </v-row>
+            <v-counter :value="authorCount" color="secondary" />
           </v-card-text>
         </v-card>
       </v-col>
 
       <v-col cols="12" md="4">
-        <v-card class="pa-3" outlined>
-          <v-card-title>
-            <v-icon left>mdi-account-multiple</v-icon>
-            Usuarios
+        <v-card class="pa-3 text-center" outlined>
+          <v-card-title class="d-flex align-center justify-center">
+            <v-icon class="mr-2">mdi-account-group</v-icon>
+            {{ userCount }} Usuarios
           </v-card-title>
           <v-card-text>
-            <v-row justify="center">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-counter :value="userCount" color="success"></v-counter>
-              </v-col>
-            </v-row>
+            <v-counter :value="userCount" color="success" />
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
-  <v-card class="pa-3" outlined>
-          <v-card-title>
-            <v-icon left>mdi-book</v-icon>
-            Libros
-          </v-card-title>
-          <v-card-text>
-            <v-row justify="center">
-              <v-col cols="12" class="d-flex justify-center">
-                <v-avatar size="80" class="my-4">
-                  <v-badge
-                    content=" "
-                    color="primary"
-                    dot
-                    overlap
-                  >
-                    <v-icon large>mdi-book</v-icon>
-                  </v-badge>
-                </v-avatar>
-              </v-col>
-              <v-col cols="12" class="d-flex justify-center">
-                <div class="display-4">{{ bookCount }}</div>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
 </template>
+
 
 
 <style scoped>
@@ -145,8 +83,45 @@
   font-style: normal;
 }
 
-.search-container, .results-container {
-  margin-top: 20px; 
-  width: 800px;
+.v-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.v-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.v-card-title {
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.v-icon {
+  font-size: 30px;
+}
+
+.v-counter {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.headline {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.subtitle-1 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  color: #555;
 }
 </style>

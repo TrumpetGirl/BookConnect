@@ -31,6 +31,7 @@ const handleFileChange = (event) => {
       imagePreview.value = e.target.result;
     };
     reader.readAsDataURL(file);
+    imageDeleted.value = false; 
   }
 };
 

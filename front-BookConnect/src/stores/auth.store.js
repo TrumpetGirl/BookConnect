@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import router from '@/router';
 import axios from 'axios';
 import { useUserStore } from './user.store';
+import { useFileStore } from './file.store';
 import * as constant from '@/utils/constants'
 
 export const useAuthStore = defineStore('auth', {
@@ -22,6 +23,7 @@ export const useAuthStore = defineStore('auth', {
         this.token = response.data.token
         localStorage.setItem("token", response.data.token)
         localStorage.setItem("user", JSON.stringify(this.user))
+        this.user.image_path = useFileStore().downloadImage(this.user.image_path)
         this.isAuthenticated = true
         return this.user.username + ', has iniciado sesión'
       } catch (error) {

@@ -37,7 +37,7 @@
 
       const age = validation.calculateAge(user.value.birth_date);
         if (age < 5) {
-          snackbarStore.error('Revise su fecha de nacimiento');
+          snackbarStore.error('Revise su fecha de nacimiento. El usuario debe tener al menos 5 años de edad.');
           return;
       }
 

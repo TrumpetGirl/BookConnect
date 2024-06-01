@@ -1,35 +1,12 @@
 <script setup>
-  import { useAuthStore, useFileStore } from '@/stores';
+  import { useAuthStore } from '@/stores';
   import { useRouter } from 'vue-router'
   import { storeToRefs } from 'pinia'
-  import { onMounted, ref } from 'vue';
-
-  let showDropdownMenu = ref(false);
+  import { ref } from 'vue';
 
   const authStore = useAuthStore();
   const router = useRouter();
-  const fileStore = useFileStore();
   const { user }= storeToRefs(authStore);
-
-  onMounted(async () => {
-    user.value.image_path = await fileStore.downloadImage(user.value.image_path)
-  })
-
-  const loadImage = (image_path) => {
-    if (image_path) {
-      return "http://localhost:3000/file/download/" + image_path
-    } else {
-      return ""
-    }
-  };
-
-  const toggleDropdownMenu = () => {
-    showDropdownMenu.value = !showDropdownMenu.value;
-  };
-
-  const closeDropdownMenu = () => {
-    showDropdownMenu.value = false;
-  };
 </script>
 
 <template>
@@ -55,7 +32,7 @@
             />
           </template>
           <v-list>
-            <v-list-item v-if="!authStore.isAdmin()" @click="router.push('/search'); closeDropdownMenu();">
+            <v-list-item v-if="!authStore.isAdmin()" @click="router.push('/search');">
               <v-list-item-title>Buscador</v-list-item-title>
             </v-list-item>
             <v-list-item v-if="!authStore.isAdmin()">
@@ -64,16 +41,16 @@
             <v-list-item v-if="!authStore.isAdmin()">
               <v-list-item-title>Configuración</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/dashboard'); closeDropdownMenu();">
+            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/dashboard');">
               <v-list-item-title>Dashboard</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/book'); closeDropdownMenu();">
+            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/book');">
               <v-list-item-title>Listado libros</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/author'); closeDropdownMenu();">
+            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/author');">
               <v-list-item-title>Listado autores</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/user'); closeDropdownMenu();">
+            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/user');">
               <v-list-item-title>Listado usuarios</v-list-item-title>
             </v-list-item>
           </v-list>
