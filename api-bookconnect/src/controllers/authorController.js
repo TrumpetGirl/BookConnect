@@ -5,13 +5,12 @@ import { findAllAuthors, findAuthorById, addAuthor, editAuthor, deleteAuthor,
 // OBTENER TODOS LOS AUTORES
 export const getAuthors = async (req, res) => {
   try {
+    console.log(req.user)
     const authors = await findAllAuthors()
-    if (authors) 
-      res.status(200).json(authors)
-    else 
-      res.status(404).json({ message: 'Lista de autores no encontrada' })
+    res.status(200).json(authors)
   } catch (error) {
-    res.status(500).json({ message: error.message })
+    console.error(error)
+    res.status(500).json({ message: "Error al obtener el listado de autores." })
   }
 };
 
@@ -20,12 +19,10 @@ export const getAuthorById = async (req, res) => {
   try {
     const id  = parseInt(req.params.id)
     const author = await findAuthorById(id)
-    if (author)
-      res.status(200).json(author)
-    else 
-      res.status(404).json({ message: `Autor con id ${req.params.id} no encontrado` })
+    res.status(200).json(author)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: `Error al obtener el autor con ID ${req.params.id}.` });
   }
 };
 
@@ -36,19 +33,21 @@ export const createAuthor = async (req, res) => {
     const newAuthor = await addAuthor(name, birth_date, nationality, imageExtension);
     res.status(201).json(newAuthor);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al crear el autor." });
   }
 };
 
 // EDITAR UN AUTOR
 export const updateAuthor = async (req, res) => {
   const id  = parseInt(req.params.id)
-  const { name, birth_date, nationality, imageExtension } = req.body;
+  const { name, birth_date, nationality, imageExtension, imageChange } = req.body;
   try {
-    const editedAuthor = await editAuthor(id, name, birth_date, nationality, imageExtension);
+    const editedAuthor = await editAuthor(id, name, birth_date, nationality, imageExtension, imageChange);
     res.status(200).json(editedAuthor);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al editar el autor." });
   }
 };
 
@@ -59,7 +58,8 @@ export const removeAuthor = async (req, res) => {
     const deletedAuthor = await deleteAuthor(id);
     res.status(200).json({ message: `Autor con ID ${id} eliminado correctamente`, deletedAuthor });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al eliminar el autor." });
   }
 };
 // ------ END CRUD ------
@@ -67,10 +67,11 @@ export const removeAuthor = async (req, res) => {
 // OBTENER EL NOMBRE DE LOS AUTORES
 export const getAuthorNames = async (req, res) => {
   try {
-      const authorNames = await findAllAuthorsSelector();
-      res.status(200).json(authorNames);
+    const authorNames = await findAllAuthorsSelector();
+    res.status(200).json(authorNames)
   } catch (error) {
-      res.status(500).json({ error: 'Error al obtener los nombres de los autores' });
+    console.error(error)
+    res.status(500).json({ message: 'Error al obtener los nombres de los autores' });
   }
 };
 
@@ -78,20 +79,22 @@ export const getAuthorNames = async (req, res) => {
 export const getNumAuthors = async (req, res) => {
   try {
     const totalAuthors = await numAuthors();
-    res.json({ totalAuthors });
+    res.status(200).json({ totalAuthors });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al obtener el número de autores." });
   }
 };
 
 // OBTENER AUTORES POR NOMBRE
 export const getAuthorsByName = async (req, res) => {
+  const { search } = req.body;
   try {
-    const { name } = req.body;
-    const author = await findAuthorsByName(name);
-    res.status(200).json(author);
+    const authors = await findAuthorsByName(search);
+    res.status(200).json(authors)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: 'Error al obtener autores por nombre ' + search });
   }
 };
 
@@ -99,10 +102,11 @@ export const getAuthorsByName = async (req, res) => {
 export const getBooksByAuthor = async (req, res) => {
   const authorId = parseInt(req.params.id)
   try {
-      const bookNames = await findBooksByAuthor(authorId);
-      res.status(200).json(bookNames);
+    const bookNames = await findBooksByAuthor(authorId);
+    res.status(200).json(bookNames);
   } catch (error) {
-      res.status(500).json({ error: 'Error al obtener los nombres de los libros por autor' });
+    console.error(error)
+    res.status(500).json({ message: 'Error al obtener los nombres de los libros por autor' });
   }
 };
 

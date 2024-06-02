@@ -15,6 +15,6 @@ router.delete('/book/:id(\\d+)', verifyToken, removeBook);
 
 router.get('/book/names', verifyToken, getBookNames);
 router.get('/book/num', verifyToken, getNumBooks);
-router.get('/book/:title', verifyToken, getBooksByTitle);
+router.post('/book/searchTitle', verifyToken, getBooksByTitle);
 
 export default router;

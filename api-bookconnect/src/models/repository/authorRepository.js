@@ -1,6 +1,6 @@
 import Author  from '../model/Author.js'
-import BasePath  from '../model/BasePath.js'
-import Base  from '../model/Base.js'
+import BasePath  from '../../views/BasePath.js'
+import Base  from '../../views/Base.js'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -10,11 +10,10 @@ const prisma = new PrismaClient();
 export const findAllAuthors = async () => {
   try {
     const authors = await prisma.author.findMany({
-      include: {  _count:{ select: {books: true} } }
+      include: {  _count:{ select: { books: true } } }
     });
-    const arrAuthors = authors.map(author => new Author(author.id, author.name, author.birth_date, 
-      author.nationality, author.image_path, author._count.books))
-    return arrAuthors;
+    return authors.map(author => new Author(author.id, author.name, author.birth_date, 
+      author.nationality, author.image_path, author._count.books));
   } catch (error) {
     console.error('Error al obtener todos los autores: ', error)
     return []; 
@@ -25,9 +24,8 @@ export const findAllAuthors = async () => {
 // OBTENER AUTOR POR ID
 export const findAuthorById = async (id) => {
   try {
-    const author = await prisma.author.findUnique({ where: { id: id }, include: {books: true} })
-    return new Author(author.id, author.name, author.birth_date, 
-      author.nationality, author.image_path, author.books)
+    const author = await prisma.author.findUnique({ where: { id: id }, include: {books: { select: { id: true, title: true, image_path: true} } } })
+    return new Author(author.id, author.name, author.birth_date, author.nationality, author.image_path, author.books)
   } catch (error) {
     console.error(`Error obteniendo el autor ${id}: `, error)
     throw error;
@@ -42,16 +40,18 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
         name: name,
         birth_date: new Date(birthDate), 
         nationality: nationality
-      }
+      },
+      include: { books: true }
     });
     if (imageExtension) {
       const updateAuthor = await prisma.author.update({
         where: { id: newAuthor.id },
-        data: { image_path: "authors/imagenAutor_" + newAuthor.id + "_" + new Date().getTime() + "." + imageExtension }
+        data: { image_path: "authors/imagenAutor_" + newAuthor.id + "_" + new Date().getTime() + "." + imageExtension },
+        include: { books: true }
       })
-      return updateAuthor
+      return new Author(updateAuthor.id, updateAuthor.name, updateAuthor.birth_date, updateAuthor.nationality, updateAuthor.image_path, updateAuthor.books)
     } else {
-      return newAuthor
+      return new Author(newAuthor.id, newAuthor.name, newAuthor.birth_date, newAuthor.nationality, newAuthor.image_path, newAuthor.books)
     }
   } catch (error) {
     console.error('Error añadiendo autor: ', error);
@@ -68,16 +68,17 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
       birth_date: new Date(birthDate),
       nationality: nationality
     };
-   
+   console.log(imageChange)
+   console.log(image_path)
     if (imageChange) {
       updateData.image_path = image_path;
     } 
     const updatedAuthor = await prisma.author.update({
       where: { id: id },
-      data: updateData
+      data: updateData,
+      include: { books: true }
     });
-
-    return updatedAuthor;
+    return new Author(updatedAuthor.id, updatedAuthor.name, updatedAuthor.birth_date, updatedAuthor.nationality, updatedAuthor.image_path, updatedAuthor.books)
   } catch (error) {
     console.error('Error editando al autor: ', error);
     throw error;
@@ -117,11 +118,12 @@ export const numAuthors = async () => {
 };
 
 // OBTENER AUTORES POR NOMBRE
-export const findAuthorsByName = async (name) => {
+export const findAuthorsByName = async (search) => {
   try {
-    return await prisma.author.findMany({ where: { name: name }, select: { name: true } });
+    const authors = await prisma.author.findMany({ where: { name: { contains: search } }, select: { id: true, name: true }, orderBy: { name: 'asc' } });
+    return authors.map(author => new Base (author.id, author.name));
   } catch (error) {
-    console.error(`Error obteniendo autor por nombre ${name}: `, error);
+    console.error(`Error obteniendo autor por nombre ${search}: `, error);
     throw error;
   }
 };

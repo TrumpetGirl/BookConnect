@@ -1,21 +1,21 @@
 export default class BooksCollection {
-    constructor(username, user_image, title, book_image, genre, rating, review, status, list, 
-        user_id, book_id, collection_id, genre_id, status_id, list_id) {
+    constructor(username, userImage, title, bookImage, genre, rating, review, status, list, 
+        userId, bookId, collectionId, genreId, statusId, listId) {
       this.username = username;
-      this.user_image = user_image;
+      this.userImage = userImage;
       this.title = title;
-      this.book_image = book_image;
+      this.bookImage = bookImage;
       this.genre = genre;
       this.rating = rating;
       this.review = review;
       this.status = status;
       this.list = list;
-      this.user_id = user_id;
-      this.book_id = book_id;
-      this.collection_id = collection_id;
-      this.genre_id = genre_id;
-      this.status_id = status_id;
-      this.list_id = list_id;
+      this.userId = userId;
+      this.bookId = bookId;
+      this.collectionId = collectionId;
+      this.genreId = genreId;
+      this.statusId = statusId;
+      this.listId = listId;
     }
   
   }

@@ -7,9 +7,7 @@ const prisma = new PrismaClient();
 // OBTENER TODOS LOS GÉNEROS
 export const findAllGenres = async () => {
   try {
-      const genres = await prisma.genre.findMany({
-        orderBy:{name:'asc'}
-      });
+      const genres = await prisma.genre.findMany({ orderBy: { name:'asc' } });
       return genres.map(genre => new Genre (genre.id, genre.name));
   } catch (error) {
       console.error('Error al obtener los géneros:', error);
@@ -20,7 +18,8 @@ export const findAllGenres = async () => {
 // OBTENER GÉNERO POR ID
 export const findGenreById = async (id) => {
   try {
-    return await prisma.genre.findUnique({ where: {id: id } })
+    const genre = await prisma.genre.findUnique({ where: { id: id } })
+    return new Genre(genre.id, genre.name)
   } catch (error) {
     console.error(`Error obteniendo el género ${id}: `, error)
     throw error;
@@ -30,23 +29,23 @@ export const findGenreById = async (id) => {
 // CREAR GÉNERO
 export async function addGenre(name) {
   try {
-    const newGenre = await prisma.genre.create({ data: { name: name}});
-      return newGenre
-    } catch (error) {
+    const newGenre = await prisma.genre.create({ data: { name: name } });
+    return new Genre(newGenre.id, newGenre.name)
+  } catch (error) {
     console.error('Error añadiendo género: ', error);
-    throw error;
+  throw error;
   }
 };
 
 // EDITAR GÉNERO
 export const editGenre = async (id, name) => {
   try {
-    const updateData = {name: name};
+    const updateData = { name: name };
     const updatedGenre = await prisma.genre.update({
       where: { id: id },
       data: updateData
     });
-    return updatedGenre;
+    return new Genre(updatedGenre.id, updatedGenre.name)
   } catch (error) {
     console.error('Error editando el género: ', error);
     throw error;
@@ -63,3 +62,13 @@ export const deleteGenre = async (id) => {
   }
 };
 // ------ END CRUD ------
+
+ // OBTENER EL NÚMERO TOTAL DE GÉNEROS
+export const numGenres = async () => {
+  try {
+    return await prisma.genre.count();
+  } catch (error) {
+    console.error('Error al obtener el número total de géneros: ', error);
+    throw error;
+  }
+};

@@ -8,12 +8,12 @@ SELECT
   `c`.`review` AS `review`,
   `s`.`type` AS `status`,
   `l`.`name` AS `list`,
-  `u`.`id` AS `user_id`,
-  `b`.`id` AS `book_id`,
-  `c`.`id` AS `collection_id`,
-  `g`.`id` AS `genre_id`,
-  `s`.`id` AS `status_id`,
-  `l`.`id` AS `list_id`
+  `u`.`id` AS `userId`,
+  `b`.`id` AS `bookId`,
+  `c`.`id` AS `collectionId`,
+  `g`.`id` AS `genreId`,
+  `s`.`id` AS `statusId`,
+  `l`.`id` AS `listId`
 FROM
   (
     (
@@ -22,15 +22,15 @@ FROM
           (
             (
               `bookconnect`.`collection` `c`
-              JOIN `bookconnect`.`user` `u` ON((`c`.`userId` = `u`.`id`))
+              JOIN `bookconnect`.`user` `u` ON(`c`.`userId` = `u`.`id`)
             )
-            JOIN `bookconnect`.`book` `b` ON((`c`.`bookId` = `b`.`id`))
+            JOIN `bookconnect`.`book` `b` ON(`c`.`bookId` = `b`.`id`)
           )
-          JOIN `bookconnect`.`state` `s` ON((`s`.`id` = `c`.`stateId`))
+          JOIN `bookconnect`.`state` `s` ON(`s`.`id` = `c`.`stateId`)
         )
-        JOIN `bookconnect`.`genre` `g` ON((`b`.`genreId` = `g`.`id`))
+        JOIN `bookconnect`.`genre` `g` ON(`b`.`genreId` = `g`.`id`)
       )
-      LEFT JOIN `bookconnect`.`collection_list` `cl` ON((`c`.`id` = `cl`.`collectionId`))
+      LEFT JOIN `bookconnect`.`collection_list` `cl` ON(`c`.`id` = `cl`.`collectionId`)
     )
-    LEFT JOIN `bookconnect`.`list` `l` ON((`cl`.`listId` = `l`.`id`))
+    LEFT JOIN `bookconnect`.`list` `l` ON(`cl`.`listId` = `l`.`id`)
   )

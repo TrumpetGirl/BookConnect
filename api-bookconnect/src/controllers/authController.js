@@ -7,9 +7,10 @@ export const loginUser = async (req, res) => {
     if (result.success) {
       res.json({ user: result.user, token: result.token });
     } else {
-      res.status(401).json({ message: result.message });
+      res.status(401).json({ message: "Acceso restringido." });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Error interno del servidor' });
+    console.error(error)
+    res.status(500).json({ message: 'Error interno del servidor.' });
   }
 };

@@ -6,12 +6,10 @@ import { findAllBooks, findBookById, addBook, editBook, deleteBook,
 export const getBooks = async (req, res) => {
   try {
     const books = await findAllBooks();
-    if (books) 
-      res.status(200).json(books)
-    else 
-      res.status(404).json({ message: 'Lista de libros no encontrada' })
+    res.status(200).json(books)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al obtener el listado de libros." });
   }
 };
 
@@ -20,12 +18,10 @@ export const getBookById = async (req, res) => {
   try {
     const id  = parseInt(req.params.id)
     const book = await findBookById(id)
-    if (book)
-      res.status(200).json(book)
-    else 
-      res.status(404).json({ message: `Libro con id ${req.params.id} no encontrado` })
+    res.status(200).json(book)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: `Error al obtener el libro con ID ${req.params.id}.` });
   }
 };
 
@@ -37,7 +33,8 @@ export const createBook = async (req, res) => {
     const newBook = await addBook(isbn, title, publicationYear, authorId, genreId, synopsis, imageExtension);
     res.status(201).json(newBook);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al crear el libro." });
   }
 };
 
@@ -50,7 +47,8 @@ export const updateBook = async (req, res) => {
     const editedBook = await editBook(id, isbn, title, publicationYear, authorId, genreId, synopsis, imageExtension, imageChange);
     res.status(200).json(editedBook);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al editar el libro." });
   }
 };
 
@@ -61,7 +59,8 @@ export const removeBook = async (req, res) => {
     const deletedBook = await deleteBook(id);
     res.status(200).json({ message: `Libro con ID ${id} eliminado correctamente`, deletedBook });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al eliminar el autor." });
   }
 };
 // ------ END CRUD ------
@@ -69,10 +68,11 @@ export const removeBook = async (req, res) => {
 // OBTENER EL NOMBRE DE LOS LIBROS
 export const getBookNames = async (req, res) => {
   try {
-      const bookNames = await findAllBooksSelector();
-      res.status(200).json(bookNames);
+    const bookNames = await findAllBooksSelector();
+    res.status(200).json(bookNames)
   } catch (error) {
-      res.status(500).json({ error: 'Error al obtener los nombres de los libros' });
+    console.error(error)
+    res.status(500).json({ message: 'Error al obtener los nombres de los libros' });
   }
 };
 
@@ -80,20 +80,22 @@ export const getBookNames = async (req, res) => {
 export const getNumBooks = async (req, res) => {
   try {
     const totalBooks = await numBooks();
-    res.json({ totalBooks });
+    res.status(200).json({ totalBooks });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: "Error al obtener el número de libros." });
   }
 };
 
-// OBTENER LIBRO POR TÍTULO
+// OBTENER LIBROS POR TÍTULO
 export const getBooksByTitle = async (req, res) => {
+  const { search } = req.body;
   try {
-    const { title } = req.params;
-    const books = await findBooksByTitle(title);
-    res.json(books);
+    const books = await findBooksByTitle(search);
+    res.status(200).json(books)
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error)
+    res.status(500).json({ message: 'Error al obtener libros por título' });
   }
 };
 

@@ -15,7 +15,7 @@ router.delete('/author/:id(\\d+)', verifyToken, removeAuthor);
 
 router.get('/author/names', verifyToken, getAuthorNames);
 router.get('/author/num', verifyToken, getNumAuthors);
-router.post('/author/:name', verifyToken, getAuthorsByName);
+router.post('/author/searchName', verifyToken, getAuthorsByName);
 router.get('/author/:id(\\d+)/books', verifyToken, getBooksByAuthor);
 
 export default router;

@@ -14,7 +14,7 @@ model author {
   birth_date  DateTime @db.Date
   nationality String   @db.VarChar(50)
   image_path  String?  @db.VarChar(255)
-  book        book[]
+  books       book[]
 }
 
 model book {
@@ -28,23 +28,23 @@ model book {
   genreId          Int          @default(1)
   author           author       @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_author")
   genre            genre        @relation(fields: [genreId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_genre")
-  collection       collection[]
+  collections      collection[]
 
   @@index([authorId], map: "fk_book_author")
   @@index([genreId], map: "fk_book_genre")
 }
 
 model collection {
-  id              Int               @id @default(autoincrement())
-  userId          Int
-  bookId          Int
-  stateId         Int
-  rating          Int
-  review          String            @db.Text
-  book            book              @relation(fields: [bookId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_book")
-  state           state             @relation(fields: [stateId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_state")
-  user            user              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_user")
-  collection_list collection_list[]
+  id               Int               @id @default(autoincrement())
+  userId           Int
+  bookId           Int
+  stateId          Int
+  rating           Int
+  review           String            @db.Text
+  book             book              @relation(fields: [bookId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_book")
+  state            state             @relation(fields: [stateId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_state")
+  user             user              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_user")
+  collection_lists collection_list[]
 
   @@unique([userId, bookId], map: "book_collection")
   @@index([bookId], map: "fk_collection_book")
@@ -64,59 +64,59 @@ model collection_list {
 }
 
 model genre {
-  id   Int    @id @default(autoincrement())
-  name String @db.VarChar(50)
-  book book[]
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(50)
+  books book[]
 }
 
 model list {
-  id              Int               @id @default(autoincrement())
-  name            String            @db.VarChar(100)
-  description     String            @db.Text
-  userId          Int
-  collection_list collection_list[]
-  user            user              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_list_user")
+  id               Int               @id @default(autoincrement())
+  name             String            @db.VarChar(100)
+  description      String            @db.Text
+  userId           Int
+  collection_lists collection_list[]
+  user             user              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_list_user")
 
   @@index([userId], map: "fk_list_user")
 }
 
 model role {
-  id   Int    @id @default(autoincrement())
-  type String @db.VarChar(50)
-  user user[]
+  id    Int    @id @default(autoincrement())
+  type  String @db.VarChar(50)
+  users user[]
 }
 
 model state {
-  id         Int          @id @default(autoincrement())
-  type       String       @db.VarChar(50)
-  collection collection[]
+  id          Int          @id @default(autoincrement())
+  type        String       @db.VarChar(50)
+  collections collection[]
 }
 
 model user {
-  id                                            Int             @id @default(autoincrement())
-  username                                      String          @unique(map: "username") @db.VarChar(100)
-  email                                         String          @db.VarChar(100)
-  password                                      String          @db.VarChar(80)
-  birth_date                                    DateTime        @db.Date
-  image_path                                    String          @db.VarChar(255)
-  roleId                                        Int             @default(2)
-  collection                                    collection[]
-  list                                          list[]
-  role                                          role            @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_user")
-  user_follower_user_follower_followerIdTouser  user_follower[] @relation("user_follower_followerIdTouser")
-  user_follower_user_follower_followingIdTouser user_follower[] @relation("user_follower_followingIdTouser")
+  id          Int             @id @default(autoincrement())
+  username    String          @unique(map: "username") @db.VarChar(100)
+  email       String          @db.VarChar(100)
+  password    String          @db.VarChar(80)
+  birth_date  DateTime        @db.Date
+  image_path  String          @db.VarChar(255)
+  roleId      Int             @default(2)
+  collections collection[]
+  lists       list[]
+  role        role            @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role_user")
+  followers   user_follower[] @relation("user_followers")
+  followings  user_follower[] @relation("user_followings")
 
   @@index([roleId], map: "fk_user_role")
 }
 
 model user_follower {
-  id                                   Int      @id @default(autoincrement())
-  start_following                      DateTime @db.Date
-  unfollow                             Boolean
-  followerId                           Int
-  followingId                          Int
-  user_user_follower_followerIdTouser  user     @relation("user_follower_followerIdTouser", fields: [followerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_follower_follower")
-  user_user_follower_followingIdTouser user     @relation("user_follower_followingIdTouser", fields: [followingId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_follower_following")
+  id              Int      @id @default(autoincrement())
+  start_following DateTime @db.Date
+  unfollow        Boolean
+  followerId      Int
+  followingId     Int
+  follower        user     @relation("user_followers", fields: [followerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_follower_follower")
+  following       user     @relation("user_followings", fields: [followingId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_user_follower_following")
 
   @@unique([followerId, followingId], map: "follower_following")
   @@index([followerId], map: "fk_user_follower_follower")
@@ -125,21 +125,21 @@ model user_follower {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view bookscollection {
-  username      String  @db.VarChar(100)
-  user_image    String  @db.VarChar(255)
-  title         String  @db.VarChar(100)
-  book_image    String  @db.VarChar(255)
-  genre         String  @db.VarChar(50)
-  rating        Int
-  review        String  @db.Text
-  status        String  @db.VarChar(50)
-  list          String? @db.VarChar(100)
-  user_id       Int     @default(0)
-  book_id       Int     @default(0)
-  collection_id Int     @default(0)
-  genre_id      Int     @default(0)
-  status_id     Int     @default(0)
-  list_id       Int?    @default(0)
+  username     String  @db.VarChar(100)
+  user_image   String  @db.VarChar(255)
+  title        String  @db.VarChar(100)
+  book_image   String  @db.VarChar(255)
+  genre        String  @db.VarChar(50)
+  rating       Int
+  review       String  @db.Text
+  status       String  @db.VarChar(50)
+  list         String? @db.VarChar(100)
+  userId       Int     @default(0)
+  bookId       Int     @default(0)
+  collectionId Int     @default(0)
+  genreId      Int     @default(0)
+  statusId     Int     @default(0)
+  listId       Int?    @default(0)
 
-  @@ignore
+  @@unique([userId, bookId], map: "booksCollection")
 }

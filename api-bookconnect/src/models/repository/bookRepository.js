@@ -1,5 +1,6 @@
 import Book  from '../model/Book.js'
-import Base  from '../model/Base.js'
+import BookList  from '../../views/BookList.js'
+import Base  from '../../views/Base.js'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -9,24 +10,16 @@ const prisma = new PrismaClient()
 export const findAllBooks = async () => {
   try {
     const books = await prisma.book.findMany({
-      include: {
-        author: {
-          select: {
-            name: true,
-            id: true
-          }
-        },
-        genre: {
-          select: {
-            name: true,
-            id: true
-          }
-        }
+      select: {
+        id: true,
+        title: true,
+        publication_year: true,
+        image_path: true,
+        author: { select: { id: true, name: true  } },
+        genre: { select: { id: true, name: true } }
       }
     });
-    const arrBooks = books.map(book => new Book(book.id, book.isbn, book.title, 
-      book.publication_year, book.synopsis, book.image_path, book.author.name, book.genre.name, book.authorId, book.genreId));
-    return arrBooks;
+    return books.map(book => new BookList(book.id, book.title, book.publication_year, book.image_path, book.author.name, book.genre.name, book.author.id, book.genre.id));
   } catch (error) {
     console.error('Error al obtener todos los libros: ', error);
     return []; 
@@ -38,18 +31,8 @@ export const findBookById = async (id) => {
   try {
     const book = await prisma.book.findUnique({ where: { id: id }, 
       include: {
-        author: {
-          select: {
-            name: true,
-            id: true
-          }
-        },
-        genre: {
-          select: {
-            name: true,
-            id: true
-          }
-        }
+        author: { select: { id: true, name: true  } },
+        genre: { select: { id: true, name: true } }
       } 
     })
     return new Book(book.id, book.isbn, book.title, 
@@ -69,22 +52,27 @@ export async function addBook(isbn, title, publicationYear, authorId, genreId, s
         isbn: isbn,
         title: title, 
         publication_year: publicationYear,
-        authorId: authorId,
-        genreId: genreId, 
         synopsis: synopsis,
-        image_path: ''
-      }
-    });
-
-    const updateBook = await prisma.book.update({
-      where: {
-        id: newBook.id
+        image_path: '',
+        author: { connect: { id: authorId } },
+        genre: { connect: { id: genreId } }
       },
-      data: {
-        image_path: "books/imagenLibro_" + newBook.id + "_" + new Date().getTime() + '.' + imageExtension
+      include: {
+        author: { select: { id: true, name: true  } },
+        genre: { select: { id: true, name: true } }
       }
     })
-    return updateBook;
+    const updateBook = await prisma.book.update({
+      where: { id: newBook.id },
+      data: { image_path: "books/imagenLibro_" + newBook.id + "_" + new Date().getTime() + '.' + imageExtension },
+      include: {
+        author: { select: { id: true, name: true  } },
+        genre: { select: { id: true, name: true } }
+      }
+    })
+    return new Book(updateBook.id, updateBook.isbn, updateBook.title, 
+      updateBook.publication_year, updateBook.synopsis, updateBook.image_path, updateBook.author.name, 
+      updateBook.genre.name, updateBook.authorId, updateBook.genreId)
   } catch (error) {
     console.error('Error añadiendo libro: ', error);
     throw error;
@@ -99,9 +87,9 @@ export const editBook = async (id,isbn, title, publicationYear, authorId, genreI
       isbn: isbn,
       title: title,
       publication_year: publicationYear,
-      author: { connect: {id:authorId}},
-      genre: { connect: {id:genreId}},
       synopsis: synopsis,
+      author: { connect: { id: authorId } },
+      genre: { connect: { id: genreId } }
     };
    
     if (imageChange) {
@@ -109,10 +97,16 @@ export const editBook = async (id,isbn, title, publicationYear, authorId, genreI
     } 
     const updatedBook = await prisma.book.update({
       where: { id: id },
-      data: updateData
+      data: updateData,
+      include: {
+        author: { select: { id: true, name: true  } },
+        genre: { select: { id: true, name: true } }
+      }
     });
 
-    return updatedBook;
+    return new Book(updatedBook.id, updatedBook.isbn, updatedBook.title, 
+      updatedBook.publication_year, updatedBook.synopsis, updatedBook.image_path, 
+      updatedBook.author.name, updatedBook.genre.name, updatedBook.authorId, updatedBook.genreId)
   } catch (error) {
     console.error('Error editando el libro: ', error);
     throw error;
@@ -133,8 +127,8 @@ export const deleteBook = async (id) => {
 // OBTENER TODOS LOS NOMBRES DE LOS LIBROS
 export const findAllBooksSelector = async () => {
   try {
-    const books = await prisma.book.findMany({ select: { id: true, title: true }, orderBy: { name:'asc' } });
-    return books.map(book => new Base (book.id, book.name));
+    const books = await prisma.book.findMany({ select: { id: true, title: true }, orderBy: { title:'asc' } });
+    return books.map(book => new Base (book.id, book.title));
   } catch (error) {
     console.error('Error al obtener los nombres de los libros: ', error);
     throw error; 
@@ -144,8 +138,7 @@ export const findAllBooksSelector = async () => {
  // OBTENER EL NÚMERO TOTAL DE LIBROS
 export const numBooks = async () => {
   try {
-    const count = await prisma.book.count();
-    return count;
+    return await prisma.book.count();
   } catch (error) {
     console.error('Error al obtener el número total de libros: ', error);
     throw error;
@@ -153,12 +146,13 @@ export const numBooks = async () => {
 };
 
 // OBTENER LIBROS POR TÍTULO
-export const findBooksByTitle = async (title) => {
+export const findBooksByTitle = async (search) => {
   try {
-    return await prisma.author.findMany({ where: { title: title }, select: { title: true } });
+    const books = await prisma.book.findMany({ where: { title: { contains: search } }, select: { id: true, title: true }, orderBy: { title: 'asc' } });
+    return books.map(book => new Base (book.id, book.title));
   } catch (error) {
-    console.error('Error al obtener libros por título:', error);
-    return []; 
+    console.error(`Error obteniendo libro por título ${search}: `, error);
+    throw error
   }
 };
 

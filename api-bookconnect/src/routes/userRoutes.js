@@ -2,7 +2,7 @@ import express from 'express';
 import { verifyToken } from '../middleware/authMiddleware.js'
 import  { loginUser } from '../controllers/authController.js';
 import  { getUsers, getUserById, makeNewUser, createUser, updateUser, removeUser,
-    getUserNames, getNumUsers, getUserByUsername, getUserByIdAndUsername } from '../controllers/userController.js';
+    getUserNames, getNumUsers, getUsersByUsername, getUserByUsername, checkLoggedUser } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -17,8 +17,9 @@ router.delete('/user/:id(\\d+)', verifyToken, removeUser);
 
 router.get('/user/names', verifyToken, getUserNames);
 router.get('/user/num', verifyToken, getNumUsers);
+router.post('/user/searchName', verifyToken, getUsersByUsername);
 router.post('/user/existsUsername', verifyToken, getUserByUsername)
-router.post('/user/existsUser', verifyToken, getUserByIdAndUsername)
+router.post('/user/existsUser', verifyToken, checkLoggedUser)
 
 router.post('/login', loginUser);
 
