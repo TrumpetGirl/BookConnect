@@ -31,7 +31,6 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     clearProperties() {
-      console.log("CLEAN")
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.user = null;
@@ -48,11 +47,9 @@ export const useAuthStore = defineStore('auth', {
       let existsUser
       if (user) {
         existsUser = await useUserStore().existsUser(user)
-        console.log(existsUser)
         if( !existsUser.exists ) {
           this.isAuthenticated = false
           this.clearProperties()
-          //window.location.reload(true)
         } else {
           existsUser.user.image_path = useFileStore().downloadImage(existsUser.user.image_path)
           this.user = existsUser.user

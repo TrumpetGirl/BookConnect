@@ -18,7 +18,6 @@ onMounted(async () => {
   try {
     await bookStore.getById(id);
     imageUrl.value = fileStore.downloadImage(book.value.image_path);
-    console.log(imageUrl.value)
   } catch (error) {
     console.error('Error al cargar el libro:', error);
   }

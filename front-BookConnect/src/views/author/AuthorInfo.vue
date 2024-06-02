@@ -28,7 +28,6 @@
         imageUrl.value = fileStore.downloadImage(author.value.image_path);
       }
       await authorStore.getAllBooksByAuthor(id);
-      console.log(books.value.length)
       if (books.value.length > 0) books.value.map((book) => book.path = useFileStore().downloadImage(book.path)) 
     } catch (error) {
       console.error('Error al cargar el autor:', error);

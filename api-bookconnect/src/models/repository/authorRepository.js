@@ -1,5 +1,6 @@
 import Author  from '../model/Author.js'
 import BasePath  from '../../views/BasePath.js'
+import SearchElement  from '../../views/SearchElement.js'
 import Base  from '../../views/Base.js'
 import { PrismaClient } from '@prisma/client';
 
@@ -68,8 +69,6 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
       birth_date: new Date(birthDate),
       nationality: nationality
     };
-   console.log(imageChange)
-   console.log(image_path)
     if (imageChange) {
       updateData.image_path = image_path;
     } 
@@ -120,8 +119,8 @@ export const numAuthors = async () => {
 // OBTENER AUTORES POR NOMBRE
 export const findAuthorsByName = async (search) => {
   try {
-    const authors = await prisma.author.findMany({ where: { name: { contains: search } }, select: { id: true, name: true }, orderBy: { name: 'asc' } });
-    return authors.map(author => new Base (author.id, author.name));
+    const authors = await prisma.author.findMany({ where: { name: { contains: search } }, select: { id: true, name: true, image_path: true }, orderBy: { name: 'asc' } });
+    return authors.map(author => new SearchElement (author.id, author.name, author.image_path, 'Autor'));
   } catch (error) {
     console.error(`Error obteniendo autor por nombre ${search}: `, error);
     throw error;

@@ -5,7 +5,6 @@ import { findAllAuthors, findAuthorById, addAuthor, editAuthor, deleteAuthor,
 // OBTENER TODOS LOS AUTORES
 export const getAuthors = async (req, res) => {
   try {
-    console.log(req.user)
     const authors = await findAllAuthors()
     res.status(200).json(authors)
   } catch (error) {

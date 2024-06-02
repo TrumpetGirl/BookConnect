@@ -134,8 +134,6 @@ const handleSubmit = async () => {
       snackbarStore.success(response.message);
       cleanForm()
     }
-    console.log(image)
-    console.log(response)
     if (image && response && response.user.image_path) {
         formData.append('path', response.user.image_path)
         formData.append('file', image)

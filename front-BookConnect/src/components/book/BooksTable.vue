@@ -38,8 +38,6 @@
   };
 
   const deleteBook = async (id, image_path) => {
-    console.log(id)
-    console.log(image_path)
      try {
       if(image_path) {
         await useFileStore().deleteImage(image_path);

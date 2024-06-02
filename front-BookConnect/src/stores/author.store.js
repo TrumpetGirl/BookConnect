@@ -49,7 +49,6 @@ export const useAuthorStore = defineStore({
                 this.authors = this.authors.filter(author => author.id !== id); 
                 return 'El autor ha sido eliminado'
             } catch (error) {
-                console.log(error);
             }
         },
         async getAuthorNames() {
@@ -57,7 +56,6 @@ export const useAuthorStore = defineStore({
                 const response = await axios.get(`${baseUrl}/names`);
                 this.authors = response.data;
             } catch (error) {
-                console.log(error);
                 return []; 
             }
         },

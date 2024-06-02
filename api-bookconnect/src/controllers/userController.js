@@ -126,7 +126,6 @@ export const checkLoggedUser = async (req, res) => {
   try {
     const { id, username, image_path, role, roleId } = req.body;
     const loggedUser = req.user
-    console.log(loggedUser)
     if ( loggedUser.id === id && 
       loggedUser.username === username && 
       loggedUser.image_path === image_path && 

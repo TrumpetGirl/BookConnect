@@ -1,4 +1,5 @@
 import Book  from '../model/Book.js'
+import SearchElement  from '../../views/SearchElement.js'
 import BookList  from '../../views/BookList.js'
 import Base  from '../../views/Base.js'
 import { PrismaClient } from '@prisma/client'
@@ -148,8 +149,8 @@ export const numBooks = async () => {
 // OBTENER LIBROS POR TÍTULO
 export const findBooksByTitle = async (search) => {
   try {
-    const books = await prisma.book.findMany({ where: { title: { contains: search } }, select: { id: true, title: true }, orderBy: { title: 'asc' } });
-    return books.map(book => new Base (book.id, book.title));
+    const books = await prisma.book.findMany({ where: { title: { contains: search } }, select: { id: true, title: true, image_path: true }, orderBy: { title: 'asc' } });
+    return books.map(book => new SearchElement (book.id, book.title, book.image_path, 'Libro'));
   } catch (error) {
     console.error(`Error obteniendo libro por título ${search}: `, error);
     throw error

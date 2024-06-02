@@ -1,4 +1,5 @@
 import Base  from '../../views/Base.js'
+import SearchElement  from '../../views/SearchElement.js'
 import UserProfile from '../../views/UserProfile.js'
 import LoggedUser from '../../views/LoggedUser.js'
 import { PrismaClient } from '@prisma/client';
@@ -170,8 +171,8 @@ export const numUsers = async () => {
 // OBTENER USUARIOS POR NOMBRE DE USUARIO
 export const findUsersByUsername = async (search) => {
   try {
-    const users = await prisma.user.findMany({ where: { username: { contains: search } }, select: { id: true, username: true}, orderBy: { username: 'asc' } });
-    return users.map(user => new Base(user.id, user.username))
+    const users = await prisma.user.findMany({ where: { username: { contains: search } }, select: { id: true, username: true, image_path: true}, orderBy: { username: 'asc' } });
+    return users.map(user => new SearchElement(user.id, user.username, user.image_path, 'Usuario'))
   } catch (error) {
     console.error(`Error obteniendo usuarios por su nombre ${search}: `, error);
     throw error;

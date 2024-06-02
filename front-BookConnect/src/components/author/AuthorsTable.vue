@@ -40,7 +40,6 @@
   const deleteAuthor = async (id, image_path) => {
      try {
       if(image_path) {
-        console.log(image_path)
         await useFileStore().deleteImage(image_path);
       }
       const response = await authorStore.delete(id);

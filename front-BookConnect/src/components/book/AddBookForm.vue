@@ -71,7 +71,6 @@
   const handleSubmit = async () => {
     
     let response;
-    console.log(imageChange)
     try {
       if (!image || !book.value.title || !book.value.isbn || !book.value.publicationYear || 
         !book.value.synopsis || !book.value.genreId || !book.value.authorId) {
@@ -86,21 +85,15 @@
    
       book.value.imageExtension = image.value.name ? image.value.name.split(".").pop() : null
       book.value.imageChange = imageChange
-      console.log('1')
       if (imageChange && book.value.image_path) {
-        console.log('entro 1')
         await fileStore.deleteImage(book.value.image_path);
       }
-      console.log('2')
       if (id) {
-        console.log('entro 2')
         response = await bookStore.update(id, book.value);
       } else {
         response = await bookStore.create(book.value);
       }
-      console.log('3')
       if (imageChange && image.value && response && response.book.image_path) {
-        console.log('entro 3')
         formData.append('path', response.book.image_path)
         formData.append('file', image.value)
         await fileStore.uploadImage(formData)
