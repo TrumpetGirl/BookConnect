@@ -24,6 +24,7 @@ const imageDeleted = ref(false);
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
+  console.log(event)
   if (file) {
     image = file
     const reader = new FileReader();

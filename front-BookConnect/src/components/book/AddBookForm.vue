@@ -21,10 +21,10 @@
 
   let title = 'Añadir libro';
 
-  let image = ref(new File([""], "filename"));
-  const imagePreview = ref(null);
-  const fileInputRef = ref(null); 
-  const imageDeleted = ref(false);
+  let imageDeleted = false;
+  let imageChange = false;
+  const image = ref(null);
+  const imageUrl = ref(null);
 
   onMounted(async () => {
     await genreStore.getAll();
@@ -32,30 +32,36 @@
   });
 
   const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    image.value = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imagePreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-    imageDeleted.value = false; 
-  }
-};
+    const file = event.target.files[0]
+    if (file) {
+      image.value = file
+      imageChange = true;
+      readFile(file)
+      imageDeleted = true
+    }
+  };
 
-const handleFileClear = () => {
-  image.value = null;
-  imagePreview.value = null;
-  imageDeleted.value = true;
-};
+  const readFile = (file) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imageUrl.value = e.target.result
+    };
+    reader.readAsDataURL(file)
+  }
+
+  const handleFileClear = () => {
+    image.value = null
+    imageUrl.value = null
+    imageDeleted = true
+  };
 
   if (id) {
     title = 'Editar libro';
     onMounted(async () => {
       await bookStore.getById(id);
       if (book.value.image_path) {
-        imagePreview.value = fileStore.downloadImage(book.value.image_path);
+        imageUrl.value = fileStore.downloadImage(book.value.image_path)
+        image.value = await fileStore.urlToFile(imageUrl.value, imageUrl.value.split("/").pop())
       }
     }) 
   } else {
@@ -63,11 +69,11 @@ const handleFileClear = () => {
   }
   
   const handleSubmit = async () => {
-    book.value.imageExtension = image.name ? image.name.split(".").pop() : null
+    
     let response;
+    console.log(imageChange)
     try {
-      console.log(fileInputRef)
-      if (!fileInputRef || !book.value.title || !book.value.isbn || !book.value.publicationYear || 
+      if (!image || !book.value.title || !book.value.isbn || !book.value.publicationYear || 
         !book.value.synopsis || !book.value.genreId || !book.value.authorId) {
           snackbarStore.error('Todos los campos son obligatorios')
         return;
@@ -77,17 +83,29 @@ const handleFileClear = () => {
         return;
       }
       const formData = new FormData();
-      
+   
+      book.value.imageExtension = image.value.name ? image.value.name.split(".").pop() : null
+      book.value.imageChange = imageChange
+      console.log('1')
+      if (imageChange && book.value.image_path) {
+        console.log('entro 1')
+        await fileStore.deleteImage(book.value.image_path);
+      }
+      console.log('2')
       if (id) {
+        console.log('entro 2')
         response = await bookStore.update(id, book.value);
       } else {
         response = await bookStore.create(book.value);
       }
-      formData.append('path', response.book.image_path);
-      formData.append('file', image);
-      await fileStore.uploadImage(formData);
-    
-    snackbarStore.success(response.message);
+      console.log('3')
+      if (imageChange && image.value && response && response.book.image_path) {
+        console.log('entro 3')
+        formData.append('path', response.book.image_path)
+        formData.append('file', image.value)
+        await fileStore.uploadImage(formData)
+      }
+      snackbarStore.success(response.message);
 
       if(id) {
         navigation.redirectTo('/book')
@@ -95,19 +113,24 @@ const handleFileClear = () => {
         cleanForm()
       }
     } catch (error) {
-      console.error('Error al agregar libro:', error);
-      snackbarStore.error('Error al agregar libro');
+      console.error('Error:', error);
+      if (id) {
+        snackbarStore.error('Error al editar libro');
+      } else {
+        snackbarStore.error('Error al agregar libro');
+      }
+      
     }
   };
 
   const cleanForm = () => {
     book.value = {};
-    image = ref(new File([""], "filename"));
-    imagePreview.value = null;
+    image = ref(null);
+    imageUrl.value = null;
     imageDeleted.value = false;
-  if (fileInputRef.value) {
-    fileInputRef.value.value = null; 
-  } 
+    if (fileInputRef.value) {
+      fileInputRef.value.value = null; 
+    } 
   };
 </script>
 
@@ -116,19 +139,20 @@ const handleFileClear = () => {
     <fieldset class="register-fieldset">
       <legend>{{ title }}</legend>
       <v-form @submit.prevent="handleSubmit" class="register-form">
-        <v-file-input 
+        <v-file-input
+        v-model="image"
+        prepend-icon="mdi-camera" 
         label="Portada (Requerido)" 
         @change="handleFileChange"
         @click:clear="handleFileClear"
-        counter 
-        accept="image/*" 
-        ref="fileInputRef" >
+        show-size
+        accept="image/*">
         </v-file-input>
         
-        <div v-if="imagePreview" class="image-preview">
-          <img :src="imagePreview" alt="Vista previa de la imagen" />
+        <div v-if="imageUrl" class="image-preview">
+          <v-img :src="imageUrl" :max-width=125 alt="Vista previa de la imagen" />
         </div>
-  
+        
         <v-text-field 
         v-model="book.title" 
         label="Título" 

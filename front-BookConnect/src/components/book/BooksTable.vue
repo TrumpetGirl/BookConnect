@@ -53,7 +53,7 @@
     await bookStore.getAll();
     books.value = books.value.map(book => ({
       ...book,
-      full_path: book.image_path ? useFileStore().downloadImage(book.image_path) : null
+      image_path: book.image_path ? useFileStore().downloadImage(book.image_path) : null
     }));
   });
 </script>
@@ -99,7 +99,7 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>
+        <v-img :src="item.image_path" max-height="100" max-width="100"></v-img>
       </template>
 
       <template v-slot:item.actions="{ item }">

@@ -25,7 +25,9 @@ export const findAllAuthors = async () => {
 // OBTENER AUTOR POR ID
 export const findAuthorById = async (id) => {
   try {
-    return await prisma.author.findUnique({ where: { id: id } })
+    const author = await prisma.author.findUnique({ where: { id: id }, include: {books: true} })
+    return new Author(author.id, author.name, author.birth_date, 
+      author.nationality, author.image_path, author.books)
   } catch (error) {
     console.error(`Error obteniendo el autor ${id}: `, error)
     throw error;
@@ -45,7 +47,7 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
     if (imageExtension) {
       const updateAuthor = await prisma.author.update({
         where: { id: newAuthor.id },
-        data: { image_path: "authors/imagenAutor_" + newAuthor.id + "." + imageExtension }
+        data: { image_path: "authors/imagenAutor_" + newAuthor.id + "_" + new Date().getTime() + "." + imageExtension }
       })
       return updateAuthor
     } else {
@@ -58,8 +60,8 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
 };
 
 // EDITAR AUTOR
-export const editAuthor = async (id, name, birthDate, nationality, imageExtension) => {
-  let image_path = imageExtension ? `authors/imagenAutor_${id}.${imageExtension}` : null;
+export const editAuthor = async (id, name, birthDate, nationality, imageExtension, imageChange) => {
+  let image_path = imageExtension ? `authors/imagenAutor_${id}_${new Date().getTime()}.${imageExtension}` : null;
   try {
     const updateData = {
       name: name,
@@ -67,11 +69,9 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
       nationality: nationality
     };
    
-    if (image_path) {
+    if (imageChange) {
       updateData.image_path = image_path;
-    } else {
-      updateData.image_path = null;
-    }
+    } 
     const updatedAuthor = await prisma.author.update({
       where: { id: id },
       data: updateData

@@ -81,7 +81,7 @@ export async function addBook(isbn, title, publicationYear, authorId, genreId, s
         id: newBook.id
       },
       data: {
-        image_path: "books/imagenLibro_" + newBook.id + "." + imageExtension
+        image_path: "books/imagenLibro_" + newBook.id + "_" + new Date().getTime() + '.' + imageExtension
       }
     })
     return updateBook;
@@ -92,24 +92,21 @@ export async function addBook(isbn, title, publicationYear, authorId, genreId, s
 }
 
 // EDITAR LIBRO
-export const editBook = async (id,isbn, title, publicationYear, author, genre, synopsis, imageExtension) => {
-  let image_path = imageExtension ? `books/imagenLibro_${id}.${imageExtension}` : null;
+export const editBook = async (id,isbn, title, publicationYear, authorId, genreId, synopsis, imageExtension, imageChange) => {
+  let image_path = imageExtension ? `books/imagenLibro_${id}_${new Date().getTime()}.${imageExtension}` : '';
   try {
     const updateData = {
       isbn: isbn,
       title: title,
-      publicationYear: publicationYear,
-      author: author,
-      genre: genre,
+      publication_year: publicationYear,
+      author: { connect: {id:authorId}},
+      genre: { connect: {id:genreId}},
       synopsis: synopsis,
-      imageExtension: imageExtension
     };
    
-    if (image_path) {
+    if (imageChange) {
       updateData.image_path = image_path;
-    } else {
-      updateData.image_path = null;
-    }
+    } 
     const updatedBook = await prisma.book.update({
       where: { id: id },
       data: updateData

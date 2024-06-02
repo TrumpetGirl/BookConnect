@@ -44,9 +44,10 @@ export const createBook = async (req, res) => {
 // EDITAR UN LIBRO
 export const updateBook = async (req, res) => {
   const id  = parseInt(req.params.id)
-  const { isbn, title, publicationYear, author, genre, synopsis, imageExtension } = req.body;
+  const publicationYear  = parseInt(req.body.publicationYear)
+  const { isbn, title, authorId, genreId, synopsis, imageExtension, imageChange } = req.body;
   try {
-    const editedBook = await editBook(id, isbn, title, publicationYear, author, genre, synopsis, imageExtension);
+    const editedBook = await editBook(id, isbn, title, publicationYear, authorId, genreId, synopsis, imageExtension, imageChange);
     res.status(200).json(editedBook);
   } catch (error) {
     res.status(500).json({ message: error.message });

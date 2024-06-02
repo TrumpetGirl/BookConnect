@@ -36,8 +36,8 @@ export const useBookStore = defineStore({
         async update(id, params) {
             try {
                 const response = await axios.put(`${baseUrl}/${id}`, params);
-                return {libro: response.data, message:'El libro ha sido editado con éxito'}
-            } catch {
+                return {book: response.data, message:'El libro ha sido editado con éxito'}
+            } catch (error) {
                 throw new Error(error.response.data.message || 'Error al editar el libro');
             }
         },
