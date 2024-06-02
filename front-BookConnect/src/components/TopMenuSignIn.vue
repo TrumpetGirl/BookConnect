@@ -20,7 +20,7 @@
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>  
       <v-col cols="auto align-self-center ">
-        <div class="welcome-message">Bienvenido/a, {{ user.username }}</div>
+        <div class="welcome-message">Bienvenido/a, {{ user?.username }}</div>
       </v-col>
       <v-col cols="auto align-self-center ">
         <v-menu>

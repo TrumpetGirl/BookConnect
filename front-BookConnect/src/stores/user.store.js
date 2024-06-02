@@ -83,7 +83,7 @@ export const useUserStore = defineStore({
                 const response = await axios.post(`${baseUrl}/existsUser`, JSON.parse(user))
                 return response.data;
             } catch (error) {
-                throw new Error('Error al verificar la disponibilidad del usuario', error);
+                return error.response
             }
         },
         async existsUsername(username) {

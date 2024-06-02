@@ -17,32 +17,37 @@ let title = 'Añadir autor';
 const id = route.params.id;
 const { author } = storeToRefs(authorStore);
 
-let image = ref(new File([""], "filename"))
-const imagePreview = ref(null);
-const fileInputRef = ref(null); 
-const imageDeleted = ref(false);
+const image = ref(null);
+const imageUrl = ref(null);
+let imageDeleted = false;
+let imageChange = false;
 
 const handleFileChange = (event) => {
-  const file = event.target.files[0]
-  console.log(event)
-  if (file) {
-    image = file
-    const reader = new FileReader();
+    const file = event.target.files[0]
+    if (file) {
+      image.value = file
+      imageChange = true;
+      readFile(file)
+      imageDeleted = true
+    }
+  };
+
+  const readFile = (file) => {
+    const reader = new FileReader()
     reader.onload = (e) => {
-      imagePreview.value = e.target.result;
+      imageUrl.value = e.target.result
     };
-    reader.readAsDataURL(file);
-    imageDeleted.value = false; 
+    reader.readAsDataURL(file)
   }
-};
 
-const deleteImage = () => {
-  imagePreview.value = null;
-  image.value = new File([""], "filename");
-  imageDeleted.value = true; 
-};
+  const handleFileClear = () => {
+    image.value = null
+    imageUrl.value = null
+    imageDeleted = true
+    imageChange = true;
+  };
 
-if (id) {
+  if (id) {
     title = 'Editar autor';
     onMounted(async ()=>{
       await authorStore.getById(id);
@@ -50,56 +55,59 @@ if (id) {
         author.value.birth_date = constant.formatDateToFormInput(new Date(author.value.birth_date));
       }
       if (author.value.image_path) {
-        imagePreview.value = fileStore.downloadImage(author.value.image_path);
+        imageUrl.value = fileStore.downloadImage(author.value.image_path)
+        image.value = await fileStore.urlToFile(imageUrl.value, imageUrl.value.split("/").pop())
       }
     }) 
-} else {
-  author.value = {}
-  author.value.birth_date = constant.formatDateToFormInput(new Date())
-}
+  } else {
+    author.value = {}
+    author.value.birth_date = constant.formatDateToFormInput(new Date())
+  }
 
 const handleSubmit = async () => {
   let response
   try {
+    if ( !author.value.name || !author.value.birth_date || !author.value.nationality ) {
+        snackbarStore.error('Todos los campos, salvo la imagen, son obligatorios')
+        return;
+    }
     const formData = new FormData()
-    author.value.imageExtension = image.name ? image.name.split(".").pop() : null
+    author.value.imageExtension = image.value ? image.value.name.split(".").pop() : null
+    author.value.imageChange = imageChange
+    if (imageChange && author.value.image_path) {
+        await fileStore.deleteImage(author.value.image_path);
+      }
     if(id) {
       response = await authorStore.update(id, author.value)
     } else {
       response = await authorStore.create(author.value)
     }
-    if (image && response && response.author.image_path) {
+    if (imageChange && image && response && response.author.image_path) {
         formData.append('path', response.author.image_path)
-        formData.append('file', image)
+        formData.append('file', image.value)
         await fileStore.uploadImage(formData)
-    } else if (imageDeleted.value && response.author.image_path) {
-      await fileStore.deleteImage(response.author.image_path);
     }
-
     snackbarStore.success(response.message);
-
     if(id) {
       navigation.redirectTo('/author')
     } else {
       cleanForm()
     }
-    
   } catch (error) {
-    console.error('Error al agregar autor:', error);
-    snackbarStore.error('Error al agregar el autor');
+    if (id)  snackbarStore.error('Error al editar autor');
+    else  snackbarStore.error('Error al agregar autor');
   }
 };
 
 const cleanForm = () => {
-  author.value = {}
-  author.value.birth_date = constant.formatDateToFormInput(new Date())
-  image = new File([""], "filename")
-  imagePreview.value = null;
-  imageDeleted.value = false;
-  if (fileInputRef.value) {
-    fileInputRef.value.value = null; 
-  } 
+  author.value = {};
+  author.value.birth_date = constant.formatDateToFormInput(new Date());
+  image.value = null;
+  imageUrl.value = null;
+  imageChange = false;
+  imageDeleted = false;
 };
+
 </script>
 
 <template>
@@ -124,13 +132,20 @@ const cleanForm = () => {
           label="Nacionalidad (País)">
           </v-text-field>
 
-          <input type="file" @change="handleFileChange" ref="fileInputRef"class="mb-5" accept="image/*"/>
-
-          <div class="image-container" v-if="imagePreview">
-            <v-img :src="imagePreview" max-width="200" max-height="200" class="mb-5"/>
-            <v-btn @click="deleteImage" color="error" class="ml-2 mb-5">Borrar imagen</v-btn>
+          <v-file-input
+            v-model="image"
+            prepend-icon="mdi-camera" 
+            label="Imagen (Opcional)" 
+            @change="handleFileChange"
+            @click:clear="handleFileClear"
+            show-size
+            accept="image/*">
+          </v-file-input>
+        
+          <div v-if="imageUrl" class="image-preview">
+            <v-img :src="imageUrl" :max-width=125 alt="Vista previa de la imagen" />
           </div>
-
+     
           <v-row>
             <v-col cols="6">
               <v-btn color="#d3d3d3" @click="cleanForm" block>Cancelar</v-btn>
@@ -176,7 +191,9 @@ p {
   margin-top: 15px;
 }
 
-.image-container .v-btn {
-  margin-left: 16px; 
-}
+.image-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
 </style>

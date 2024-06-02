@@ -11,7 +11,7 @@
     { title: 'Autor', value: 'author' },
     { title: 'Año de publicación', value: 'publicationYear' },
     { title: 'Género', value: 'genre' },
-    { title: 'Acciones', value: 'actions', sortable: false }
+    { title: 'Editar / Eliminar', value: 'actions', sortable: false }
   ]);
 
   const bookStore = useBookStore();
@@ -38,6 +38,8 @@
   };
 
   const deleteBook = async (id, image_path) => {
+    console.log(id)
+    console.log(image_path)
      try {
       if(image_path) {
         await useFileStore().deleteImage(image_path);
@@ -53,7 +55,7 @@
     await bookStore.getAll();
     books.value = books.value.map(book => ({
       ...book,
-      image_path: book.image_path ? useFileStore().downloadImage(book.image_path) : null
+      full_path: book.image_path ? useFileStore().downloadImage(book.image_path) : null
     }));
   });
 </script>
@@ -99,7 +101,7 @@
       </template>
 
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.image_path" max-height="100" max-width="100"></v-img>
+        <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>
       </template>
 
       <template v-slot:item.actions="{ item }">

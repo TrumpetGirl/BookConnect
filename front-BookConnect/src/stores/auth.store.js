@@ -30,12 +30,16 @@ export const useAuthStore = defineStore('auth', {
         throw new Error(error.response.data.message || 'Error al iniciar sesión');
       }
     },
-    logout() {
+    clearProperties() {
+      console.log("CLEAN")
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       this.user = null;
-      this.isAuthenticated = null;
+      this.isAuthenticated = false;
       this.token = null;
+    },
+    logout() {
+      this.clearProperties()
       router.push('/user/login');
     },
     async hasToken() {
@@ -44,10 +48,17 @@ export const useAuthStore = defineStore('auth', {
       let existsUser
       if (user) {
         existsUser = await useUserStore().existsUser(user)
-        existsUser.image_path = useFileStore().downloadImage(existsUser.image_path)
-        this.user = existsUser
+        console.log(existsUser)
+        if( !existsUser.exists ) {
+          this.isAuthenticated = false
+          this.clearProperties()
+          //window.location.reload(true)
+        } else {
+          existsUser.user.image_path = useFileStore().downloadImage(existsUser.user.image_path)
+          this.user = existsUser.user
+        } 
       }
-      if (token && existsUser) {
+      if (token) {
         this.isAuthenticated = true
         this.token = token
       } else {
@@ -56,7 +67,10 @@ export const useAuthStore = defineStore('auth', {
       }
     }, 
     isAdmin () {
-      return this.user && constant.adminRoleId === this.user.role;
+      if (this.isAuthenticated && this.user && constant.adminRoleId === this.user.roleId)
+        return true
+      else
+        return false
     }
   }
 })

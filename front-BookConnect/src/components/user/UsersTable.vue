@@ -1,4 +1,5 @@
 <script setup>
+  import * as constant from '../../utils/constants' 
   import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useUserStore, useFileStore, useSnackbarStore } from '@/stores';
@@ -8,9 +9,7 @@
   const headers = ref([
     { title: 'Nombre de usuario', value: 'username' },
     { title: 'Imagen', value: 'image_path' },
-    { title: 'Correo electrónico', value: 'email' },
-    { title: 'Fecha de Nacimiento', value: 'birth_date' },
-    { title: 'Acciones', value: 'actions', sortable: false }
+    { title: 'Editar / Eliminar', value: 'actions', sortable: false }
   ]);
 
   const userStore = useUserStore();
@@ -38,7 +37,6 @@
 
   const deleteUser = async (id, image_path) => {
      try {
-      console.log(image_path)
       if(image_path) {
         await useFileStore().deleteImage(image_path);
       }
@@ -53,7 +51,7 @@
     await userStore.getAll();
     users.value = users.value.map(user => ({
       ...user,
-      birth_date: new Date(user.birth_date).toLocaleDateString(),
+      birth_date: constant.formatDateToLocaleES(user.birth_date),
       full_path: user.image_path ? useFileStore().downloadImage(user.image_path) : null
     }));
   });
@@ -99,19 +97,17 @@
         <span class="user-name" @click="viewUser(item.id)">{{ item.username}}</span>
       </template>
 
-      <template v-slot:item.birth_date="{ item }">
-        <span>{{ item.birth_date }}</span>
-      </template>
-
+  
       <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.full_path" 
-        max-height="75" 
-        max-width="75">
-        </v-img>
+        <v-avatar size ="100">
+          <v-img :src="item.full_path"
+          class="rounded-circle">
+          </v-img>
+        </v-avatar>
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-icon class="mr-2" @click="() => {editUser(item.id)}">
+        <v-icon class="mr-2" @click="editUser(item.id)">
           mdi-pencil
         </v-icon>
         <v-icon class="ml-2" @click="confirmDelete(item)">
@@ -138,12 +134,12 @@
   }
 
   .custom-width {
-    max-width: 80%;
+    max-width: 50%;
     margin: auto;
   }
 
   .custom-data-table {
-    max-width: 80%;
+    max-width: 50%;
     background-color: #ffe6f0; 
     margin: auto;
   }
@@ -160,5 +156,10 @@
 
   .user-name:hover {
     color: darkblue;
+  }
+
+  .rounded-circle {
+  border-radius: 50%;
+  margin: auto;
   }
 </style>

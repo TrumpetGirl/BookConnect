@@ -23,28 +23,39 @@ let usernameMessage = '';
 
 let title = 'Añadir usuario';
 
-let image = ref(new File([""], "filename"))
-const imagePreview = ref(null);
-const fileInputRef = ref(null); 
-const imageDeleted = ref(false);
+let imageDeleted = false;
+let imageChange = false;
+const image = ref(null);
+const imageUrl = ref(null);
 
-const handleFileChange = (event) => {
-  const file = event.target.files[0]
-  if (file) {
-    image = file
-    const reader = new FileReader();
+
+onMounted(async () => {
+    await roleStore.getAll();
+  });
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      image.value = file
+      imageChange = true;
+      readFile(file)
+      imageDeleted = true
+    }
+  };
+
+  const readFile = (file) => {
+    const reader = new FileReader()
     reader.onload = (e) => {
-      imagePreview.value = e.target.result;
+      imageUrl.value = e.target.result
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file)
   }
-};
 
-const deleteImage = () => {
-  imagePreview.value = null;
-  image.value = new File([""], "filename");
-  imageDeleted.value = true; 
-};
+  const handleFileClear = () => {
+    image.value = null
+    imageUrl.value = null
+    imageDeleted = true
+  };
 
 if (id) {
     title = 'Editar usuario';
@@ -54,7 +65,8 @@ if (id) {
         user.value.birth_date = constant.formatDateToFormInput(new Date(user.value.birth_date));
       }
       if (user.value.image_path) {
-        imagePreview.value = fileStore.downloadImage(user.value.image_path);
+        imageUrl.value = fileStore.downloadImage(user.value.image_path)
+        image.value = await fileStore.urlToFile(imageUrl.value, imageUrl.value.split("/").pop())
       }
     }) 
 } else {
@@ -62,10 +74,6 @@ if (id) {
   user.value.birth_date = constant.formatDateToFormInput(new Date())
 
 }
-
-onMounted(async () => {
-    await roleStore.getAllRolesSelector();
-  });
 
   const validatePassword = (password) => {
     const hasNumber = /[0-9]/.test(password);
@@ -90,7 +98,7 @@ const handleSubmit = async () => {
   let response
   try {
     if (!user.value.username || !user.value.birth_date || !user.value.email || 
-        !user.value.password || !confirmPassword.value) {
+        (!id && !user.value.password) || (!id && !confirmPassword.value)) {
           snackbarStore.error('Todos los campos son obligatorios')
         return;
       }
@@ -107,7 +115,7 @@ const handleSubmit = async () => {
         return;
       }
 
-      if (confirmPassword.value !== user.value.password) {
+      if (!id && confirmPassword.value !== user.value.password) {
       snackbarStore.error('Las contraseñas no coinciden');
       return;
       }
@@ -152,12 +160,10 @@ const cleanForm = () => {
   user.value = {}
   user.value.birth_date = constant.formatDateToFormInput(new Date())
   confirmPassword.value = ''
-  image = new File([""], "filename")
-  imagePreview.value = null;
-  imageDeleted.value = false;
-  if (fileInputRef.value) {
-    fileInputRef.value.value = null; 
-  } 
+  image.value = null;
+  imageUrl.value = null;
+  imageDeleted = false;
+  imageChange = false;
 };
 
 </script>
@@ -205,7 +211,7 @@ const cleanForm = () => {
           ></v-text-field>
 
           <v-select 
-          v-model="user.role" 
+          v-model="user.roleId" 
           :items="roles"
           item-title="type"
           item-value="id" 
@@ -213,7 +219,19 @@ const cleanForm = () => {
           required>
         </v-select>
 
-          <input type="file" @change="handleFileChange" class="mb-5"/>
+        <v-file-input
+          v-model="image"
+          prepend-icon="mdi-camera" 
+          label="Imagen de perfil" 
+          @change="handleFileChange"
+          @click:clear="handleFileClear"
+          show-size
+          accept="image/*">
+        </v-file-input>
+        
+        <div v-if="imageUrl" class="image-preview">
+          <v-img :src="imageUrl" :max-width=125 alt="Vista previa de la imagen" />
+        </div>
 
           <v-row>
             <v-col cols="6">

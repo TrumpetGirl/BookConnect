@@ -1,6 +1,6 @@
 <script setup>
   import { ref, watch } from 'vue';
-  // import { searchBooksByTitle } from '@/services/bookService';
+  // import { user } from '@/services/bookService';
 
   const searchQuery = ref('');
   const books = ref([]);

@@ -125,12 +125,10 @@
 
   const cleanForm = () => {
     book.value = {};
-    image = ref(null);
+    image.value = null;
     imageUrl.value = null;
-    imageDeleted.value = false;
-    if (fileInputRef.value) {
-      fileInputRef.value.value = null; 
-    } 
+    imageDeleted = false;
+    imageChange = false;
   };
 </script>
 
