@@ -1,12 +1,11 @@
 <script setup>
-  import { useAuthStore } from '@/stores';
+  import { useAuthStore } from '@/stores'
   import { useRouter } from 'vue-router'
   import { storeToRefs } from 'pinia'
-  import { ref } from 'vue';
 
-  const authStore = useAuthStore();
-  const router = useRouter();
-  const { user }= storeToRefs(authStore);
+  const authStore = useAuthStore()
+  const router = useRouter()
+  const { user } = storeToRefs(authStore)
 </script>
 
 <template>
@@ -19,39 +18,39 @@
       </v-col>
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>  
-      <v-col cols="auto align-self-center ">
+      <v-col cols="auto align-self-center">
         <div class="welcome-message">Bienvenido/a, {{ user?.username }}</div>
       </v-col>
-      <v-col cols="auto align-self-center ">
+      <v-col cols="auto align-self-center">
         <v-menu>
           <template v-slot:activator="{ props }">
             <img
               class="profile-picture"
-              :src="user.image_path"
+              :src="user?.image_path"
               v-bind="props"
             />
           </template>
           <v-list>
-            <v-list-item v-if="!authStore.isAdmin()" @click="router.push('/search');">
-              <v-list-item-title>Buscador</v-list-item-title>
+            <v-list-item v-if="!authStore.isAdmin" @click="router.push('/search');">
+              <v-list-item-title><v-icon class="mr-2">mdi-magnify</v-icon>Buscador</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!authStore.isAdmin()">
-              <v-list-item-title>Mi colección</v-list-item-title>
+            <v-list-item v-if="!authStore.isAdmin"  @click="router.push({ name: 'myCollection' });">
+              <v-list-item-title><v-icon class="mr-2">mdi-book-multiple</v-icon>Mi colección</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!authStore.isAdmin()">
-              <v-list-item-title>Configuración</v-list-item-title>
+            <v-list-item v-if="!authStore.isAdmin"  @click="router.push('/configuration');">
+              <v-list-item-title><v-icon class="mr-2">mdi-cog</v-icon>Configuración</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/dashboard');">
-              <v-list-item-title>Dashboard</v-list-item-title>
+            <v-list-item v-if="authStore.isAdmin" @click="router.push('/dashboard');">
+              <v-list-item-title><v-icon class="mr-2">mdi-view-dashboard</v-icon>Dashboard</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/book');">
-              <v-list-item-title>Listado libros</v-list-item-title>
+            <v-list-item v-if="authStore.isAdmin" @click="router.push('/book');">
+              <v-list-item-title><v-icon class="mr-2">mdi-book-open-page-variant</v-icon>Listado libros</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/author');">
-              <v-list-item-title>Listado autores</v-list-item-title>
+            <v-list-item v-if="authStore.isAdmin" @click="router.push('/author');">
+              <v-list-item-title><v-icon class="mr-2">mdi-feather</v-icon>Listado autores</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="authStore.isAdmin()" @click="router.push('/user');">
-              <v-list-item-title>Listado usuarios</v-list-item-title>
+            <v-list-item v-if="authStore.isAdmin" @click="router.push('/user');">
+              <v-list-item-title><v-icon class="mr-2">mdi-account-group</v-icon>Listado usuarios</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -98,5 +97,8 @@
     cursor: pointer;
     margin-right: 20px;
   }
-</style>
 
+  .v-list-item {
+    background-color: #ffb6d2; 
+  }
+</style>

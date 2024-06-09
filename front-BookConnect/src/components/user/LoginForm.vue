@@ -1,32 +1,19 @@
 <script setup>
-  import { RouterLink } from 'vue-router';
-  import { useAuthStore, useSnackbarStore } from '@/stores';
-  import { ref, onMounted  } from 'vue';
+  import { RouterLink } from 'vue-router'
+  import { useAuthStore, useSnackbarStore } from '@/stores'
+  import { ref, onMounted  } from 'vue'
   import router from '@/router'
 
-  const authStore = useAuthStore();
-  const snackbarStore = useSnackbarStore();
+  
+  const snackbarStore = useSnackbarStore()
 
-  const username = ref('');
-  const password = ref('');
+  const username = ref('')
+  const password = ref('')
 
   const handleLogin = async () => {
-    try {
-      const response = await authStore.login(username.value, password.value);
-      if (authStore.isLoggedIn) {
-        if (authStore.isAdmin()) {
-          router.push('/dashboard');
-        } else {
-          router.push('/search');
-        }
-        snackbarStore.success(response)
-      } else {
-        snackbarStore.error('La contraseña es incorrecta')
-      }
-    } catch (error) {
-      snackbarStore.error(error.message)
-    }
-  };
+    const authStore = useAuthStore()
+    await authStore.login(username.value, password.value)
+  }
 
   const cancel = () => {
     username.value = '';

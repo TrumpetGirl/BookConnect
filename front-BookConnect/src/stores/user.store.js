@@ -39,9 +39,8 @@ export const useUserStore = defineStore({
                 await axios.post(`${baseUrl}/register`, user);
                 return 'El usuario ha sido registrado con éxito'
             } catch (error) {
-                throw new Error(error.response.data.message || 'Error al registrar usuario');
-              }
-           
+                return error.response || 'Error al registrar usuario';
+            }
         },
         async update(id, params) {
             try {
@@ -90,8 +89,8 @@ export const useUserStore = defineStore({
             try {
                 return (await axios.post(`${baseUrl}/existsUsername`, { username })).data;
             } catch (error) {
-                console.log(error);
-                throw new Error('Error al verificar la disponibilidad del nombre de usuario');
+                console.log(error)
+                return error.response || 'Error al verificar la disponibilidad del nombre de usuario.';
             }
         },
 

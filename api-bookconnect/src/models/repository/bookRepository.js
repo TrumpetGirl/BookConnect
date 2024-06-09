@@ -1,7 +1,7 @@
 import Book  from '../model/Book.js'
-import SearchElement  from '../../views/SearchElement.js'
-import BookList  from '../../views/BookList.js'
-import Base  from '../../views/Base.js'
+import SearchElement  from '../view/SearchElement.js'
+import BookList  from '../view/BookList.js'
+import Base  from '../view/Base.js'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()

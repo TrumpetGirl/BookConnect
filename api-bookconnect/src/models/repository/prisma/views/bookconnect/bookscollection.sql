@@ -7,6 +7,8 @@ SELECT
   `c`.`rating` AS `rating`,
   `c`.`review` AS `review`,
   `s`.`type` AS `status`,
+  `c`.`created_date` AS `created_date`,
+  `c`.`updated_date` AS `updated_date`,
   `l`.`name` AS `list`,
   `u`.`id` AS `userId`,
   `b`.`id` AS `bookId`,
@@ -22,15 +24,15 @@ FROM
           (
             (
               `bookconnect`.`collection` `c`
-              JOIN `bookconnect`.`user` `u` ON(`c`.`userId` = `u`.`id`)
+              JOIN `bookconnect`.`user` `u` ON((`c`.`userId` = `u`.`id`))
             )
-            JOIN `bookconnect`.`book` `b` ON(`c`.`bookId` = `b`.`id`)
+            JOIN `bookconnect`.`book` `b` ON((`c`.`bookId` = `b`.`id`))
           )
-          JOIN `bookconnect`.`state` `s` ON(`s`.`id` = `c`.`stateId`)
+          JOIN `bookconnect`.`state` `s` ON((`s`.`id` = `c`.`stateId`))
         )
-        JOIN `bookconnect`.`genre` `g` ON(`b`.`genreId` = `g`.`id`)
+        JOIN `bookconnect`.`genre` `g` ON((`b`.`genreId` = `g`.`id`))
       )
-      LEFT JOIN `bookconnect`.`collection_list` `cl` ON(`c`.`id` = `cl`.`collectionId`)
+      LEFT JOIN `bookconnect`.`collection_list` `cl` ON((`c`.`id` = `cl`.`collectionId`))
     )
-    LEFT JOIN `bookconnect`.`list` `l` ON(`cl`.`listId` = `l`.`id`)
+    LEFT JOIN `bookconnect`.`list` `l` ON((`cl`.`listId` = `l`.`id`))
   )

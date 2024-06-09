@@ -4,7 +4,7 @@
   import * as navigation from '../../utils/navigation';
   import { RouterLink } from 'vue-router';
   import { ref } from 'vue';
-  import { useUserStore, useSnackbarStore } from '@/stores';
+  import { useAuthStore, useSnackbarStore } from '@/stores'
 
   const user = ref({
     username: '',
@@ -17,53 +17,47 @@
   let usernameError = false;
   let usernameMessage = '';
   
-  const userStore = useUserStore();
   const snackbarStore = useSnackbarStore();
+  const authStore = useAuthStore()
 
   const handleRegister = async () => {
-    try {
-      
-      if (!user.value.username || !user.value.birth_date || !user.value.email || 
-        !user.value.password || !confirmPassword.value) {
-          snackbarStore.error('Todos los campos son obligatorios')
-        return;
-      }
 
-      const usernameExistsResponse = await userStore.existsUsername(user.value.username);
-      if (usernameExistsResponse) {
-        snackbarStore.error('El usuario ya existe');
-        return;
-      }
+    if (!user.value.username || !user.value.birth_date || !user.value.email || 
+      !user.value.password || !confirmPassword.value) {
+        snackbarStore.error('Todos los campos son obligatorios')
+      return;
+    }
 
-      const age = validation.calculateAge(user.value.birth_date);
-        if (age < 5) {
-          snackbarStore.error('Revise su fecha de nacimiento. El usuario debe tener al menos 5 años de edad.');
-          return;
-      }
+      // const usernameExistsResponse = await userStore.existsUsername(user.value.username);
+      // console.log(usernameExistsResponse)
+      // if (usernameExistsResponse) {
+      //   snackbarStore.error('El usuario ya existe');
+      //   return;
+      // }
 
-      if (!constant.emailPattern.test(user.value.email)) {
-        snackbarStore.error('Correo electrónico no válido')
-        return;
-      }
+    const age = validation.calculateAge(user.value.birth_date);
+    if (age < 5) {
+      snackbarStore.error('Revise su fecha de nacimiento. El usuario debe tener al menos 5 años de edad.');
+      return;
+    }
 
-      if (confirmPassword.value !== user.value.password) {
+    if (!constant.emailPattern.test(user.value.email)) {
+      snackbarStore.error('Correo electrónico no válido')
+      return;
+    }
+
+    if (confirmPassword.value !== user.value.password) {
       snackbarStore.error('Las contraseñas no coinciden');
       return;
-      }
+    }
 
     if (!validation.validatePassword(user.value.password)) {
       snackbarStore.error('La contraseña debe tener al menos 10 caracteres de longitud y, al menos, 1 número, 1 letra y 1 caracter de tipo especial');
       return;
-      }
+    }
 
-    const response = await userStore.register(user.value);
-    snackbarStore.success(response);
-    navigation.redirectTo('/user/login');
-    cleanForm();
-    } catch (error) {
-      console.error('Error al agregar el usuario:', error);
-      snackbarStore.error(error.message);
-  }
+    const authStore = useAuthStore()
+    await authStore.register(user.value)
   };
 
   const cleanForm = () => {

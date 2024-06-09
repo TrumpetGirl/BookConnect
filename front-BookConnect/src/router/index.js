@@ -46,18 +46,17 @@ const publicPages = ['/user/login', '/user/register']
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
-  const { isAuthenticated } = storeToRefs(authStore)
-  
-  if (isAuthenticated.value == null) await authStore.hasToken()
-  const isAdmin = authStore.isAdmin()
+  const { isAuthenticated, returnPath } = storeToRefs(authStore)
+  if (isAuthenticated.value == null) await authStore.isLoggedIn()
+  const isAdmin = authStore.isAdmin
   const isPublicPage = publicPages.includes(to.path)
- 
+  returnPath.value = from.path
   // Si el usuario no está conectado y trata de acceder a una página pública, permite la navegación
   if (!isAuthenticated.value) {
     if (isPublicPage) {
       next();
     } else {
-      next('/user/login');
+      next('/user/login')
     }
   } else {
     // Si el usuario está conectado y trata de acceder a una página pública, redirige según su rol

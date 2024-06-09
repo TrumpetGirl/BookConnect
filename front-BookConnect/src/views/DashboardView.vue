@@ -3,12 +3,12 @@
   import { useBookStore, useAuthorStore, useUserStore } from '@/stores';
   import { storeToRefs } from 'pinia';
 
-  const bookStore = useBookStore()
-  const authorStore = useAuthorStore()
-  const userStore = useUserStore()
-  const { bookCount } = storeToRefs(bookStore)
-  const { authorCount } = storeToRefs(authorStore)
-  const { userCount } = storeToRefs(userStore)
+  const bookStore = useBookStore();
+  const authorStore = useAuthorStore();
+  const userStore = useUserStore();
+  const { bookCount } = storeToRefs(bookStore);
+  const { authorCount } = storeToRefs(authorStore);
+  const { userCount } = storeToRefs(userStore);
 
   onMounted(async () => {
     await bookStore.getCount();
@@ -18,16 +18,17 @@
 </script>
 
 <template>
-  <v-container>
-    <v-card class="pa-3 mb-4">
-      <v-card-title class="headline">
+  <v-container class="narrow-container">
+    <div class="section-title">
+      <v-icon class="mr-2">mdi-view-dashboard</v-icon>
+      <h1 class="headline">
         Dashboard
-      </v-card-title>
+      </h1>
+    </div>
 
-      <v-card-title class="subtitle-1 text-center">
-        Estadísticas
-      </v-card-title>
-    </v-card>
+    <h2 class="subtitle-1 text-center">
+      Estadísticas
+    </h2>
 
     <v-row>
       <v-col cols="12" md="4">
@@ -69,18 +70,16 @@
   </v-container>
 </template>
 
-
-
 <style scoped>
-.container {
+.narrow-container {
+  max-width: 750px; 
+  margin: 0 auto;
+}
+
+.section-title {
   display: flex;
-  flex-direction: column; 
-  justify-content: flex-start; 
   align-items: center;
-  font-family: "Ubuntu Sans", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 100;
-  font-style: normal;
+  margin-bottom: 16px;
 }
 
 .v-card {
@@ -91,10 +90,6 @@
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease;
-}
-
-.v-card:hover {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .v-card-title {
@@ -115,7 +110,7 @@
 .headline {
   font-size: 28px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin: 0;
 }
 
 .subtitle-1 {
@@ -123,5 +118,9 @@
   font-weight: 500;
   margin-bottom: 24px;
   color: #555;
+}
+
+.text-center {
+  text-align: center;
 }
 </style>

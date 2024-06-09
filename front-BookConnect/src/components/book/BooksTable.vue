@@ -95,12 +95,12 @@
     </template>
 
     <template v-slot:item.title="{ item }">
-        <span class="book-title" @click="viewBook(item.id)">{{ item.title}}</span>
-      </template>
+      <span class="book-title" @click="viewBook(item.id)">{{ item.title}}</span>
+    </template>
 
-      <template v-slot:item.image_path="{ item }">
-        <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>
-      </template>
+    <template v-slot:item.image_path="{ item }">
+      <v-img :src="item.full_path" max-height="100" max-width="100"></v-img>
+    </template>
 
       <template v-slot:item.actions="{ item }">
         <v-icon class="mr-2" @click="() => {editBook(item.id)}">

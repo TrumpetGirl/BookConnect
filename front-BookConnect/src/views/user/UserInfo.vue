@@ -59,12 +59,12 @@
         </v-card>
       </v-col>
       <v-row>
-        <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
+        <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin">
             <v-btn @click="() => router.push('/user')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver al listado
             </v-btn>
           </v-col>
-          <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin()">
+          <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin">
             <v-btn @click="() => router.push('/')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver atrás
             </v-btn>

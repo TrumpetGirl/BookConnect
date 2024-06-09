@@ -1,7 +1,7 @@
-import Base  from '../../views/Base.js'
-import SearchElement  from '../../views/SearchElement.js'
-import UserProfile from '../../views/UserProfile.js'
-import LoggedUser from '../../views/LoggedUser.js'
+import Base  from '../view/Base.js'
+import SearchElement  from '../view/SearchElement.js'
+import UserProfile from '../view/UserProfile.js'
+import LoggedUser from '../view/LoggedUser.js'
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
@@ -111,6 +111,42 @@ export const registerUser = async (username, password, email, birth_date) => {
   }
 };
 
+// REGISTRAR USUARIO 
+export const createUser = async (username, password, email, birth_date, imageExtension) => {
+  const hashedPassword = await bcrypt.hash(password, 10) 
+  const newUser = await prisma.user.create({
+    data: {
+      username: username,
+      password: hashedPassword,
+      email: email,
+      birth_date: new Date(birth_date),
+      image_path: 'users/avatar.png',
+      lists: {
+        create: {
+          name: "Favoritos",
+          description: "Lista de favoritos de " + username
+        }
+      }
+    },
+    include: { role: true }
+  })
+  if (newUser) {
+    if (imageExtension) {
+      const updateUser = await prisma.user.update({
+        where: { id: newUser.id },
+        data: { image_path: "users/imagenUsuario_" + newUser.id + "_" + new Date().getTime() + "." + imageExtension },
+        include: { role: true }
+      })
+      return new LoggedUser(updateUser.id, updateUser.username, updateUser.image_path, updateUser.role.type, updateUser.role.id)
+    } else {
+      return new LoggedUser(newUser.id, newUser.username, newUser.image_path, newUser.role.type, newUser.role.id)
+    }
+  } else {
+    return null
+  }
+  
+}
+
 // EDITAR USUARIO
 export const editUser = async (username, email, birthDate, imageExtension, imageChange) => {
   let image_path = imageExtension ? `users/imagenUsuario_${id}_${new Date().getTime()}.${imageExtension}` : null;
@@ -171,7 +207,7 @@ export const numUsers = async () => {
 // OBTENER USUARIOS POR NOMBRE DE USUARIO
 export const findUsersByUsername = async (search) => {
   try {
-    const users = await prisma.user.findMany({ where: { username: { contains: search } }, select: { id: true, username: true, image_path: true}, orderBy: { username: 'asc' } });
+    const users = await prisma.user.findMany({ where: { username: { contains: search }, roleId: { not: 1 } }, select: { id: true, username: true, image_path: true}, orderBy: { username: 'asc' } });
     return users.map(user => new SearchElement(user.id, user.username, user.image_path, 'Usuario'))
   } catch (error) {
     console.error(`Error obteniendo usuarios por su nombre ${search}: `, error);
@@ -181,13 +217,16 @@ export const findUsersByUsername = async (search) => {
 
 // OBTENER USUARIO POR NOMBRE DE USUARIO
 export const findUserByUsername = async (username) => {
-  try {
-    const user = await prisma.user.findUnique({ where: { username: username } });
-    return new Base(user.id, user.username)
-  } catch (error) {
-    console.error('Error obteniendo el usuario por su nombre de usuario: ', error);
-    throw error;
-  }
+  const user = await prisma.user.findUnique({ where: { username: username } })
+  if (user) return new Base(user.id, user.username)
+  else return null
+};
+
+// OBTENER USUARIO POR EMAIL
+export const findUserByEmail = async (email) => {
+  const user = await prisma.user.findUnique({ where: { email: email } })
+  if (user) return new Base(user.id, user.email)
+  else return null
 };
 
 // OBTENER USUARIOS POR ID Y NOMBRE --> EXISTSUSER

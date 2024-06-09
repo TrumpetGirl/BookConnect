@@ -1,5 +1,5 @@
 import { findAllUsers, findUserById, makeUser, registerUser, editUser, deleteUser,
-  findAllUsersSelector, numUsers, findUsersByUsername, findUserByIdAndUsername, findUserByUsername } from '../models/repository/userRepository.js';
+  findAllUsersSelector, numUsers, findUsersByUsername, findUserByUsername } from '../models/repository/userRepository.js';
 
 // ------ CRUD ------
 //OBTENER TODOS LOS USUARIOS
@@ -110,35 +110,15 @@ export const getUsersByUsername = async (req, res) => {
 };
 
 // OBTENER USUARIO POR NOMBRE DE USUARIO
-export const getUserByUsername = async (req, res) => {
+export const getUserByUsername = async (req, res, next) => {
   try {
-    const { username } = req.body;
-    const user = await findUserByUsername(username);
-    res.status(200).json(user);
+    const { username } = req.body
+    const user = await findUserByUsername(username)
+    res.status(200).json(user)
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Error al obtener el usuario por nombre de usuario.' });
+    next(error)
   }
-};
-
-// OBTENER USUARIO POR ID Y NOMBRE DE USUARIO
-export const checkLoggedUser = async (req, res) => {
-  try {
-    const { id, username, image_path, role, roleId } = req.body;
-    const loggedUser = req.user
-    if ( loggedUser.id === id && 
-      loggedUser.username === username && 
-      loggedUser.image_path === image_path && 
-      loggedUser.role === role && 
-      loggedUser.roleId === roleId)
-        res.status(200).json({ user: {id, username, image_path, role, roleId }, exists: true})
-    else
-        res.status(200).json({ message: "El usuario no está en la sesión.", exists: false})
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Error al comprobar al usuario logueado.', exists: false });
-  }
-};
+}
 
 
 

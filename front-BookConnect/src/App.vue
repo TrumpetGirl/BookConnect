@@ -7,7 +7,7 @@
 <template>
   <v-app>
     <v-app-bar app class="top-menu">
-      <TopMenuSignIn v-if="authStore.isLoggedIn"/>
+      <TopMenuSignIn v-if="authStore.isAuthenticated"/>
       <TopMenu v-else />
     </v-app-bar>
     <v-main>

@@ -14,6 +14,7 @@ model author {
   birth_date  DateTime @db.Date
   nationality String   @db.VarChar(50)
   image_path  String?  @db.VarChar(255)
+  approved    Boolean  @default(true)
   books       book[]
 }
 
@@ -26,6 +27,7 @@ model book {
   image_path       String       @db.VarChar(255)
   authorId         Int          @default(1)
   genreId          Int          @default(1)
+  approved         Boolean      @default(true)
   author           author       @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_author")
   genre            genre        @relation(fields: [genreId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_book_genre")
   collections      collection[]
@@ -38,9 +40,11 @@ model collection {
   id               Int               @id @default(autoincrement())
   userId           Int
   bookId           Int
-  stateId          Int
+  stateId          Int               @default(1)
   rating           Int
   review           String            @db.Text
+  created_date     DateTime          @default(now())
+  updated_date     DateTime          @default(now())
   book             book              @relation(fields: [bookId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_book")
   state            state             @relation(fields: [stateId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_state")
   user             user              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_user")
@@ -94,8 +98,8 @@ model state {
 
 model user {
   id          Int             @id @default(autoincrement())
-  username    String          @unique(map: "username") @db.VarChar(100)
-  email       String          @db.VarChar(100)
+  username    String          @unique(map: "unique_username") @db.VarChar(100)
+  email       String          @unique(map: "unique_email") @db.VarChar(200)
   password    String          @db.VarChar(80)
   birth_date  DateTime        @db.Date
   image_path  String          @db.VarChar(255)
@@ -125,21 +129,23 @@ model user_follower {
 
 /// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 view bookscollection {
-  username     String  @db.VarChar(100)
-  user_image   String  @db.VarChar(255)
-  title        String  @db.VarChar(100)
-  book_image   String  @db.VarChar(255)
-  genre        String  @db.VarChar(50)
+  username     String   @db.VarChar(100)
+  user_image   String   @db.VarChar(255)
+  title        String   @db.VarChar(100)
+  book_image   String   @db.VarChar(255)
+  genre        String   @db.VarChar(50)
   rating       Int
-  review       String  @db.Text
-  status       String  @db.VarChar(50)
-  list         String? @db.VarChar(100)
-  userId       Int     @default(0)
-  bookId       Int     @default(0)
-  collectionId Int     @default(0)
-  genreId      Int     @default(0)
-  statusId     Int     @default(0)
-  listId       Int?    @default(0)
+  review       String   @db.Text
+  status       String   @db.VarChar(50)
+  created_date DateTime @default(now())
+  updated_date DateTime @default(now())
+  list         String?  @db.VarChar(100)
+  userId       Int      @default(0)
+  bookId       Int      @default(0)
+  collectionId Int      @default(0)
+  genreId      Int      @default(0)
+  statusId     Int      @default(0)
+  listId       Int?     @default(0)
 
   @@unique([userId, bookId], map: "booksCollection")
 }

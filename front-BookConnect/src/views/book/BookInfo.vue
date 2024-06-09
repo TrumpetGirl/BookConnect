@@ -1,17 +1,20 @@
 <script setup>
 import { ref, onMounted  } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useBookStore, useFileStore, useAuthStore } from '@/stores';
-import { storeToRefs } from 'pinia';
+import { useBookStore, useFileStore, useAuthStore, useCollectionStore } from '@/stores';
+import { storeToRefs } from 'pinia'
+import * as navigation from '../../utils/navigation'
 
 const bookStore = useBookStore();
 const authStore = useAuthStore();
 const fileStore = useFileStore();
+
 const route = useRoute();
 const router = useRouter();
 
-const { book } = storeToRefs(bookStore);
-const imageUrl = ref(null);
+const { returnPath } = storeToRefs(authStore)
+const { book } = storeToRefs(bookStore)
+const imageUrl = ref(null)
 
 onMounted(async () => {
   const { id } = route.params;
@@ -24,13 +27,15 @@ onMounted(async () => {
 });
 
 
-const addToCollection = () => {
-  // Implementación de addToCollection
-};
+const addToCollection = async () => {
+  const colectionStore = useCollectionStore()
+  console.log(book.value.id)
+  await colectionStore.create(book.value.id)
+}
 
 const addToList = () => {
   // Implementación de addToList
-};
+}
 </script>
 
 <template>
@@ -69,13 +74,13 @@ const addToList = () => {
         </v-btn>
       </v-card-actions>
     </v-card>
-    <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
+    <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin">
       <v-btn @click="() => router.push('/book')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
         Volver al listado
       </v-btn>
     </v-col>
-    <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin()">
-      <v-btn @click="() => router.push('/')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+    <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin">
+      <v-btn @click="() => navigation.goBack()" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
         Volver atrás
       </v-btn>
     </v-col>

@@ -8,14 +8,13 @@ export const verifyToken = (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "Acceso restringido." })
     }
-    const result = verifyAccessToken(token);
+    const result = verifyAccessToken(token)
     if (!result.success) {
-      return res.status(403).json({ message: "Acceso prohibido." })
+      return res.status(401).json({ message: "Acceso restringido." })
     }
-    req.user = result.data;
-    //req.token = token
+    req.loggedUser = result.data
     next()
   } else {
-    res.status(403).json({ message: "Acceso prohibido." })
+    res.status(401).json({ message: "Acceso restringido." })
   }
 };

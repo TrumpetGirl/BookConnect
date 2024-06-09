@@ -1,7 +1,7 @@
 import Author  from '../model/Author.js'
-import BasePath  from '../../views/BasePath.js'
-import SearchElement  from '../../views/SearchElement.js'
-import Base  from '../../views/Base.js'
+import BasePath  from '../view/BasePath.js'
+import SearchElement  from '../view/SearchElement.js'
+import Base  from '../view/Base.js'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

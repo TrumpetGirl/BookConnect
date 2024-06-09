@@ -242,7 +242,7 @@ const cleanForm = () => {
         </v-form>
       </fieldset>
       <v-row>
-        <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin()">
+        <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin">
             <v-btn @click="navigation.redirectTo('/user')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver al listado
             </v-btn>

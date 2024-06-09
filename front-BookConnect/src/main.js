@@ -38,7 +38,7 @@ const authStore = useAuthStore();
 app.mount('#app')
 
 axios.interceptors.request.use((config) => {
-  const { token } = storeToRefs(authStore);
+  const { token } = storeToRefs(authStore)
   if (token.value) {
     config.headers.Authorization = 'Bearer ' + token.value
   }
@@ -50,15 +50,17 @@ axios.interceptors.response.use(
     return response
   },
   (error) => {
+    console.log(error.response)
     if (error.response) {
       if (error.response.status === 401) {
-        router.push('/unauthorized')
-      } else  if (error.response.status === 403) {
+        //router.push('/unauthorized')
+        authStore.logout()
+      } else if (error.response.status === 403) {
         router.push('/forbidden')
       } else {
-        alert('Parece que ha ocurrido un error. Vuelve a intentarlo.')
+        //return error.response.data
       }
     }
     return Promise.reject(error)
-  },
-);
+  }
+)

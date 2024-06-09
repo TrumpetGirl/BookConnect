@@ -1,22 +1,22 @@
-import Collection  from '../model/Collection.js'
-import BooksCollection  from '../views/BooksCollection.js'
+import MyBooks  from '../view/MyBooks.js'
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-
 // OBTENER LIBROS DE LA COLECCCIÓN POR ID DE USUARIO
-export const findBooksCollectionByUser = async (userId)=>{
+export const findBookCollectionOfUser = async (userId)=>{
     try {
-      const bookCollection = await prisma.collection.findMany({
-        where: { userId: userId },
-        include: { book: { select: { id: true, title: true, image_path: true } } }
-      });
-      return bookCollection.map(bookCollection => new BooksCollection (bookCollection.user_id, bookCollection.username,
-        bookCollection.user_image, bookCollection.book_id, bookCollection.title, bookCollection.book_image));
+      const [booksCollection, count, nowReading] = await prisma.$transaction([
+        prisma.bookscollection.findMany({ where: { userId: userId }, orderBy: { created_date: 'desc' } }),
+        prisma.bookscollection.count({ where: { userId: userId } }),
+        prisma.bookscollection.findFirst({ where: { userId: userId }, orderBy: { updated_date: 'desc' } })
+      ])
+      return { success: true, 
+        count: count, 
+        nowReading: nowReading ? new MyBooks(nowReading.bookId, nowReading.title, nowReading.book_image, nowReading.rating, nowReading.status) : null, 
+        booksCollection: booksCollection.map(bookCollection => new MyBooks(bookCollection.bookId, bookCollection.title, bookCollection.book_image, bookCollection.rating, bookCollection.status) ) }
     } catch (error) {
-      console.error(`Error al obtener los libros de la colección de ${userId}: `, error);
-      throw error;
+      return { success: false, message: 'Error interno del servidor.' }
     }
-  };
+  }
 
