@@ -1,9 +1,9 @@
 <script setup>
   import { onMounted, ref, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useUserStore, useAuthStore } from '@/stores';
-  import { useFileStore } from '@/stores/file.store';
+  import { useUserStore, useAuthStore, useFileStore } from '@/stores'
   import { storeToRefs } from 'pinia';
+  import * as navigation from '../../utils/navigation'
 
   const userStore = useUserStore();
   const authStore = useAuthStore();
@@ -13,10 +13,12 @@
 
   const { user } = storeToRefs(userStore);
 
+  const { id } = route.params;
+
   const imageUrl = ref(null);
 
   onMounted(async () => {
-    const { id } = route.params;
+    
     try {
       await userStore.getById(id);
       if (user.value.image_path) {
@@ -33,6 +35,16 @@
     }
     return '';
   });
+
+  const goToUserColection = () => {
+    if (!id || parseInt(id) === user.value.id) {
+      navigation.redirectTo({ name: 'myCollection' })
+    } else {
+      router.push('/collection/user/'+ id)
+    }
+  };
+
+  
 </script>
 
 <template>
@@ -59,16 +71,21 @@
         </v-card>
       </v-col>
       <v-row>
+        <v-col class="d-flex justify-end" cols="12">
+          <v-btn @click="() => goToUserColection()" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            Ir a la colección
+          </v-btn>
+        </v-col>
         <v-col class="d-flex justify-end" cols="12" v-if="authStore.isAdmin">
-            <v-btn @click="() => router.push('/user')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
-              Volver al listado
-            </v-btn>
-          </v-col>
-          <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin">
-            <v-btn @click="() => router.push('/')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
-              Volver atrás
-            </v-btn>
-          </v-col>
+          <v-btn @click="() => router.push('/user')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            Volver al listado
+          </v-btn>
+        </v-col>
+        <v-col class="d-flex justify-end" cols="12" v-else>
+          <v-btn @click="() => navigation.goBack()" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            Volver atrás
+          </v-btn>
+        </v-col>
 
           <!-- <v-col cols="12">
             <v-card>

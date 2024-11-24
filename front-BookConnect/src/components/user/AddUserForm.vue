@@ -17,7 +17,6 @@ const id = route.params.id;
 const { user } = storeToRefs(userStore);
 const { roles } = storeToRefs(roleStore);
 
-const confirmPassword = ref('');
 let usernameError = false;
 let usernameMessage = '';
 
@@ -72,17 +71,9 @@ if (id) {
 } else {
   user.value = {}
   user.value.birth_date = constant.formatDateToFormInput(new Date())
-
 }
 
-  const validatePassword = (password) => {
-    const hasNumber = /[0-9]/.test(password);
-    const hasLetter = /[a-zA-Z]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return password.length >= 10 && hasNumber && hasLetter && hasSpecialChar;
-  };
-
-  const calculateAge = (birthDate) => {
+const calculateAge = (birthDate) => {
     const today = new Date();
     const birthDateObj = new Date(birthDate);
     let age = today.getFullYear() - birthDateObj.getFullYear();
@@ -97,61 +88,57 @@ const handleSubmit = async () => {
 
   let response
   try {
-    if (!user.value.username || !user.value.birth_date || !user.value.email || 
-        (!id && !user.value.password) || (!id && !confirmPassword.value)) {
-          snackbarStore.error('Todos los campos son obligatorios')
-        return;
-      }
-
-      const age = calculateAge(user.value.birth_date);
-        if (age < 5) {
-          snackbarStore.error('Revise su fecha de nacimiento');
-          return;
-      }
-
-      const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-      if (!emailPattern.test(user.value.email)) {
-        snackbarStore.error('Correo electrónico no válido')
-        return;
-      }
-
-      if (!id && confirmPassword.value !== user.value.password) {
-      snackbarStore.error('Las contraseñas no coinciden');
+    if (!user.value.username || !user.value.birth_date || !user.value.email ) {
+        snackbarStore.error('Todos los campos son obligatorios')
       return;
-      }
+    }
 
-    if (!validatePassword(user.value.password)) {
-      snackbarStore.error('La contraseña debe tener al menos 10 caracteres de longitud y, al menos, 1 número, 1 letra y 1 caracter de tipo especial');
+    const age = calculateAge(user.value.birth_date);
+      if (age < 5) {
+        snackbarStore.error('Revise su fecha de nacimiento');
+        return;
+    }
+
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailPattern.test(user.value.email)) {
+      snackbarStore.error('Correo electrónico no válido')
       return;
-      }
+    }
+
     const formData = new FormData()
-    user.value.imageExtension = image.name ? image.name.split(".").pop() : null
+    user.value.imageExtension = image.value.name ? image.value.name.split(".").pop() : null
+    user.value.imageChange = imageChange
+    if (imageChange && user.value.image_path) {
+      await fileStore.deleteImage(user.value.image_path);
+    }
     if(id) {
       response = await userStore.update(id, user.value)
     } else {
       response = await userStore.create(user.value)
-      
-      snackbarStore.success(response.message);
-      cleanForm()
+      //snackbarStore.success(response.message);
+      //cleanForm()
     }
-    if (image && response && response.user.image_path) {
+    if (imageChange && image.value && response && response.user.image_path) {
         formData.append('path', response.user.image_path)
-        formData.append('file', image)
+        formData.append('file', image.value)
         await fileStore.uploadImage(formData)
     }
 
     snackbarStore.success(response.message);
 
     if(id) {
-      await userStore.getAll()
       navigation.redirectTo('/user')
     } else {
       cleanForm()
     }
 
   } catch (error) {
-    console.error('Error al agregar usuario:', error);
-  }
+    if (id) {
+        snackbarStore.error('Error al editar usuario');
+    } else {
+      snackbarStore.error('Error al agregar usuario');
+    }
+}
 };
 
 const cleanForm = () => {
@@ -191,23 +178,7 @@ const cleanForm = () => {
           label="Fecha de Nacimiento"
           type="date"
         ></v-text-field>
-        
-        <v-text-field
-          v-if="(!id)"
-          v-model="user.password"
-          label="Contraseña"
-          type="password"
-          required
-        ></v-text-field>
-
-          <v-text-field
-          v-if="(!id)"
-          v-model="confirmPassword"
-          label="Repite Contraseña"
-          type="password"
-          required
-          ></v-text-field>
-
+ 
           <v-select 
           v-model="user.roleId" 
           :items="roles"

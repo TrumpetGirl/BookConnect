@@ -11,7 +11,7 @@
     { title: 'Autor', value: 'author' },
     { title: 'Año de publicación', value: 'publicationYear' },
     { title: 'Género', value: 'genre' },
-    { title: 'Editar / Eliminar', value: 'actions', sortable: false }
+    { title: 'Editar', value: 'actions', sortable: false }
   ]);
 
   const bookStore = useBookStore();
@@ -106,9 +106,9 @@
         <v-icon class="mr-2" @click="() => {editBook(item.id)}">
           mdi-pencil
         </v-icon>
-        <v-icon class="ml-2" @click="confirmDelete(item)">
+        <!-- <v-icon class="ml-2" @click="confirmDelete(item)">
           mdi-delete
-        </v-icon>
+        </v-icon> -->
       </template>
     </v-data-table>
   </v-container>

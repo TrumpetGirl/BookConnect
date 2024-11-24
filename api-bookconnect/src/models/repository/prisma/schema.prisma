@@ -41,8 +41,8 @@ model collection {
   userId           Int
   bookId           Int
   stateId          Int               @default(1)
-  rating           Int
-  review           String            @db.Text
+  rating           Int?
+  review           String?           @db.Text
   created_date     DateTime          @default(now())
   updated_date     DateTime          @default(now())
   book             book              @relation(fields: [bookId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_book")
@@ -50,7 +50,7 @@ model collection {
   user             user              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_user")
   collection_lists collection_list[]
 
-  @@unique([userId, bookId], map: "book_collection")
+  @@unique([userId, bookId], map: "user_book_collection")
   @@index([bookId], map: "fk_collection_book")
   @@index([stateId], map: "fk_collection_state")
   @@index([userId], map: "fk_collection_user")
@@ -60,9 +60,13 @@ model collection_list {
   id           Int        @id @default(autoincrement())
   collectionId Int
   listId       Int
+  enabled      Boolean    @default(true)
+  created_date DateTime   @default(now())
+  updated_date DateTime   @default(now())
   collection   collection @relation(fields: [collectionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_list_collection")
   list         list       @relation(fields: [listId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_collection_list_list")
 
+  @@unique([collectionId, listId], map: "collection_list_collection_list")
   @@index([collectionId], map: "fk_collection_list_collection")
   @@index([listId], map: "fk_collection_list_list")
 }
@@ -134,8 +138,8 @@ view bookscollection {
   title        String   @db.VarChar(100)
   book_image   String   @db.VarChar(255)
   genre        String   @db.VarChar(50)
-  rating       Int
-  review       String   @db.Text
+  rating       Int?
+  review       String?  @db.Text
   status       String   @db.VarChar(50)
   created_date DateTime @default(now())
   updated_date DateTime @default(now())

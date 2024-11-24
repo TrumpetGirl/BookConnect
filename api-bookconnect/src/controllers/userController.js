@@ -3,13 +3,13 @@ import { findAllUsers, findUserById, makeUser, registerUser, editUser, deleteUse
 
 // ------ CRUD ------
 //OBTENER TODOS LOS USUARIOS
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
   try {
-    const users = await findAllUsers();
-    res.status(200).json(users)
+    const result = await findAllUsers();
+    if (result && result.success) res.status(200).json( result )
+    else res.status(400).json({success: false, message: 'Error al obtener los usuarios.'})
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Error al obtener el listado de usuarios." });
+    next(error)
   }
 }
 
@@ -29,11 +29,11 @@ export const getUserById = async (req, res) => {
 export const makeNewUser = async (req, res) => {
   const { username, password, email, birth_date, imageExtension, roleId } = req.body;
   try {
-    const newUser = await makeUser(username, password, email, birth_date, imageExtension, roleId);
-    res.status(201).json(newUser);
+    const result = await makeUser(username, password, email, birth_date, imageExtension, roleId);
+    if (result && result.success) res.status(201).json(result)
+    else res.status(400).json({success: false, message: 'Error al obtener los usuarios.'})
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Error al crear el estado." });
+    next(error)
   }
 };
 
@@ -54,7 +54,7 @@ export const updateUser = async (req, res) => {
   const id  = parseInt(req.params.id)
   const { username, email, birth_date, imageExtension, imageChange } = req.body;
   try {
-    const editedUser = await editUser(username, email, birth_date, imageExtension, imageChange);
+    const editedUser = await editUser(id, username, email, birth_date, imageExtension, imageChange);
     res.status(200).json(editedUser);
   } catch (error) {
     console.error(error)

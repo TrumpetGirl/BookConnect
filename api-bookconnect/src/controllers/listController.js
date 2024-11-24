@@ -1,4 +1,4 @@
-import { findAllLists, findListById, addList, editList, deleteList, numLists } from '../models/repository/listRepository.js'
+import { findAllLists, findListById, addList, editList, deleteList, numLists, findFavouritesBooksOfUser, upsertFavourite } from '../models/repository/listRepository.js'
 
 // ------ CRUD ------
 // OBTENER TODAS LAS LISTAS
@@ -63,6 +63,19 @@ export const removeList = async (req, res) => {
 // ------ END CRUD ------
 
 // OBTENER NÚMERO TOTAL DE LISTAS
+
+export const createFavourite = async (req, res, next) => {
+  try {
+    const { id } = req.loggedUser
+    const collectionId = parseInt(req.body.collectionId)
+    const result = await upsertFavourite(id, collectionId)
+    if (result && result?.success) res.status(200).json( result )
+    else res.status(400).json({ success: false, message: "Error al añadir el libro a favoritos." })
+  } catch (error) {
+    next(error)
+  }
+}
+
 export const getNumLists = async (req, res) => {
   try {
     const totalLists = await numLists();
@@ -72,5 +85,16 @@ export const getNumLists = async (req, res) => {
     res.status(500).json({ message: "Error al obtener el número de listas." });
   }
 };
+
+export const getFavouritesOfUser = async (req, res, next) => {
+  try {
+    const result = await findFavouritesBooksOfUser(parseInt(req.params.userId))
+    if (result && result.success) res.status(200).json( result )
+    else res.status(400).json({ success: false, message: "Error al recuperar los libros favoritos del usuario." })
+  } catch (error) {
+    next(error)
+  }
+}
+
 
 

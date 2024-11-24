@@ -1,81 +1,109 @@
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import { useRoute, useRouter } from 'vue-router'
-  import { useAuthStore, useCollectionStore } from '@/stores'
-  import { storeToRefs } from 'pinia'
-  import * as navigation from '../../utils/navigation'
+import { onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useFileStore, useCollectionStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import * as navigation from '../../utils/navigation'
 
-  const router = useRouter()
+const route = useRoute()
+const router = useRouter()
 
-  const collectionStore = useCollectionStore()
-  const { collections, collectionCount } = storeToRefs(collectionStore)
+const collectionStore = useCollectionStore()
+const { collections, collectionCount, nowReading, collectionUsername } = storeToRefs(collectionStore)
 
-  const authStore = useAuthStore()
-  const { user } = storeToRefs(authStore)
+const viewBook = (id) => {
+    router.push({ name: 'bookInfo', params: { id: id } })
+  };
 
-  const navigateToLists = () => {
-    router.push({ name: 'Lists' })
-  }
-
-  const updateBookStatus = (book, status) => {
-    book.status = status
-  }
-
-  onMounted(async () => {
-    const route = useRoute()
-    const { userId } = route.params
-    if (!userId || parseInt(userId) === user.value.id) {
-      navigation.redirectTo({ name: 'myCollection' })
-    } else {
-      await collectionStore.getByUserId(user.value.id)
-    }
-    
-  });
+onMounted(async () => {
+  const { userId } = route.params
+  await collectionStore.getByUserId(userId)
+  collections.value = collections.value.map(collection => ({
+    ...collection,
+    image: collection.book_image ? useFileStore().downloadImage(collection.book_image) : null
+  }))
+  if (nowReading.value) nowReading.value.image = nowReading.value.book_image ? useFileStore().downloadImage(nowReading.value.book_image) : null
+});
 </script>
 
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="3" class="sidebar">
-        <div class="reading-now">
-          <h3>Leyendo ahora:</h3>
-          <v-img :src="currentReadingImage" class="book-image"></v-img>
-        </div>
-        <div class="followers-info">
-          <p>Seguidores:</p>
-          <h2>{{ followers }}</h2>
-          <p>Siguiendo:</p>
-          <h2>{{ following }}</h2>
-        </div>
-        <v-btn class="list-button" @click="navigateToLists"><v-icon style="margin-right:10px;">mdi-format-list-bulleted</v-icon>Mis Listas</v-btn>
-      </v-col>
-      <v-col cols="9" class="main-content">
-        <h2 class="collection-title">Mi colección</h2>
+    <v-row dense>
+      <v-col cols="12" class="main-content">
+        <h2 class="collection-title">Colección de {{ collectionUsername }}</h2>
         <p>{{ collectionCount }} libros</p>
         <v-row>
-          <v-col cols="2" v-for="(collection, index) in collections" :key="index">
-            <v-img :src="collection.book_image" class="book-image"></v-img>
-            <h4>{{ collection.title }}</h4>
-            <v-menu>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn small v-bind="attrs" v-on="on">
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item v-for="(option, i) in bookStatusOptions" :key="i" @click="updateBookStatus(book, option)">
-                  {{ option }}
-                </v-list-item>
-                <v-divider></v-divider>
-                <v-list-item>
-                  Puntuación:
-                  <v-rating v-model="book.rating" length="5" color="red"></v-rating>
-                </v-list-item>
-              </v-list>
-            </v-menu>
+          <v-col cols="3" md="3" sm="12" v-for="(collection, index) in collections" :key="index">
+            <v-card @click="viewBook(collection.bookId)">
+              <v-card-item>
+                <v-img :src="collection.image" class="book-image"></v-img>
+              </v-card-item>
+              <v-card-text class="book-title">{{ collection.title }}</v-card-text>
+            </v-card>
           </v-col>
         </v-row>
+      </v-col>
+      <v-col class="d-flex justify-end" cols="12">
+        <v-btn @click="() => navigation.goBack()" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+          Volver atrás
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
 </template>
+
+<style scoped>
+.sidebar {
+  background-color: #f8c6d6;
+  padding: 20px;
+}
+
+.reading-now {
+  margin-bottom: 20px;
+}
+
+.followers-info {
+  margin-bottom: 20px;
+}
+
+.book-image {
+  width: 100px;
+  height: 150px;
+  margin: auto;
+}
+
+.list-button {
+  background-color: #ffe6f0;
+  color: black;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.collection-title {
+  color: #d39292;
+  font-weight: bold;
+}
+
+.book-image {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+.v-btn {
+  margin: 5px 0;
+}
+
+.v-menu {
+  display: inline-block;
+}
+
+.v-list-item {
+  cursor: pointer;
+}
+
+.v-card-text {
+  text-align: center;
+}
+</style>

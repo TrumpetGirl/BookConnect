@@ -23,14 +23,12 @@
 </template>
 
 <style scoped>
-
   .top-menu {
   background: linear-gradient(to bottom, #bdb9b9, #8e8c8c) !important;
   color: white !important;
   font-family: "Poetsen One", sans-serif !important;
   font-weight: 400 !important;
   font-style: normal !important;
-}
-
+  }
 </style>
 

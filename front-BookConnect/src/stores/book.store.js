@@ -1,7 +1,8 @@
-import { defineStore } from 'pinia';
-import axios from 'axios';
+import { defineStore } from 'pinia'
+import axios from 'axios'
+import { useSnackbarStore } from './index'
 
-const baseUrl = `${import.meta.env.VITE_API_URL}/book`;
+const baseUrl = `${import.meta.env.VITE_API_URL}/book`
 
 export const useBookStore = defineStore({
     id: 'book',
@@ -12,17 +13,24 @@ export const useBookStore = defineStore({
     }),
     actions: {
         async getAll() {
-            try {
-                this.books = (await axios.get(baseUrl)).data; 
-            } catch (error) {
-                throw new Error(error.response.data.message || 'No se han podido recuperar los libros');
+            const response = (await axios.get(baseUrl)).data; 
+            if (response?.success) {
+                this.books = response.books
+            } else {
+                useSnackbarStore().error(response.message)
             }
         },
         async getById(id) {
             try {
-                this.book = (await axios.get(`${baseUrl}/${id}`)).data;
+                const response = (await axios.get(`${baseUrl}/${id}`)).data
+                if (response?.success) {
+                    this.book = response.book
+                } else {
+                    this.book = {}
+                    useSnackbarStore().error(response?.message)
+                }
             } catch (error) {
-                throw new Error(error.response.data.message || 'No se ha podido recuperar el libro');
+                useSnackbarStore().error(error?.response?.data?.message || "Error al obtener libro.")
             }
         },
         async create(book) {

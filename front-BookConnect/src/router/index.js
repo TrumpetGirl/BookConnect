@@ -3,7 +3,7 @@ import userRoutes from './user.routes'
 import authorRoutes from './author.routes'
 import bookRoutes from './book.routes'
 import collectionRoutes from './collection.routes'
-import { Forbidden, Unauthorized, Dashboard, Searcher}  from '@/views'
+import { Forbidden, Unauthorized, Dashboard, Searcher, Favourites}  from '@/views'
 import { useAuthStore } from '@/stores';
 import { storeToRefs } from 'pinia'
 
@@ -32,6 +32,11 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: Searcher
+    },
+    {
+      path: '/favourites',
+      name: 'favourites',
+      component: Favourites
     },
     {
       path: '/dashboard',

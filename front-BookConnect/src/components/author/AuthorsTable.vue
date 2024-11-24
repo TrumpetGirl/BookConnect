@@ -56,7 +56,6 @@
       birth_date: constant.formatDateToLocaleES(author.birth_date),
       full_path: author.image_path ? useFileStore().downloadImage(author.image_path) : null
     }));
-    console.log(authors.value);
   });
 </script>
 

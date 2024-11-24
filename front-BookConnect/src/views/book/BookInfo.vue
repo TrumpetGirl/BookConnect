@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted  } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useBookStore, useFileStore, useAuthStore, useCollectionStore } from '@/stores';
+import { useBookStore, useFileStore, useAuthStore, useCollectionStore, useListStore } from '@/stores';
 import { storeToRefs } from 'pinia'
 import * as navigation from '../../utils/navigation'
 
@@ -12,7 +12,6 @@ const fileStore = useFileStore();
 const route = useRoute();
 const router = useRouter();
 
-const { returnPath } = storeToRefs(authStore)
 const { book } = storeToRefs(bookStore)
 const imageUrl = ref(null)
 
@@ -29,8 +28,12 @@ onMounted(async () => {
 
 const addToCollection = async () => {
   const colectionStore = useCollectionStore()
-  console.log(book.value.id)
   await colectionStore.create(book.value.id)
+}
+
+const addToFavourites = async () => {
+  const listStore = useListStore()
+  await listStore.addToFavourites(book.value.collectionId)
 }
 
 const addToList = () => {
@@ -59,18 +62,21 @@ const addToList = () => {
         <v-col cols="12">
           <v-card-text>
             <div><strong>Puntuación:</strong></div>
-            <v-rating v-model="rating" disabled color="pink"></v-rating>
+            <v-rating v-model="book.ratingAvg" disabled color="pink"></v-rating>
             <div><strong>Sinopsis:</strong></div>
             <div>{{ book.synopsis }}</div>
           </v-card-text>
         </v-col>
       </v-row>
       <v-card-actions>
-        <v-btn class="collection-btn" color="white" @click="addToCollection">
-          <v-icon style="margin-right:10px;">mdi-book-plus</v-icon> Añadir a mi colección
+        <v-btn class="collection-btn" color="white" @click="addToCollection" v-if="!book.inMyCollection">
+          <v-icon  style="margin-right:10px;">mdi-book-plus</v-icon> Añadir a mi colección
         </v-btn>
-        <v-btn class="list-btn" color="white" @click="addToList">
-          <v-icon style="margin-right:10px;">mdi-format-list-bulleted</v-icon> Añadir a una lista
+        <v-btn class="list-btn" color="white" @click="addToFavourites" v-if="book.inMyCollection && !book.favourite">
+          <v-icon style="margin-right:10px;">mdi-star</v-icon> Añadir a favoritos
+        </v-btn>
+        <v-btn class="list-btn" color="white" @click="deleteFromFavourites" v-else-if="book.inMyCollection && book.favourite">
+          <v-icon style="margin-right:10px;">mdi-star</v-icon> Quitar de favoritos
         </v-btn>
       </v-card-actions>
     </v-card>

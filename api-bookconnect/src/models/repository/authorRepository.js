@@ -16,8 +16,8 @@ export const findAllAuthors = async () => {
     return authors.map(author => new Author(author.id, author.name, author.birth_date, 
       author.nationality, author.image_path, author._count.books));
   } catch (error) {
-    console.error('Error al obtener todos los autores: ', error)
-    return []; 
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -55,8 +55,8 @@ export async function addAuthor(name, birthDate, nationality, imageExtension) {
       return new Author(newAuthor.id, newAuthor.name, newAuthor.birth_date, newAuthor.nationality, newAuthor.image_path, newAuthor.books)
     }
   } catch (error) {
-    console.error('Error añadiendo autor: ', error);
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -79,8 +79,8 @@ export const editAuthor = async (id, name, birthDate, nationality, imageExtensio
     });
     return new Author(updatedAuthor.id, updatedAuthor.name, updatedAuthor.birth_date, updatedAuthor.nationality, updatedAuthor.image_path, updatedAuthor.books)
   } catch (error) {
-    console.error('Error editando al autor: ', error);
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -89,8 +89,8 @@ export const deleteAuthor = async (id) => {
   try {
     return await prisma.author.delete({ where: { id: id } });
   } catch (error) {
-    console.error(`Error eliminando el autor ${id}: `, error);
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 // ------ END CRUD ------
@@ -101,8 +101,8 @@ export const findAllAuthorsSelector = async () => {
     const authors = await prisma.author.findMany({ select: { id: true, name: true }, orderBy: { name:'asc' } });
     return authors.map(author => new Base (author.id, author.name));
   } catch (error) {
-    console.error('Error al obtener los nombres de los autores: ', error);
-    throw error; 
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
  };
 
@@ -111,8 +111,8 @@ export const numAuthors = async () => {
   try {
     return await prisma.author.count();
   } catch (error) {
-    console.error('Error al obtener el número total de autores: ', error);
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -122,8 +122,8 @@ export const findAuthorsByName = async (search) => {
     const authors = await prisma.author.findMany({ where: { name: { contains: search } }, select: { id: true, name: true, image_path: true }, orderBy: { name: 'asc' } });
     return authors.map(author => new SearchElement (author.id, author.name, author.image_path, 'Autor'));
   } catch (error) {
-    console.error(`Error obteniendo autor por nombre ${search}: `, error);
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -136,8 +136,8 @@ export const findBooksByAuthor = async (authorId) =>{
     });
     return author.books.map(book => new BasePath (book.id, book.title, book.image_path));
   } catch (error) {
-    console.error(`Error al obtener los libros del autor ${authorId}: `, error);
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 

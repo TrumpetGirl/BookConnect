@@ -1,9 +1,9 @@
 <script setup>
   import { onMounted, ref, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useAuthorStore, useAuthStore } from '@/stores';
-  import { useFileStore } from '@/stores/file.store';
+  import { useAuthorStore, useAuthStore, useFileStore } from '@/stores';
   import { storeToRefs } from 'pinia';
+  import * as navigation from '../../utils/navigation'
 
   const authorStore = useAuthorStore();
   const authStore = useAuthStore();
@@ -78,34 +78,34 @@
             </v-btn>
           </v-col>
           <v-col class="d-flex justify-end" cols="12" v-if="!authStore.isAdmin">
-            <v-btn @click="() => router.push('/')" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
+            <v-btn @click="() => navigation.goBack()" color="#b0bec5" class="ma-2" prepend-icon="mdi-arrow-left">
               Volver atrás
             </v-btn>
           </v-col>
 
           <v-col cols="12">
-        <v-card>
-          <v-card-title>
-            <h3>Libros de {{ author.name }}</h3>
-          </v-card-title>
-          <v-data-table
-            :headers="[
-              { title: 'Portada', value: 'path' },
-              { title: 'Título', value: 'description' }
-            ]"
-            :items="books"
-            class="elevation-1"
-          >
-          <template v-slot:item.path="{ item }">
-            <v-img :src="item.path" max-height="100" max-width="100"></v-img>
-          </template>
+            <v-card class="book-table">
+              <v-card-title>
+                <h3>Libros de {{ author.name }}</h3>
+              </v-card-title>
+              <v-data-table
+                :headers="[
+                  { title: 'Portada', value: 'path' },
+                  { title: 'Título', value: 'description' }
+                ]"
+                :items="books"
+                class="elevation-1"
+              >
+              <template v-slot:item.path="{ item }">
+                <v-img :src="item.path" max-height="100" max-width="100"></v-img>
+              </template>
 
-          <template v-slot:item.description="{ item }">
-            <span class="book-title" @click="viewBook(item.id)">{{item.description}}</span>
-          </template>
-          </v-data-table>
-        </v-card>
-      </v-col>
+              <template v-slot:item.description="{ item }">
+                <span class="book-title" @click="viewBook(item.id)">{{item.description}}</span>
+              </template>
+              </v-data-table>
+            </v-card>
+          </v-col>
       </v-row>
     </v-row>
   </v-container>
@@ -123,9 +123,12 @@
   }
 
   .rounded-circle {
-  border-radius: 50%;
-}
+    border-radius: 50%;
+  }
 
-
+  .book-table {
+    max-width: 70%;
+    margin:auto;
+  }
   </style>
   

@@ -8,8 +8,7 @@
   const search = ref('');
   const headers = ref([
     { title: 'Nombre de usuario', value: 'username' },
-    { title: 'Imagen', value: 'image_path' },
-    { title: 'Editar / Eliminar', value: 'actions', sortable: false }
+    { title: 'Imagen', value: 'image_path' }
   ]);
 
   const userStore = useUserStore();
@@ -64,9 +63,9 @@
         <v-icon class="mr-2">mdi-account-group</v-icon> 
         Usuarios
       </h2>
-      <v-btn color="success" @click="addUser" prepend-icon="mdi-plus" variant="outlined" rounded="xl" class="add-user-button">
+      <!-- <v-btn color="success" @click="addUser" prepend-icon="mdi-plus" variant="outlined" rounded="xl" class="add-user-button">
         Añadir Usuario
-      </v-btn>
+      </v-btn> -->
     </div>
 
     <v-text-field
@@ -106,14 +105,14 @@
         </v-avatar>
       </template>
 
-      <template v-slot:item.actions="{ item }">
+      <!-- <template v-slot:item.actions="{ item }">
         <v-icon class="mr-2" @click="editUser(item.id)">
           mdi-pencil
         </v-icon>
         <v-icon class="ml-2" @click="confirmDelete(item)">
           mdi-delete
-        </v-icon>
-      </template>
+        </v-icon> 
+      </template> -->
     </v-data-table>
   </v-container>
 </template>

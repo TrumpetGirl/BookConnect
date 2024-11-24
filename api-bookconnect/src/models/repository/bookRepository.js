@@ -20,28 +20,40 @@ export const findAllBooks = async () => {
         genre: { select: { id: true, name: true } }
       }
     });
-    return books.map(book => new BookList(book.id, book.title, book.publication_year, book.image_path, book.author.name, book.genre.name, book.author.id, book.genre.id));
+    return { 
+      success: true, 
+      books: books ? books.map(book => new BookList(book.id, book.title, book.publication_year, book.image_path, book.author.name, book.genre.name, book.author.id, book.genre.id)) : []
+    }
   } catch (error) {
-    console.error('Error al obtener todos los libros: ', error);
-    return []; 
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
 // OBTENER LIBRO POR ID
-export const findBookById = async (id) => {
+export const findBookById = async (id, userId) => {
   try {
-    const book = await prisma.book.findUnique({ where: { id: id }, 
-      include: {
-        author: { select: { id: true, name: true  } },
-        genre: { select: { id: true, name: true } }
-      } 
-    })
-    return new Book(book.id, book.isbn, book.title, 
-      book.publication_year, book.synopsis, book.image_path, book.author.name, 
-      book.genre.name, book.authorId, book.genreId)
+    const [book, ratingAvg, isInMyCollection, isInList] = await prisma.$transaction([
+      prisma.book.findUnique({ where: { id: id }, 
+        include: {
+          author: { select: { id: true, name: true  } },
+          genre: { select: { id: true, name: true } }
+        }
+      }),
+      prisma.bookscollection.aggregate({ _avg: { rating: true }, where: {bookId: id} }),
+      prisma.bookscollection.findUnique({ where: { userId_bookId: {userId: userId, bookId: id} } }),
+      prisma.collection_list.findFirst({ where: { collection: { is: { userId: userId, bookId: id } } } })
+    ])
+    const inMyCollection = isInMyCollection ? true : false
+    const favourite = isInList ? true : false
+    return { 
+      success: true,
+      book: book ? new Book(book.id, book.isbn, book.title, 
+        book.publication_year, book.synopsis, book.image_path, book.author.name, 
+        book.genre.name, book.authorId, book.genreId, ratingAvg._avg.rating, inMyCollection, favourite, isInMyCollection?.collectionId) : null
+    }
   } catch (error) {
-    console.error(`Error obteniendo el libro ${id}: `, error)
-    throw error;
+    console.log(error)
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 

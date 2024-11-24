@@ -57,9 +57,9 @@ axios.interceptors.response.use(
         authStore.logout()
       } else if (error.response.status === 403) {
         router.push('/forbidden')
-      } else {
-        //return error.response.data
-      }
+      } /*else {
+        return error.response.data
+      }*/
     }
     return Promise.reject(error)
   }

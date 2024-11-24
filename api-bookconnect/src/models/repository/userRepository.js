@@ -21,10 +21,9 @@ export const findAllUsers = async () => {
       orderBy: { username: "asc" }
     });
     const arrUsers = users.map(user => new LoggedUser(user.id, user.username, user.image_path, user.role.type, user.role.id));
-    return arrUsers;
+    return { success: true, users: arrUsers }
   } catch (error) {
-    console.error('Error al obtener todos los usuarios: ', error);
-    return []; 
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -43,8 +42,7 @@ export const findUserById = async (id) => {
     });
     return new UserProfile (user.id, user.username, user.email, user.birth_date, user.image_path, user.role.id, user.role.type)
   } catch (error) {
-    console.error('Error obteniendo usuario por id: ', error);
-    throw error;
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -74,13 +72,12 @@ export const makeUser = async (username, password, email, birth_date, imageExten
         data: { image_path: "users/imagenUsuario_" + newUser.id + "_" + new Date().getTime() + "." + imageExtension },
         include: { role: true }
       })
-      return new LoggedUser(updateUser.id, updateUser.username, updateUser.image_path, updateUser.role.type, updateUser.role.id);
+      return {success: true, user: new LoggedUser(updateUser.id, updateUser.username, updateUser.image_path, updateUser.role.type, updateUser.role.id) };
     } else {
-      return new LoggedUser(newUser.id, newUser.username, newUser.image_path, newUser.role.type, newUser.role.id)
+      return {success: true, user: new LoggedUser(newUser.id, newUser.username, newUser.image_path, newUser.role.type, newUser.role.id) }
     }
   } catch (error) {
-    console.error('Error al crear el usuario: ', error);
-    throw error;
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -106,8 +103,7 @@ export const registerUser = async (username, password, email, birth_date) => {
     });
     return new LoggedUser(newUser.id, newUser.username, newUser.image_path, newUser.role.type, newUser.role.id)
   } catch (error) {
-    console.error('Error al registrar al usuario: ', error);
-    throw error;
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 
@@ -144,11 +140,11 @@ export const createUser = async (username, password, email, birth_date, imageExt
   } else {
     return null
   }
-  
 }
 
 // EDITAR USUARIO
-export const editUser = async (username, email, birthDate, imageExtension, imageChange) => {
+export const editUser = async (id, username, email, birthDate, imageExtension, imageChange) => {
+  
   let image_path = imageExtension ? `users/imagenUsuario_${id}_${new Date().getTime()}.${imageExtension}` : null;
   try {
     const updateData = {
@@ -164,11 +160,10 @@ export const editUser = async (username, email, birthDate, imageExtension, image
       where: { id: id },
       data: updateData,
       include: { role: true }
-    });
+    })
     return new LoggedUser(updatedUser.id, updatedUser.username, updatedUser.image_path, updatedUser.role.type, updatedUser.role.id)
   } catch (error) {
-    console.error('Error editando al usuario: ', error);
-    throw error;
+    return { success: false, message: 'Error interno del servidor.' }
   }
 };
 

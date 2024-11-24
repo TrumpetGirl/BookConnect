@@ -42,16 +42,19 @@
 </script>
 <template>
   <v-container>
-    <h2>¿Buscando nuevas lecturas?</h2>
-    <v-text-field
-      v-model="searchText"
-      label="Buscar"
-      prepend-inner-icon="mdi-magnify"
-      variant="outlined"
-      hide-details
-      single-line
-      class="custom-width mb-5"
-    ></v-text-field>
+    <div class="custom-width">
+      <h2>¿Buscando nuevas lecturas?</h2>
+      <v-text-field
+        v-model="searchText"
+        label="Buscar por título de libro, nombre de autor o nombre de usuario"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        hide-details
+        single-line
+        class="mb-5 mt-5"
+      ></v-text-field>
+    </div>
+    
     <v-data-table
       v-if="searchText.length > 2"
       :group-by="groupBy"

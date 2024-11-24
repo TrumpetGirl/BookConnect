@@ -12,10 +12,11 @@ export const useUserStore = defineStore({
     }),
     actions: {
         async getAll() {
-            try {
-                this.users = (await axios.get(baseUrl)).data; 
-            } catch (error) {
-                throw new Error(error.response.data.message || 'No se han podido recuperar los usuarios');
+            const response = (await axios.get(baseUrl)).data; 
+            if (response?.success) {
+                this.users = response.users
+            } else {
+                useSnackbarStore().error(response.message)
             }
         },
         async getById(id) {

@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import axios from 'axios'
-import { useSnackbarStore } from './snackbar.store'
+import { useBookStore, useSnackbarStore } from './index'
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/collection`;
 
@@ -9,13 +9,14 @@ export const useCollectionStore = defineStore({
     state: () => ({
         collections: [],
         collection: {},
+        collectionUsername: "",
         collectionCount: 0,
         nowReading: {}
     }),
     actions: {
         async getAll() {
             const response = await axios.get(baseUrl)
-            if (response.success) {
+            if (response?.success) {
                 this.collections = response.booksCollection
                 this.collectionCount = response.count
             } else {
@@ -24,17 +25,26 @@ export const useCollectionStore = defineStore({
         },
         async getById(id) {
             try {
-                this.collection = (await axios.get(`${baseUrl}/${id}`)).data
+                const response = (await axios.get(`${baseUrl}/${id}`)).data
+                if (response?.success) {
+                    this.collection = response.collection
+                } else {
+                    useSnackbarStore().error(response.message)
+                }
             } catch (error) {
                 useSnackbarStore().error(error.response.data.message || 'Error al obtener libro de la colección');
             }
         },
         async create(bookId) {
             try {
-                const response = await axios.post(baseUrl, {bookId: bookId})
-                if (response.data.success) {
-                    useSnackbarStore().success(response.data.message)
-                }
+                const response = (await axios.post(baseUrl, {bookId: bookId})).data
+                
+                if (response?.success) {
+                    const bookStore = useBookStore()
+                    const { book } = storeToRefs(bookStore)
+                    book.value.inMyCollection = true
+                    useSnackbarStore().success(response.message)
+                } else useSnackbarStore().error(response.message)
             } catch (error) {
                 useSnackbarStore().error(error?.response?.data?.message  || 'Error al añadir libro a la colección.');
             }  
@@ -64,19 +74,24 @@ export const useCollectionStore = defineStore({
               console.log(error);
             }
         },
-        async getByUserId(userId, page, limit) {
+        async getByUserId(userId) {
             try {
-                const response = (await axios.get(`${baseUrl}/user/${userId}`, { params: { page, limit } } )).data
+                const response = (await axios.get(`${baseUrl}/user/${userId}`)).data
                 if (response?.success) {
                     this.collections = response.booksCollection
                     this.collectionCount = response.count
+                    this.collectionUsername = response.username
                     this.nowReading = response.nowReading
                 } else {
+                    this.collections = {}
+                    this.collectionCount = 0
+                    this.collectionUsername = ""
+                    this.nowReading = {}
                     useSnackbarStore().error(response?.message)
                 }
             } catch (error) {
-                useSnackbarStore().error(error?.response?.data?.message || "Error al registrar usuario.")
+                useSnackbarStore().error(error?.response?.data?.message || "Error al obtener libros de la colección.")
             }
-        },
+        }
     }
 });

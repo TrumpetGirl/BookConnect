@@ -72,7 +72,7 @@
     
     let response;
     try {
-      if (!image || !book.value.title || !book.value.isbn || !book.value.publicationYear || 
+      if (!image?.value || !book.value.title || !book.value.isbn || !book.value.publicationYear || 
         !book.value.synopsis || !book.value.genreId || !book.value.authorId) {
           snackbarStore.error('Todos los campos son obligatorios')
         return;

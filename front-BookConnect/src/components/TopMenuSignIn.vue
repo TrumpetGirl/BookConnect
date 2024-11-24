@@ -37,8 +37,8 @@
             <v-list-item v-if="!authStore.isAdmin"  @click="router.push({ name: 'myCollection' });">
               <v-list-item-title><v-icon class="mr-2">mdi-book-multiple</v-icon>Mi colección</v-list-item-title>
             </v-list-item>
-            <v-list-item v-if="!authStore.isAdmin"  @click="router.push('/configuration');">
-              <v-list-item-title><v-icon class="mr-2">mdi-cog</v-icon>Configuración</v-list-item-title>
+            <v-list-item v-if="!authStore.isAdmin"  @click="router.push('/favourites');">
+              <v-list-item-title><v-icon class="mr-2">mdi-star</v-icon>Favoritos</v-list-item-title>
             </v-list-item>
             <v-list-item v-if="authStore.isAdmin" @click="router.push('/dashboard');">
               <v-list-item-title><v-icon class="mr-2">mdi-view-dashboard</v-icon>Dashboard</v-list-item-title>
@@ -99,6 +99,6 @@
   }
 
   .v-list-item {
-    background-color: #ffb6d2; 
+    background-color: white; 
   }
 </style>

@@ -5,25 +5,26 @@ import { findAllBooks, findBookById, addBook, editBook, deleteBook,
 // OBTENER TODOS LOS LIBROS
 export const getBooks = async (req, res) => {
   try {
-    const books = await findAllBooks();
-    res.status(200).json(books)
+    const result = await findAllBooks();
+    if (result && result.success) res.status(200).json( result )
+    else res.status(400).json({success: false, message: result.message || 'Error al obtener los libros.' })
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: "Error al obtener el listado de libros." });
+    next(error)
   }
-};
+}
 
 // OBTENER LIBRO POR ID
 export const getBookById = async (req, res) => {
   try {
     const id  = parseInt(req.params.id)
-    const book = await findBookById(id)
-    res.status(200).json(book)
+    const userId = parseInt(req.loggedUser.id)
+    const result = await findBookById(id, userId)
+    if (result && result.success) res.status(200).json( result )
+    else res.status(400).json({success: false, message: result.message || 'Error al obtener el libro.' })
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: `Error al obtener el libro con ID ${req.params.id}.` });
+    next(error)
   }
-};
+}
 
 // CREAR LIBRO
 export const createBook = async (req, res) => {

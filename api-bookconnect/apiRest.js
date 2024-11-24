@@ -8,11 +8,10 @@ const app = express()
 
 app.use(cors())
 
-app.use(express.static('public'))
-
 app.use(express.json())
 
-app.use(authRoutes, authorRoutes, bookRoutes, collectionRoutes, fileRoutes, genreRoutes, listRoutes, roleRoutes, stateRoutes, userRoutes)
+app.use(authRoutes, authorRoutes, bookRoutes, collectionRoutes, fileRoutes, genreRoutes, 
+    listRoutes, roleRoutes, stateRoutes, userRoutes)
 
 app.use(logErrors)
 app.use(clientErrorHandler)

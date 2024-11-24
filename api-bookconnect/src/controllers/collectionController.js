@@ -1,25 +1,25 @@
-import { findBookCollectionOfUser } from '../models/repository/collectionRepository.js'
+import { addCollection, findBookCollectionOfUser } from '../models/repository/collectionRepository.js'
 
-export const getCollectionOfUser = async (req, res, next) => {
+// ------ CRUD ------
+export const createCollection = async (req, res, next) => {
   try {
-    const result = await findBookCollectionOfUser(parseInt(req.params.userId))
-    console.log(result)
-    if (result && result.success) res.status(200).json( result )
-    else res.status(400).json({ success: false, message: "Error al recuperar la colección del usuario." })
+    const { id } = req.loggedUser
+    const bookId = parseInt(req.body.bookId)
+    const result = await addCollection(id, bookId)
+    if (result && result?.success) res.status(200).json( result )
+    else res.status(400).json({ success: false, message: "Error al añadir el libro a la colección." })
   } catch (error) {
     next(error)
   }
 }
 
-export const createCollection = async (req, res, next) => {
+// ------ END CRUD ------
+
+export const getCollectionOfUser = async (req, res, next) => {
   try {
-    const { id } = req.loggedUser
-    const result = await login(username.trim(), password)
-    if (result.success) {
-      res.status(200).json({ success: true, message: result.user.username + ", has iniciado sesión.", user: result.user, token: result.token })
-    } else {
-      res.status(401).json({ success: false, message: result.message })
-    }
+    const result = await findBookCollectionOfUser(parseInt(req.params.userId))
+    if (result && result.success) res.status(200).json( result )
+    else res.status(400).json({ success: false, message: "Error al recuperar la colección del usuario." })
   } catch (error) {
     next(error)
   }
